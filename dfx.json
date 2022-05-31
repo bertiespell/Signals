@@ -1,0 +1,35 @@
+{
+  "canisters": {
+    "rust_avenue": {
+      "candid": "src/rust_avenue/rust_avenue.did",
+      "package": "rust_avenue",
+      "type": "rust"
+    },
+    "avenue_assets": {
+      "dependencies": [
+        "rust_avenue"
+      ],
+      "frontend": {
+        "entrypoint": "src/avenue_assets/src/index.html"
+      },
+      "source": [
+        "src/avenue_assets/assets",
+        "dist/avenue_assets/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8000",
+      "type": "ephemeral"
+    }
+  },
+  "version": 1
+}
