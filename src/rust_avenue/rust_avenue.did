@@ -1,3 +1,31 @@
+type Message_2 = record {
+    "identity": text;
+    "contents": text;
+    "time": nat64;
+};
+
+type Message = Message_2;
+
+type Profile_2 = record {
+    "name": text;
+    "description": text;
+    "keywords": vec text;
+};
+type Profile = Profile_2;
+
+type Coordinate_2 = record {
+    "lat": int32;
+    "long": int32;
+};
+
+type Coordinate = Coordinate_2;
+
 service : {
+    "getSelf": () -> (Profile_2) query;
+    "get": (text) -> (Profile_2) query;
+    "update": (Profile_2) -> ();
+    "search": (text) -> (opt Profile_2) query;
     "greet": (text) -> (text) query;
+    "create_new_chat": (Coordinate_2, text) -> (vec Message_2);
+    "get_chat": (Coordinate_2) -> (vec Message_2);
 }

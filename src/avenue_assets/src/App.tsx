@@ -1,5 +1,6 @@
 import * as React from "react";
 import { rust_avenue } from "../../declarations/rust_avenue";
+import Map from "./Map";
 
 const App = () => {
 	const [greeting, setGreeting] = React.useState("");
@@ -21,7 +22,6 @@ const App = () => {
 
 	return (
 		<main>
-			<img src="logo.png" alt="DFINITY logo" />
 			<form onSubmit={handleSubmit}>
 				<label htmlFor="name">Enter your name: &nbsp;</label>
 				<input id="name" alt="Name" type="text" ref={inputRef as any} />
@@ -30,7 +30,11 @@ const App = () => {
 				</button>
 			</form>
 			<h1 className="text-l font-bold font-serif underline decoration-sky-500">
-				Hello world!
+				<div className="absolute inset-0 bg-gray-300">
+					<div id="map">
+						<Map />
+					</div>
+				</div>
 			</h1>
 			<section id="greeting">{greeting}</section>
 		</main>
