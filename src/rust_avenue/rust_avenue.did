@@ -28,4 +28,5 @@ service : {
     "greet": (text) -> (text) query;
     "create_new_chat": (Coordinate_2, text) -> (vec Message_2);
     "get_chat": (Coordinate_2) -> (vec Message_2);
+    "add_new_message": (Coordinate_2, text) -> (vec Message_2);
 }

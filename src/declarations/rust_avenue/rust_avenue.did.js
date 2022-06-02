@@ -11,6 +11,11 @@ export const idlFactory = ({ IDL }) => {
     'keywords' : IDL.Vec(IDL.Text),
   });
   return IDL.Service({
+    'add_new_message' : IDL.Func(
+        [Coordinate_2, IDL.Text],
+        [IDL.Vec(Message_2)],
+        [],
+      ),
     'create_new_chat' : IDL.Func(
         [Coordinate_2, IDL.Text],
         [IDL.Vec(Message_2)],

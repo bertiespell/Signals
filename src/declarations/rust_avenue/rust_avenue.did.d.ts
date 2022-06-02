@@ -16,6 +16,7 @@ export interface Profile_2 {
   'keywords' : Array<string>,
 }
 export interface _SERVICE {
+  'add_new_message' : ActorMethod<[Coordinate_2, string], Array<Message_2>>,
   'create_new_chat' : ActorMethod<[Coordinate_2, string], Array<Message_2>>,
   'get' : ActorMethod<[string], Profile_2>,
   'getSelf' : ActorMethod<[], Profile_2>,
