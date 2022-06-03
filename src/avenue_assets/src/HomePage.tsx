@@ -10,6 +10,7 @@ import {
 	XIcon,
 } from "@heroicons/react/outline";
 import Map from "./Map";
+import InteractionBox from "./components/InteractionBox";
 
 const user = {
 	name: "Emily Selman",
@@ -25,28 +26,11 @@ const navigation = [
 	{ name: "Profile", href: "#", icon: UserIcon },
 ];
 
-{
-	/* <div>
-				<Chat open={open} setOpen={setOpen} />
-			</div>
-			<div>
-				<Map />
-			</div> */
-}
-
 export default function Homepage() {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
 	return (
 		<>
-			{/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-gray-50">
-        <body class="h-full overflow-hidden">
-        ```
-      */}
 			<div className="h-full flex">
 				<Transition.Root show={mobileMenuOpen} as={Fragment}>
 					<Dialog
@@ -264,8 +248,8 @@ export default function Homepage() {
 
 						{/* Secondary column (hidden on smaller screens) */}
 						<aside className="hidden lg:block lg:flex-shrink-0 lg:order-first">
-							<div className="h-full relative flex flex-col w-96 border-r border-gray-200 bg-white overflow-y-auto">
-								{/* Your content */}
+							<div className="h-full relative flex flex-col w-96 border-r border-gray-200 bg-white overflow-y-auto grid-cols-1 grid-rows-8">
+								<InteractionBox />
 							</div>
 						</aside>
 					</main>

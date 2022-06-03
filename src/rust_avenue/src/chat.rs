@@ -15,6 +15,11 @@ struct Coordinate {
     long: i32
 }
 
+struct Chat {
+    messages: Vec<Message>;
+    type: String;
+};
+
 type ChatStore = BTreeMap<Coordinate, Vec<Message>>;
 
 thread_local! {
