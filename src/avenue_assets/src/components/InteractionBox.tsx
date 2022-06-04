@@ -1,7 +1,6 @@
 import { Marker } from "leaflet";
 import { useContext, useState } from "react";
 import { MapContext } from "../context/map";
-import { NewPinContext } from "../context/new-pin";
 import PinContent from "./interactions/PinContent";
 import Starting from "./interactions/Starting";
 import TypeSelection from "./interactions/TypeSelection";
@@ -15,15 +14,14 @@ export enum CreationState {
 }
 
 export default function InteractionBox() {
-	const { pinType, setPinType } = useContext(NewPinContext as any);
-	const { marker } = useContext(MapContext as any);
+	const { pinType, setPinType, activeContent } = useContext(MapContext);
 
 	const [interactionState, setInteractionState] = useState(
 		CreationState.Starting
 	);
 
 	const createSignal = () => {
-		marker.dragging.disable();
+		activeContent?.marker.dragging?.disable();
 		setInteractionState(CreationState.TypeSelection);
 	};
 

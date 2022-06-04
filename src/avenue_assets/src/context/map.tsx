@@ -2,15 +2,18 @@ import { Marker } from "leaflet";
 import React, { useContext, useEffect, useState } from "react";
 import { rust_avenue } from "../../../declarations/rust_avenue";
 import { SignalType_2 } from "../../../declarations/rust_avenue/rust_avenue.did";
-import { mapSignalTypeToIcon } from "../utils/mapSignalTypes";
-import { ActiveContentContext } from "./active-content";
+import {
+	mapSignalToType,
+	mapSignalTypeToIcon,
+	PinType,
+} from "../utils/mapSignalTypes";
 
 export const MapContext = React.createContext<{
-	mapInitialised: boolean;
-	map: any;
-	marker: Marker | undefined;
-	location: any;
+	// marker: Marker | undefined;
+	pinType: PinType;
 	activeContent: ActiveContent | undefined;
+	setPinType: any;
+	sendSignal: any;
 }>({} as any);
 
 const L = (window as any).L;
@@ -41,8 +44,6 @@ const MapProvider = ({ children }: any) => {
 
 	const [mapInitialised, setMapInitialized] = useState(false);
 	const [map, setMap] = useState();
-	const [marker, setMarker] = useState();
-	const [location, setLocation] = useState<any>();
 	const [allMarkers, setAllMarkers] = useState<Array<Marker>>([]);
 
 	const setKnownSignals = async () => {
@@ -84,10 +85,7 @@ const MapProvider = ({ children }: any) => {
 						13
 					);
 					setMap(map);
-					setLocation([
-						location.coords.latitude,
-						location.coords.longitude,
-					]);
+
 					L.tileLayer(
 						"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
 						{
@@ -116,7 +114,6 @@ const MapProvider = ({ children }: any) => {
 								signalMetadata: null,
 							})
 						);
-					setMarker(marker);
 					setActiveContent({
 						marker,
 						isNewPin: true,
@@ -129,14 +126,31 @@ const MapProvider = ({ children }: any) => {
 			}
 		);
 	});
+
+	const [pinType, setPinType] = useState(PinType.Chat);
+
+	const sendSignal = async (e: Event, initial_message: string) => {
+		e.preventDefault();
+		if (activeContent && activeContent.isNewPin) {
+			const location = activeContent?.marker.getLatLng();
+			const coveretedSignalType = mapSignalToType(pinType);
+			const chat = await rust_avenue.create_new_chat(
+				{ lat: location.lat, long: location.lng },
+				initial_message,
+				coveretedSignalType
+			);
+			return;
+		}
+		throw Error("No new signal detected");
+	};
+
 	return (
 		<MapContext.Provider
 			value={{
-				mapInitialised, //?
-				map, //?
-				marker, //?
-				location, //?
 				activeContent,
+				pinType,
+				setPinType,
+				sendSignal,
 			}}
 		>
 			{children}

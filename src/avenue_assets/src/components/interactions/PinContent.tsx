@@ -2,12 +2,11 @@ import { Fragment, useContext, useState } from "react";
 
 import {
 	ChatAltIcon,
-	CheckCircleIcon,
 	TagIcon,
 	UserCircleIcon as UserCircleIconSolid,
 } from "@heroicons/react/solid";
-import { NewPinContext } from "../../context/new-pin";
 import { PinType } from "../../utils/mapSignalTypes";
+import { MapContext } from "../../context/map";
 
 type Person = {
 	name: string;
@@ -71,7 +70,7 @@ function classNames(...classes: any) {
 }
 
 export default function PinContent({ contentType }: { contentType: PinType }) {
-	const { sendSignal } = useContext(NewPinContext as any);
+	const { sendSignal } = useContext(MapContext);
 	const [contents, setContents] = useState("");
 
 	return (
