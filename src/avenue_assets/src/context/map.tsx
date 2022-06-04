@@ -1,10 +1,17 @@
 import { Marker } from "leaflet";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { rust_avenue } from "../../../declarations/rust_avenue";
 import { SignalType_2 } from "../../../declarations/rust_avenue/rust_avenue.did";
 import { mapSignalTypeToIcon } from "../utils/mapSignalTypes";
+import { ActiveContentContext } from "./active-content";
 
-export const MapContext = React.createContext({});
+export const MapContext = React.createContext<{
+	mapInitialised: boolean;
+	map: any;
+	marker: Marker | undefined;
+	location: any;
+	activeContent: ActiveContent | undefined;
+}>({} as any);
 
 const L = (window as any).L;
 
@@ -23,7 +30,15 @@ type Signal = {
 	};
 };
 
+export type ActiveContent = {
+	marker: Marker;
+	signalMetadata: Signal | null;
+	isNewPin: boolean;
+};
+
 const MapProvider = ({ children }: any) => {
+	const [activeContent, setActiveContent] = useState<ActiveContent>();
+
 	const [mapInitialised, setMapInitialized] = useState(false);
 	const [map, setMap] = useState();
 	const [marker, setMarker] = useState();
@@ -40,7 +55,13 @@ const MapProvider = ({ children }: any) => {
 				icon: mapSignalTypeToIcon(L, signal.signal.signal_type),
 			})
 				.addTo(map)
-				.on("click", () => console.log(signal));
+				.on("click", () => {
+					setActiveContent({
+						marker,
+						isNewPin: false,
+						signalMetadata: signal,
+					});
+				});
 			const newMarkers = allMarkers.concat();
 			newMarkers.push(marker);
 			setAllMarkers(newMarkers);
@@ -86,8 +107,21 @@ const MapProvider = ({ children }: any) => {
 								iconSize: [37, 58],
 							}),
 						}
-					).addTo(map);
+					)
+						.addTo(map)
+						.on("click", () =>
+							setActiveContent({
+								marker,
+								isNewPin: true,
+								signalMetadata: null,
+							})
+						);
 					setMarker(marker);
+					setActiveContent({
+						marker,
+						isNewPin: true,
+						signalMetadata: null,
+					});
 				}
 			},
 			(error) => {
@@ -98,10 +132,11 @@ const MapProvider = ({ children }: any) => {
 	return (
 		<MapContext.Provider
 			value={{
-				mapInitialised,
-				map,
-				marker,
-				location,
+				mapInitialised, //?
+				map, //?
+				marker, //?
+				location, //?
+				activeContent,
 			}}
 		>
 			{children}

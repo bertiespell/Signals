@@ -1,7 +1,39 @@
+import { useContext, useEffect } from "react";
+import { ActiveContent, MapContext } from "../context/map";
 import Map from "../Map";
+import { mapActiveContentToPinType, PinType } from "../utils/mapSignalTypes";
 import InteractionBox from "./InteractionBox";
+import Chat from "./signals/chat";
+import Event from "./signals/event";
+import Trade from "./signals/trade";
 
 export default function LayoutPanels() {
+	const { activeContent } = useContext(MapContext);
+
+	const mapContentTypeToPanel = (activeContent?: ActiveContent) => {
+		if (activeContent?.signalMetadata?.signal.signal_type) {
+			const signalType = mapActiveContentToPinType(activeContent);
+			if (signalType === PinType.Chat)
+				return (
+					<>
+						<Chat></Chat>
+					</>
+				);
+			if (signalType === PinType.Trade)
+				return (
+					<>
+						<Trade></Trade>
+					</>
+				);
+			if (signalType === PinType.Event)
+				return (
+					<>
+						<Event></Event>
+					</>
+				);
+		}
+	};
+
 	return (
 		<>
 			{/* Primary column */}
@@ -20,8 +52,11 @@ export default function LayoutPanels() {
 			{/* Secondary column (hidden on smaller screens) */}
 			<aside className="hidden lg:block lg:flex-shrink-0 lg:order-first">
 				<div className="h-full relative flex flex-col w-96 border-r border-gray-200 bg-white overflow-y-auto grid-cols-1 grid-rows-8">
-					{/* TODO: If the current marker is selected, show interaction box, otherwise show the other pansl */}
-					<InteractionBox />
+					{activeContent?.isNewPin ? (
+						<InteractionBox />
+					) : (
+						<>not new!{mapContentTypeToPanel(activeContent)}</>
+					)}
 				</div>
 			</aside>
 		</>

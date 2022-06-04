@@ -11,6 +11,7 @@ import {
 } from "@heroicons/react/outline";
 import Map from "./Map";
 import InteractionBox from "./components/InteractionBox";
+import LayoutPanels from "./components/LayoutPanels";
 
 const user = {
 	name: "Emily Selman",
@@ -233,25 +234,7 @@ export default function Homepage() {
 					</div>
 
 					<main className="flex-1 flex overflow-hidden">
-						{/* Primary column */}
-						<section
-							aria-labelledby="primary-heading"
-							className="min-w-0 flex-1 h-full flex flex-col overflow-y-auto lg:order-last"
-						>
-							<h1 id="primary-heading" className="sr-only">
-								Account
-							</h1>
-							<div>
-								<Map />
-							</div>
-						</section>
-
-						{/* Secondary column (hidden on smaller screens) */}
-						<aside className="hidden lg:block lg:flex-shrink-0 lg:order-first">
-							<div className="h-full relative flex flex-col w-96 border-r border-gray-200 bg-white overflow-y-auto grid-cols-1 grid-rows-8">
-								<InteractionBox />
-							</div>
-						</aside>
+						<LayoutPanels />
 					</main>
 				</div>
 			</div>
