@@ -22,9 +22,7 @@ export default function InteractionBox() {
 	);
 
 	const createSignal = () => {
-		console.log(marker);
 		marker.dragging.disable();
-
 		setInteractionState(CreationState.TypeSelection);
 	};
 

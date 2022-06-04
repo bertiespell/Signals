@@ -1,5 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
+import { Marker } from "leaflet";
+import React, { useContext, useState } from "react";
 import { MapContext } from "./map";
+import { rust_avenue } from "../../../declarations/rust_avenue";
 
 export const NewPinContext = React.createContext({});
 
@@ -14,8 +16,13 @@ const NewPinProvider = ({ children }: any) => {
 
 	const [pinType, setPinType] = useState(PinType.Chat);
 
-	const sendSignal = () => {
-		console.log("Sending signal... to icp");
+	const sendSignal = async (e: Event, initial_message: string) => {
+		e.preventDefault();
+		const location = (marker as Marker).getLatLng();
+		const chat = await rust_avenue.create_new_chat(
+			{ lat: location.lat, long: location.lng },
+			initial_message
+		);
 	};
 
 	return (

@@ -1,5 +1,8 @@
 export const idlFactory = ({ IDL }) => {
-  const Coordinate_2 = IDL.Record({ 'lat' : IDL.Int32, 'long' : IDL.Int32 });
+  const Coordinate_2 = IDL.Record({
+    'lat' : IDL.Float64,
+    'long' : IDL.Float64,
+  });
   const Message_2 = IDL.Record({
     'contents' : IDL.Text,
     'time' : IDL.Nat64,
@@ -10,6 +13,11 @@ export const idlFactory = ({ IDL }) => {
     'description' : IDL.Text,
     'keywords' : IDL.Vec(IDL.Text),
   });
+  const Signal_2 = IDL.Record({
+    'messages' : IDL.Vec(Message_2),
+    'location' : Coordinate_2,
+  });
+  const Signal = Signal_2;
   return IDL.Service({
     'add_new_message' : IDL.Func(
         [Coordinate_2, IDL.Text],
@@ -23,6 +31,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'get' : IDL.Func([IDL.Text], [Profile_2], ['query']),
     'getSelf' : IDL.Func([], [Profile_2], ['query']),
+    'get_all_signals' : IDL.Func([], [IDL.Vec(Signal)], ['query']),
     'get_chat' : IDL.Func([Coordinate_2], [IDL.Vec(Message_2)], []),
     'greet' : IDL.Func([IDL.Text], [IDL.Text], ['query']),
     'search' : IDL.Func([IDL.Text], [IDL.Opt(Profile_2)], ['query']),

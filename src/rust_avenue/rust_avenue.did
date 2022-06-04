@@ -14,11 +14,16 @@ type Profile_2 = record {
 type Profile = Profile_2;
 
 type Coordinate_2 = record {
-    "lat": int32;
-    "long": int32;
+    "lat": float64;
+    "long": float64;
 };
 
-type Coordinate = Coordinate_2;
+type Signal_2 = record {
+    "location": Coordinate_2;
+    "messages": vec Message_2;
+};
+
+type Signal = Signal_2;
 
 service : {
     "getSelf": () -> (Profile_2) query;
@@ -29,4 +34,5 @@ service : {
     "create_new_chat": (Coordinate_2, text) -> (vec Message_2);
     "get_chat": (Coordinate_2) -> (vec Message_2);
     "add_new_message": (Coordinate_2, text) -> (vec Message_2);
+    "get_all_signals": () -> (vec Signal) query;
 }

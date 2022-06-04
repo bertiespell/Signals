@@ -1,5 +1,7 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
 
+const colors = require("tailwindcss/colors");
+
 module.exports = {
 	content: ["./src/avenue_assets/**/*.{js,jsx,ts,tsx}"],
 	theme: {
@@ -8,6 +10,7 @@ module.exports = {
 				sans: ["Inter var", ...defaultTheme.fontFamily.sans],
 			},
 			colors: {
+				rose: colors.rose,
 				transparent: "transparent",
 				current: "currentColor",
 				"dark-electric-blue": "#646e78ff",
@@ -19,6 +22,7 @@ module.exports = {
 		},
 	},
 	plugins: [
+		require("@tailwindcss/forms"),
 		require("@tailwindcss/typography"),
 		require("@tailwindcss/aspect-ratio"),
 	],
