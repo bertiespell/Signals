@@ -5,8 +5,9 @@ import { NewPinContext } from "../context/new-pin";
 import PinContent from "./interactions/PinContent";
 import Starting from "./interactions/Starting";
 import TypeSelection from "./interactions/TypeSelection";
+import ProgressBar from "./ProgressBar";
 
-enum CreationState {
+export enum CreationState {
 	Starting = "starting",
 	TypeSelection = "typeSelection",
 	AddContent = "addContent",
@@ -49,5 +50,12 @@ export default function InteractionBox() {
 		),
 		created: <></>,
 	};
-	return <>{stateToComponent[interactionState]}</>;
+	return (
+		<>
+			{stateToComponent[interactionState]}
+			{/* <div className="absolute inset-x-0 bottom-0 h-16">
+				<ProgressBar setInteractionState={setInteractionState} />
+			</div> */}
+		</>
+	);
 }

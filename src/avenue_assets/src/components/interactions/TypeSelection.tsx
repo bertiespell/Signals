@@ -1,5 +1,5 @@
 import { CalendarIcon, ChatIcon, MailIcon } from "@heroicons/react/outline";
-import { PinType } from "../../context/new-pin";
+import { PinType } from "../../utils/mapSignalTypes";
 
 export default function TypeSelection({
 	selectType,

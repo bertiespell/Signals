@@ -10,3 +10,13 @@ main,
 #app > div {
 	height: 100%;
 }
+
+.blinking {
+	animation: fade 0.5s infinite alternate;
+}
+
+@keyframes fade {
+	from {
+		opacity: 0.5;
+	}
+}

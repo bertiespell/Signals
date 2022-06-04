@@ -18,12 +18,25 @@ type Coordinate_2 = record {
     "long": float64;
 };
 
+type SignalType_2 = variant {
+  chat;
+  trade;
+  event;
+};
+
 type Signal_2 = record {
-    "location": Coordinate_2;
     "messages": vec Message_2;
+    "signal_type": SignalType_2;
 };
 
 type Signal = Signal_2;
+
+type Located_Signal_2 = record {
+    "location": Coordinate_2;
+    "signal": Signal_2;
+};
+
+type Located_Signal = Located_Signal_2;
 
 service : {
     "getSelf": () -> (Profile_2) query;
@@ -31,8 +44,8 @@ service : {
     "update": (Profile_2) -> ();
     "search": (text) -> (opt Profile_2) query;
     "greet": (text) -> (text) query;
-    "create_new_chat": (Coordinate_2, text) -> (vec Message_2);
-    "get_chat": (Coordinate_2) -> (vec Message_2);
-    "add_new_message": (Coordinate_2, text) -> (vec Message_2);
-    "get_all_signals": () -> (vec Signal) query;
+    "create_new_chat": (Coordinate_2, text, SignalType_2) -> (Signal_2);
+    "get_chat": (Coordinate_2) -> (Signal_2);
+    "add_new_message": (Coordinate_2, text) -> (Signal_2);
+    "get_all_signals": () -> (vec Located_Signal_2) query;
 }

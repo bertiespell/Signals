@@ -6,7 +6,8 @@ import {
 	TagIcon,
 	UserCircleIcon as UserCircleIconSolid,
 } from "@heroicons/react/solid";
-import { NewPinContext, PinType } from "../../context/new-pin";
+import { NewPinContext } from "../../context/new-pin";
+import { PinType } from "../../utils/mapSignalTypes";
 
 type Person = {
 	name: string;

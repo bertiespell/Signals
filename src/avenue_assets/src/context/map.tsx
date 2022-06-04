@@ -1,6 +1,8 @@
 import { Marker } from "leaflet";
 import React, { useEffect, useState } from "react";
 import { rust_avenue } from "../../../declarations/rust_avenue";
+import { SignalType_2 } from "../../../declarations/rust_avenue/rust_avenue.did";
+import { mapSignalTypeToIcon } from "../utils/mapSignalTypes";
 
 export const MapContext = React.createContext({});
 
@@ -11,11 +13,14 @@ type Signal = {
 		lat: number;
 		long: number;
 	};
-	messages: Array<{
-		contents: string;
-		identity: string;
-		time: string;
-	}>;
+	signal: {
+		messages: Array<{
+			contents: string;
+			identity: string;
+			time: string;
+		}>;
+		signal_type: SignalType_2;
+	};
 };
 
 const MapProvider = ({ children }: any) => {
@@ -30,17 +35,12 @@ const MapProvider = ({ children }: any) => {
 			rust_avenue as any
 		).get_all_signals();
 
-		var myIcon = L.icon({
-			iconUrl: "../../chat-five.png",
-			iconSize: [40, 40],
-			iconAnchor: [40, 40],
-			popupAnchor: [-3, -76],
-		});
-
 		signals.map((signal) => {
 			var marker = L.marker([signal.location.lat, signal.location.long], {
-				icon: myIcon,
-			}).addTo(map);
+				icon: mapSignalTypeToIcon(L, signal.signal.signal_type),
+			})
+				.addTo(map)
+				.on("click", () => console.log(signal));
 			const newMarkers = allMarkers.concat();
 			newMarkers.push(marker);
 			setAllMarkers(newMarkers);
@@ -77,7 +77,15 @@ const MapProvider = ({ children }: any) => {
 
 					var marker = L.marker(
 						[location.coords.latitude, location.coords.longitude],
-						{ draggable: true }
+						{
+							draggable: true,
+							icon: L.icon({
+								iconUrl:
+									"https://unpkg.com/leaflet@1.0.3/dist/images/marker-icon.png",
+								className: "blinking",
+								iconSize: [37, 58],
+							}),
+						}
 					).addTo(map);
 					setMarker(marker);
 				}

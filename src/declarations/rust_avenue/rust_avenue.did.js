@@ -3,36 +3,40 @@ export const idlFactory = ({ IDL }) => {
     'lat' : IDL.Float64,
     'long' : IDL.Float64,
   });
+  const SignalType_2 = IDL.Variant({
+    'trade' : IDL.Null,
+    'chat' : IDL.Null,
+    'event' : IDL.Null,
+  });
   const Message_2 = IDL.Record({
     'contents' : IDL.Text,
     'time' : IDL.Nat64,
     'identity' : IDL.Text,
+  });
+  const Signal_2 = IDL.Record({
+    'signal_type' : SignalType_2,
+    'messages' : IDL.Vec(Message_2),
   });
   const Profile_2 = IDL.Record({
     'name' : IDL.Text,
     'description' : IDL.Text,
     'keywords' : IDL.Vec(IDL.Text),
   });
-  const Signal_2 = IDL.Record({
-    'messages' : IDL.Vec(Message_2),
+  const Located_Signal_2 = IDL.Record({
+    'signal' : Signal_2,
     'location' : Coordinate_2,
   });
-  const Signal = Signal_2;
   return IDL.Service({
-    'add_new_message' : IDL.Func(
-        [Coordinate_2, IDL.Text],
-        [IDL.Vec(Message_2)],
-        [],
-      ),
+    'add_new_message' : IDL.Func([Coordinate_2, IDL.Text], [Signal_2], []),
     'create_new_chat' : IDL.Func(
-        [Coordinate_2, IDL.Text],
-        [IDL.Vec(Message_2)],
+        [Coordinate_2, IDL.Text, SignalType_2],
+        [Signal_2],
         [],
       ),
     'get' : IDL.Func([IDL.Text], [Profile_2], ['query']),
     'getSelf' : IDL.Func([], [Profile_2], ['query']),
-    'get_all_signals' : IDL.Func([], [IDL.Vec(Signal)], ['query']),
-    'get_chat' : IDL.Func([Coordinate_2], [IDL.Vec(Message_2)], []),
+    'get_all_signals' : IDL.Func([], [IDL.Vec(Located_Signal_2)], ['query']),
+    'get_chat' : IDL.Func([Coordinate_2], [Signal_2], []),
     'greet' : IDL.Func([IDL.Text], [IDL.Text], ['query']),
     'search' : IDL.Func([IDL.Text], [IDL.Opt(Profile_2)], ['query']),
     'update' : IDL.Func([Profile_2], [], []),
