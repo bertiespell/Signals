@@ -1,7 +1,11 @@
 import { useContext, useEffect } from "react";
 import { ActiveContent, MapContext } from "../context/map";
 import Map from "../Map";
-import { mapActiveContentToPinType, PinType } from "../utils/mapSignalTypes";
+import {
+	mapActiveContentToPinType,
+	PinType,
+	SignalType,
+} from "../utils/mapSignalTypes";
 import InteractionBox from "./InteractionBox";
 import Chat from "./signals/chat";
 import Event from "./signals/event";
@@ -10,7 +14,9 @@ import Trade from "./signals/trade";
 export default function LayoutPanels() {
 	const { activeContent } = useContext(MapContext);
 
-	const mapContentTypeToPanel = (activeContent?: ActiveContent) => {
+	const mapContentTypeToPanel = (
+		activeContent?: ActiveContent<SignalType>
+	) => {
 		if (activeContent?.signalMetadata?.signal.signal_type) {
 			const signalType = mapActiveContentToPinType(activeContent);
 			if (signalType === PinType.Chat)
@@ -55,7 +61,7 @@ export default function LayoutPanels() {
 					{activeContent?.isNewPin ? (
 						<InteractionBox />
 					) : (
-						<>not new!{mapContentTypeToPanel(activeContent)}</>
+						<>{mapContentTypeToPanel(activeContent)}</>
 					)}
 				</div>
 			</aside>

@@ -4,6 +4,9 @@ import { MapContext } from "../context/map";
 import PinContent from "./interactions/PinContent";
 import Starting from "./interactions/Starting";
 import TypeSelection from "./interactions/TypeSelection";
+import ChatForm from "./newContentForms/ChatForm";
+import EventForm from "./newContentForms/EventForm";
+import TradeForm from "./newContentForms/TradeForm";
 import ProgressBar from "./ProgressBar";
 
 export enum CreationState {
@@ -30,6 +33,24 @@ export default function InteractionBox() {
 		setInteractionState(CreationState.AddContent);
 	};
 
+	const mapNewContentPanelToType = {
+		chat: (
+			<>
+				<ChatForm />
+			</>
+		),
+		event: (
+			<>
+				<EventForm />
+			</>
+		),
+		trade: (
+			<>
+				<TradeForm />
+			</>
+		),
+	};
+
 	const stateToComponent = {
 		starting: (
 			<>
@@ -41,11 +62,7 @@ export default function InteractionBox() {
 				<TypeSelection selectType={selectType} />
 			</>
 		),
-		addContent: (
-			<>
-				<PinContent contentType={pinType} />
-			</>
-		),
+		addContent: <>{mapNewContentPanelToType[pinType]}</>,
 		created: <></>,
 	};
 	return (

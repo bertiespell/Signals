@@ -5,73 +5,19 @@ import {
 	TagIcon,
 	UserCircleIcon as UserCircleIconSolid,
 } from "@heroicons/react/solid";
-import { PinType } from "../../utils/mapSignalTypes";
 import { MapContext } from "../../context/map";
+import { Activity } from "../signals/chat";
 
-export type Person = {
-	name: string;
-	href: string;
-};
-
-export type Activity = {
-	id: number;
-	type: string;
-	person: Person;
-	assigned: Person;
-	imageUrl: string;
-	comment: string;
-	date: string;
-	tags: Array<{
-		name: string;
-		href: string;
-		color: string;
-	}>;
-};
-
-/**
- * This class is pre-built to support richer Signal feeds. As well as comments, it can also be used to mark
- * "assignments" (which could work like allowing people to invite other people to a Signal), or adding tags
- * to make events discoverable in search functionality.
- * 
- * They are of the following types:
- * 
- * {
-		id: 1,
-		type: "comment",
-		person: { name: "Eduardo Benz", href: "#" },
-		imageUrl:
-			"https://images.unsplash.com/photo-1520785643438-5bf77931f493?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80",
-		comment:
-			"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tincidunt nunc ipsum tempor purus vitae id. Morbi in vestibulum nec varius. Et diam cursus quis sed purus nam. ",
-		date: "6d ago",
-	},
-	{
-		id: 2,
-		type: "assignment",
-		person: { name: "Hilary Mahy", href: "#" },
-		assigned: { name: "Kristin Watson", href: "#" },
-		date: "2d ago",
-	},
-	{
-		id: 3,
-		type: "tags",
-		person: { name: "Hilary Mahy", href: "#" },
-		tags: [
-			{ name: "Bug", href: "#", color: "bg-rose-500" },
-			{ name: "Accessibility", href: "#", color: "bg-indigo-500" },
-		],
-		date: "6h ago",
-	},
- */
 const activity: Array<Activity> = [];
 
 function classNames(...classes: any) {
 	return classes.filter(Boolean).join(" ");
 }
 
-export default function PinContent({ contentType }: { contentType: PinType }) {
+export default function ChatForm() {
 	const { sendSignal } = useContext(MapContext);
 	const [contents, setContents] = useState("");
+	const [title, setTitle] = useState("");
 
 	return (
 		<div className="p-5 pt-20 mt-8 lg:mt-0">
@@ -91,14 +37,6 @@ export default function PinContent({ contentType }: { contentType: PinType }) {
 			<section aria-labelledby="activity-title" className="mt-8 xl:mt-10">
 				<div>
 					<div className="divide-y divide-gray-200">
-						<div className="pb-4">
-							<h2
-								id="activity-title"
-								className="text-lg font-medium text-gray-900"
-							>
-								Activity
-							</h2>
-						</div>
 						<div className="pt-6">
 							{/* Activity feed*/}
 							<div className="flow-root">
@@ -302,51 +240,58 @@ export default function PinContent({ contentType }: { contentType: PinType }) {
 							</div>
 							<div className="mt-6">
 								<div className="flex space-x-3">
-									<div className="flex-shrink-0">
-										<div className="relative">
-											<img
-												className="h-10 w-10 rounded-full bg-gray-400 flex items-center justify-center ring-8 ring-white"
-												src="https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
-												alt=""
-											/>
-
-											<span className="absolute -bottom-0.5 -right-1 bg-white rounded-tl px-0.5 py-px">
-												<ChatAltIcon
-													className="h-5 w-5 text-gray-400"
-													aria-hidden="true"
-												/>
-											</span>
-										</div>
-									</div>
 									<div className="min-w-0 flex-1">
 										<form action="#">
-											<div>
+											<div className="p-3">
 												<label
-													htmlFor="comment"
-													className="sr-only"
+													htmlFor="event-title"
+													className="block text-sm font-medium text-gray-700"
 												>
-													Comment
+													Chat Title
 												</label>
-												<textarea
-													id="comment"
-													name="comment"
-													rows={3}
-													className="shadow-sm block w-full focus:ring-gray-900 focus:border-gray-900 sm:text-sm border border-gray-300 rounded-md"
-													placeholder="Add some content to start your signal."
-													value={contents}
+												<input
+													type="text"
+													name="event-title"
+													id="event-title"
+													value={title}
 													onChange={(e) =>
-														setContents(
-															e.target.value
-														)
+														setTitle(e.target.value)
 													}
+													className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 												/>
+											</div>
+											<div className="p-3">
+												<label
+													htmlFor="about"
+													className="block text-sm font-medium text-gray-700"
+												>
+													Message
+												</label>
+												<div className="mt-1">
+													<textarea
+														id="about"
+														name="about"
+														rows={8}
+														value={contents}
+														onChange={(e) =>
+															setContents(
+																e.target.value
+															)
+														}
+														className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
+														placeholder="Leave a first message for everyone"
+													/>
+												</div>
 											</div>
 											<div className="mt-6 flex items-center justify-end space-x-4">
 												<button
 													type="submit"
 													className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
 													onClick={(e) =>
-														sendSignal(e, contents)
+														sendSignal(e, {
+															title,
+															contents,
+														})
 													}
 												>
 													Send Signal

@@ -3,7 +3,10 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 const colors = require("tailwindcss/colors");
 
 module.exports = {
-	content: ["./src/avenue_assets/**/*.{js,jsx,ts,tsx}"],
+	content: [
+		"./src/avenue_assets/**/*.{js,jsx,ts,tsx}",
+		"node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}",
+	],
 	theme: {
 		extend: {
 			fontFamily: {
@@ -25,5 +28,6 @@ module.exports = {
 		require("@tailwindcss/forms"),
 		require("@tailwindcss/typography"),
 		require("@tailwindcss/aspect-ratio"),
+		require("flowbite/plugin"),
 	],
 };

@@ -1,5 +1,30 @@
 import { ActiveContent } from "../context/map";
 
+export type SignalPin<T> = {
+    contents: T;
+    identity: string;
+    time: string;
+}
+
+export type SignalType = EventSignal | Chat | Trade;
+
+export type EventSignal = {
+    date: string;
+    title: string;
+    description: string;
+}
+
+export type Chat = {
+    title: string;
+    contents: string;
+}
+
+export type Trade = {
+    title: string;
+    description: string;
+    price: number;
+}
+
 export enum PinType {
 	Chat = "chat",
 	Trade = "trade",
@@ -44,7 +69,7 @@ export const mapSignalTypeToIcon = (L: any, signalType: SignalType_2) => {
     throw Error("Unknown signal type");
 };
 
-export const mapActiveContentToPinType = (activeContent: ActiveContent): PinType => {
+export const mapActiveContentToPinType = (activeContent: ActiveContent<SignalType>): PinType => {
     if (Object.keys(activeContent.signalMetadata?.signal.signal_type as any)[0] === "chat") return PinType.Chat;
     if (Object.keys(activeContent.signalMetadata?.signal.signal_type as any)[0] === "event") return PinType.Event;
     if (Object.keys(activeContent.signalMetadata?.signal.signal_type as any)[0] === "trade") return PinType.Trade;

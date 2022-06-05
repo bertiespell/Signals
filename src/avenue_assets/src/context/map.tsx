@@ -1,24 +1,53 @@
 import { Marker } from "leaflet";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { rust_avenue } from "../../../declarations/rust_avenue";
 import { SignalType_2 } from "../../../declarations/rust_avenue/rust_avenue.did";
 import {
+	EventSignal,
 	mapSignalToType,
 	mapSignalTypeToIcon,
 	PinType,
+	Trade,
+	Chat,
+	SignalType,
 } from "../utils/mapSignalTypes";
 
-export const MapContext = React.createContext<{
-	// marker: Marker | undefined;
+type MapContextType<T extends SignalType> = {
 	pinType: PinType;
-	activeContent: ActiveContent | undefined;
+	activeContent: ActiveContent<T> | undefined;
 	setPinType: any;
 	sendSignal: any;
-}>({} as any);
+};
+
+export const MapContext = React.createContext<MapContextType<SignalType>>(
+	{} as any
+);
 
 const L = (window as any).L;
 
-type Signal = {
+type SignalMetaData<T extends SignalType> = {
+	signalData: {
+		identity: string;
+		time: string;
+		contents: T;
+	};
+	messages: Array<{
+		contents: string;
+		identity: string;
+		time: string;
+	}>;
+	signal_type: SignalType_2;
+};
+
+type Signal<T extends SignalType> = {
+	location: {
+		lat: number;
+		long: number;
+	};
+	signal: SignalMetaData<T>;
+};
+
+type RustSignal = {
 	location: {
 		lat: number;
 		long: number;
@@ -27,45 +56,91 @@ type Signal = {
 		messages: Array<{
 			contents: string;
 			identity: string;
-			time: string;
+			time: bigint;
 		}>;
 		signal_type: SignalType_2;
 	};
 };
 
-export type ActiveContent = {
+export type ActiveContent<T extends SignalType> = {
 	marker: Marker;
-	signalMetadata: Signal | null;
+	signalMetadata: Signal<T> | null;
 	isNewPin: boolean;
 };
 
-const MapProvider = ({ children }: any) => {
-	const [activeContent, setActiveContent] = useState<ActiveContent>();
+const MapProvider = <T extends SignalType>({ children }: any) => {
+	const [activeContent, setActiveContent] = useState<ActiveContent<T>>();
 
 	const [mapInitialised, setMapInitialized] = useState(false);
 	const [map, setMap] = useState();
 	const [allMarkers, setAllMarkers] = useState<Array<Marker>>([]);
 
 	const setKnownSignals = async () => {
-		const signals: Array<Signal> = await (
+		const signals: Array<RustSignal> = await (
 			rust_avenue as any
 		).get_all_signals();
 
 		signals.map((signal) => {
-			var marker = L.marker([signal.location.lat, signal.location.long], {
-				icon: mapSignalTypeToIcon(L, signal.signal.signal_type),
-			})
-				.addTo(map)
-				.on("click", () => {
-					setActiveContent({
-						marker,
-						isNewPin: false,
-						signalMetadata: signal,
+			// when we reset data structure we can remove this try block
+			try {
+				let unix_timestamp = Number(
+					signal.signal.messages[0].time
+				).toString();
+
+				// multiplied by 1000 so that the argument is in milliseconds, not seconds.
+				const date = new Date(
+					Number(unix_timestamp.slice(0, 10)) * 1000
+				);
+
+				const formattedSignal: Signal<T> = {
+					location: signal.location,
+					signal: {
+						signalData: {
+							contents: JSON.parse(
+								signal.signal.messages[0].contents
+							),
+							identity: signal.signal.messages[0].identity,
+							time: date.toLocaleDateString("en-US"),
+						},
+						messages: signal.signal.messages
+							.slice(1)
+							.map((message) => {
+								let unix_timestamp = Number(
+									message.time
+								).toString();
+
+								const messageDate = new Date(
+									Number(unix_timestamp.slice(0, 10)) * 1000
+								);
+								return {
+									...message,
+									time: messageDate.toLocaleDateString(
+										"en-US"
+									),
+								};
+							}),
+						signal_type: signal.signal.signal_type,
+					},
+				};
+
+				var marker = L.marker(
+					[signal.location.lat, signal.location.long],
+					{
+						icon: mapSignalTypeToIcon(L, signal.signal.signal_type),
+					}
+				)
+					.addTo(map)
+					.on("click", () => {
+						setActiveContent({
+							marker,
+							isNewPin: false,
+							signalMetadata: formattedSignal,
+						});
 					});
-				});
-			const newMarkers = allMarkers.concat();
-			newMarkers.push(marker);
-			setAllMarkers(newMarkers);
+				const newMarkers = allMarkers.concat();
+				newMarkers.push(marker);
+				setAllMarkers(newMarkers);
+			} catch {}
 		});
 	};
 
@@ -76,10 +151,12 @@ const MapProvider = ({ children }: any) => {
 	}, [map]);
 
 	useEffect(() => {
+		// get browser's current location
 		window.navigator.geolocation.getCurrentPosition(
 			(location) => {
 				if (!mapInitialised) {
 					setMapInitialized(true);
+					// initialize the map to this view
 					var map = L.map("map").setView(
 						[location.coords.latitude, location.coords.longitude],
 						13
@@ -94,6 +171,7 @@ const MapProvider = ({ children }: any) => {
 						}
 					).addTo(map);
 
+					// create a marker in the center
 					var marker = L.marker(
 						[location.coords.latitude, location.coords.longitude],
 						{
@@ -129,15 +207,18 @@ const MapProvider = ({ children }: any) => {
 
 	const [pinType, setPinType] = useState(PinType.Chat);
 
-	const sendSignal = async (e: Event, initial_message: string) => {
+	const sendSignal = async (
+		e: Event,
+		contents: EventSignal | Trade | Chat
+	) => {
 		e.preventDefault();
 		if (activeContent && activeContent.isNewPin) {
 			const location = activeContent?.marker.getLatLng();
-			const coveretedSignalType = mapSignalToType(pinType);
-			const chat = await rust_avenue.create_new_chat(
+			const signalType = mapSignalToType(pinType);
+			await rust_avenue.create_new_chat(
 				{ lat: location.lat, long: location.lng },
-				initial_message,
-				coveretedSignalType
+				JSON.stringify(contents),
+				signalType
 			);
 			return;
 		}
