@@ -11,6 +11,7 @@ use ic_cdk_macros::*;
 use std::cell::RefCell;
 use std::collections::BTreeMap;
 
+pub mod ratings;
 pub mod signal;
 pub mod types;
 pub mod users;

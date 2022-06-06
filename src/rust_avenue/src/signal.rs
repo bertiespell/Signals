@@ -12,11 +12,6 @@ use std::collections::BTreeMap;
 
 use ordered_float::OrderedFloat;
 
-// vec of signals they've  voted on...
-// Enables us to look up and search by location
-type UserToSignalStore = BTreeMap<Principal, Vec<Signal>>;
-type SignalRatingStore = BTreeMap<Signal, i32>;
-
 thread_local! {
     static SIGNAL_STORE: RefCell<SignalStore> = RefCell::default();
     static USER_SIGNAL_STORE: RefCell<UserSignalStore> = RefCell::default();
@@ -36,6 +31,10 @@ fn caller() -> Principal {
 fn delete_signal(location: IncomingCoordinate) {
     let principal_id = caller();
 
+    internal_delete_signal(location, principal_id);
+}
+
+pub fn internal_delete_signal(location: IncomingCoordinate, principal_id: Principal) {
     let ordered_location = Coordinate {
         lat: OrderedFloat(location.lat),
         long: OrderedFloat(location.long),
@@ -132,7 +131,7 @@ fn get_signals_for_user(principal: Principal) -> Vec<Signal> {
 }
 
 #[query]
-fn get_chat(location: IncomingCoordinate) -> Signal {
+pub fn get_signal(location: IncomingCoordinate) -> Signal {
     let ordered_location = Coordinate {
         lat: OrderedFloat(location.lat),
         long: OrderedFloat(location.long),
@@ -148,8 +147,8 @@ fn get_chat(location: IncomingCoordinate) -> Signal {
 }
 
 #[query]
-fn get_all_signals() -> Vec<LocatedSignal> {
-    let mut all_signals: Vec<LocatedSignal> = vec![];
+fn get_all_signals() -> Vec<IncomingLocatedSignal> {
+    let mut all_signals: Vec<IncomingLocatedSignal> = vec![];
 
     SIGNAL_STORE.with(|signal_store| {
         signal_store.borrow().iter().for_each(|(key, value)| {
@@ -158,7 +157,7 @@ fn get_all_signals() -> Vec<LocatedSignal> {
                 long: key.long.into_inner(),
             };
 
-            let signal = LocatedSignal {
+            let signal = IncomingLocatedSignal {
                 location: incoming_coordinate,
                 signal: value.clone(),
             };
@@ -180,7 +179,7 @@ fn add_new_message(location: IncomingCoordinate, contents: String) -> Signal {
         time: time(),
     };
 
-    let mut signal = get_chat(location);
+    let mut signal = get_signal(location);
     signal.messages.push(message);
 
     let ordered_location = Coordinate {
@@ -195,4 +194,23 @@ fn add_new_message(location: IncomingCoordinate, contents: String) -> Signal {
     });
 
     return signal;
+}
+
+pub fn get_user_for_signal_coordinates(location: IncomingCoordinate) -> Principal {
+    let signal = get_signal(location);
+
+    let mut found_principal = Option::None;
+    USER_SIGNAL_STORE.with(|user_store| {
+        let mut principle = Option::None;
+
+        user_store.borrow().iter().for_each(|(key, value)| {
+            if value.contains(&signal) {
+                principle = Some(key.clone());
+            }
+        });
+
+        found_principal = principle.clone()
+    });
+
+    return found_principal.unwrap();
 }

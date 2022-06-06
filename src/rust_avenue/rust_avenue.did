@@ -45,10 +45,12 @@ service : {
     "search": (text) -> (opt Profile_2) query;
     "greet": (text) -> (text) query;
     "create_new_chat": (Coordinate_2, text, SignalType_2) -> (Signal_2);
-    "get_chat": (Coordinate_2) -> (Signal_2);
+    "get_signal": (Coordinate_2) -> (Signal_2);
     "add_new_message": (Coordinate_2, text) -> (Signal_2);
     "get_all_signals": () -> (vec Located_Signal_2) query;
     "whoami": () -> (principal) query;
     "get_signals_for_user": (principal) -> (vec Signal_2) query;
     "delete_signal": (Coordinate_2) -> ();
+    "leave_rating": (Coordinate_2, bool) -> ();
+    "get_rating_for_signal": (Coordinate_2) -> (int32) query;
 }
