@@ -1,4 +1,5 @@
 [workspace]
 members = [
     "src/rust_avenue",
+    "src/signals_token",
 ]

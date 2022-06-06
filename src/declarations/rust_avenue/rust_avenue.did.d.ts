@@ -40,4 +40,5 @@ export interface _SERVICE {
   'greet' : ActorMethod<[string], string>,
   'search' : ActorMethod<[string], [] | [Profile_2]>,
   'update' : ActorMethod<[Profile_2], undefined>,
+  'whoami' : ActorMethod<[], Principal>,
 }

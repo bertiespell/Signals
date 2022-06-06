@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useContext, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
 	BookmarkAltIcon,
@@ -12,6 +12,7 @@ import {
 import Map from "./Map";
 import InteractionBox from "./components/InteractionBox";
 import LayoutPanels from "./components/LayoutPanels";
+import { UserContext } from "./context/user";
 
 const user = {
 	name: "Emily Selman",
@@ -19,16 +20,26 @@ const user = {
 	imageUrl:
 		"https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
 };
-const navigation = [
-	{ name: "Home", href: "#", icon: HomeIcon },
-	{ name: "Trending", href: "#", icon: FireIcon },
-	{ name: "Bookmarks", href: "#", icon: BookmarkAltIcon },
-	{ name: "Messages", href: "#", icon: InboxIcon },
-	{ name: "Profile", href: "#", icon: UserIcon },
-];
 
 export default function Homepage() {
+	const { login } = useContext(UserContext);
+
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+	const navigation = [
+		{ name: "Home", href: "#", icon: HomeIcon },
+		{ name: "Trending", href: "#", icon: FireIcon },
+		{ name: "Bookmarks", href: "#", icon: BookmarkAltIcon },
+		{ name: "Messages", href: "#", icon: InboxIcon },
+		{
+			name: "Profile",
+			href: "#",
+			icon: UserIcon,
+			onClick: () => {
+				login();
+			},
+		},
+	];
 
 	return (
 		<>
@@ -103,17 +114,23 @@ export default function Homepage() {
 										>
 											<div className="px-2 space-y-1">
 												{navigation.map((item) => (
-													<a
+													<button
+														type="submit"
 														key={item.name}
-														href={item.href}
+														// href={item.href}
 														className="group p-2 rounded-md flex items-center text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+														onClick={(e) => {
+															item.onClick
+																? item.onClick()
+																: null;
+														}}
 													>
 														<item.icon
 															className="mr-4 h-6 w-6 text-gray-400 group-hover:text-gray-500"
 															aria-hidden="true"
 														/>
 														{item.name}
-													</a>
+													</button>
 												))}
 											</div>
 										</nav>

@@ -48,4 +48,5 @@ service : {
     "get_chat": (Coordinate_2) -> (Signal_2);
     "add_new_message": (Coordinate_2, text) -> (Signal_2);
     "get_all_signals": () -> (vec Located_Signal_2) query;
+    "whoami": () -> (principal) query;
 }

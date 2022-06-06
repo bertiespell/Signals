@@ -2,6 +2,7 @@ use ic_cdk::{
     api::time,
     export::{
         candid::{CandidType, Deserialize},
+        Principal,
     },
 };
 use ic_cdk_macros::*;
@@ -59,9 +60,18 @@ struct Message {
     pub time: u64,
 }
 
+fn caller() -> Principal {
+    let caller = ic_cdk::api::caller();
+    // The anonymous principal is not allowed to do certain actions, such as create chats or add messages.
+    if caller == Principal::anonymous() {
+        panic!("Anonymous principal not allowed to make calls.")
+    }
+    caller
+}
+
 #[update]
 fn create_new_chat(location: IncomingCoordinate, initial_contents: String, signal_type: SignalType) -> Signal {
-    let principal_id = ic_cdk::api::caller();
+    let principal_id = caller();
 
     let message: Message = Message { identity: principal_id.to_string(), contents: initial_contents, time: time() };
 
@@ -130,7 +140,7 @@ fn get_all_signals() -> Vec<LocatedSignal> {
 
 #[update]
 fn add_new_message(location: IncomingCoordinate, contents: String) -> Signal {
-    let principal_id = ic_cdk::api::caller();
+    let principal_id = caller();
 
     let message: Message = Message { identity: principal_id.to_string(), contents: contents, time: time() };
 

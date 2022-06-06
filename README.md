@@ -31,3 +31,38 @@ If you are hosting frontend code somewhere without using DFX, you may need to ma
 # To update Tailwind CSS
 
 `npx tailwindcss -i ./src/avenue_assets/assets/main.css -o ./dist/avenue_assets/main.css --watch`
+
+# During development to test again with clean state
+
+```
+dfx stop
+dfx start --background --clean
+dfx deploy
+npm start
+```
+
+You'll maybe want to remove any problem packages from the dfx.json (for instance installing ledger isn't working yet)
+
+# Internet Identity
+
+The app is currently configured to work with a local copy of the internet identity canister running on port 8080
+
+Follow the instructions over: https://github.com/dfinity/internet-identity, specifically, in the HACKING document: https://github.com/dfinity/internet-identity/blob/main/HACKING.md#running-locally
+
+I.e. install the Internet Identity canister
+
+```
+npm ci
+dfx start --clean --background
+II_FETCH_ROOT_KEY=1 dfx deploy --no-wallet --argument '(null)'
+dfx canister call internet_identity init_salt
+```
+
+Then `npm start` on the FE (which is where the actor is looking in the User Context)
+
+# To do
+
+-   Show the user profile nicely, save the Principle against a username and profile pic url (stored in IPFS)
+-   Create ways to pay in ICP via app for Trades
+-   Create NFT ticketed app for Events
+-   Give users greater control over their signals - you should be able to edit and delete your own

@@ -1,5 +1,5 @@
 import { Marker } from "leaflet";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { rust_avenue } from "../../../declarations/rust_avenue";
 import { SignalType_2 } from "../../../declarations/rust_avenue/rust_avenue.did";
 import {
@@ -11,6 +11,7 @@ import {
 	Chat,
 	SignalType,
 } from "../utils/mapSignalTypes";
+import { UserContext } from "./user";
 
 type MapContextType<T extends SignalType> = {
 	pinType: PinType;
@@ -69,6 +70,8 @@ export type ActiveContent<T extends SignalType> = {
 };
 
 const MapProvider = <T extends SignalType>({ children }: any) => {
+	const { authenticatedActor } = useContext(UserContext);
+
 	const [activeContent, setActiveContent] = useState<ActiveContent<T>>();
 
 	const [mapInitialised, setMapInitialized] = useState(false);
@@ -215,11 +218,20 @@ const MapProvider = <T extends SignalType>({ children }: any) => {
 		if (activeContent && activeContent.isNewPin) {
 			const location = activeContent?.marker.getLatLng();
 			const signalType = mapSignalToType(pinType);
-			await rust_avenue.create_new_chat(
-				{ lat: location.lat, long: location.lng },
-				JSON.stringify(contents),
-				signalType
-			);
+			try {
+				await (authenticatedActor as any).create_new_chat(
+					{ lat: location.lat, long: location.lng },
+					JSON.stringify(contents),
+					signalType
+				);
+			} catch (e) {
+				// The calls actually succeeds, but it returns an error:
+				// Error: Fail to verify certificate
+				// I think this may be a bug in local development setup though
+				// (the call to the canister actually succeeds)
+				// Some more detail here https://forum.dfinity.org/t/fail-to-verify-certificate-in-development-update-calls/4078
+				console.log(e);
+			}
 			return;
 		}
 		throw Error("No new signal detected");

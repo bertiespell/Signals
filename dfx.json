@@ -17,6 +17,11 @@
         "dist/avenue_assets/"
       ],
       "type": "assets"
+    },
+    "signals_token": {
+      "candid": "src/signals_token/signals_token.did",
+      "package": "signals_token",
+      "type": "rust"
     }
   },
   "defaults": {

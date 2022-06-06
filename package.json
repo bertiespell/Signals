@@ -16,7 +16,7 @@
     "generate": "dfx generate rust_avenue"
   },
   "devDependencies": {
-    "@dfinity/agent": "0.10.4",
+    "@dfinity/agent": "^0.10.4",
     "@dfinity/candid": "0.10.4",
     "@dfinity/principal": "0.10.4",
     "@types/uuid": "^8.3.4",
@@ -47,6 +47,7 @@
     "last 2 edge version"
   ],
   "dependencies": {
+    "@dfinity/auth-client": "^0.10.4",
     "@headlessui/react": "^1.6.4",
     "@heroicons/react": "^1.0.6",
     "@tailwindcss/aspect-ratio": "^0.4.0",

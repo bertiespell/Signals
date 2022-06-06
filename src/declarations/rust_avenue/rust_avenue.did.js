@@ -40,6 +40,7 @@ export const idlFactory = ({ IDL }) => {
     'greet' : IDL.Func([IDL.Text], [IDL.Text], ['query']),
     'search' : IDL.Func([IDL.Text], [IDL.Opt(Profile_2)], ['query']),
     'update' : IDL.Func([Profile_2], [], []),
+    'whoami' : IDL.Func([], [IDL.Principal], ['query']),
   });
 };
 export const init = ({ IDL }) => { return []; };

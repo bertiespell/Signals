@@ -1,14 +1,17 @@
 import MapProvider from "./context/map";
+import UserProvider from "./context/user";
 import Homepage from "./HomePage";
 
 const App = () => {
 	return (
 		<>
-			<MapProvider>
-				<main style={{ height: "100%" }}>
-					<Homepage />
-				</main>
-			</MapProvider>
+			<UserProvider>
+				<MapProvider>
+					<main style={{ height: "100%" }}>
+						<Homepage />
+					</main>
+				</MapProvider>
+			</UserProvider>
 		</>
 	);
 };
