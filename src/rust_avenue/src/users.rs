@@ -1,5 +1,6 @@
+use crate::types::*;
 use ic_cdk::{
-    api::call::{ManualReply},
+    api::call::ManualReply,
     export::{
         candid::{CandidType, Deserialize},
         Principal,
@@ -13,12 +14,6 @@ type UserStore = BTreeMap<Principal, User>;
 
 thread_local! {
     static USER_STORE: RefCell<UserStore> = RefCell::default();
-}
-
-#[derive(Clone, Debug, Default, CandidType, Deserialize)]
-struct User {
-    pub name: String,
-    pub profile_pic_url: String,
 }
 
 #[query]
@@ -73,4 +68,3 @@ fn caller() -> Principal {
 //         user_store.borrow_mut().insert(principal_id, user);
 //     });
 // }
-

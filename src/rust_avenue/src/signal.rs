@@ -1,3 +1,4 @@
+use crate::types::*;
 use ic_cdk::{
     api::time,
     export::{
@@ -11,56 +12,14 @@ use std::collections::BTreeMap;
 
 use ordered_float::OrderedFloat;
 
-/// The incoming coordinate is an f64 which can implement CandidType
-#[derive(Clone, Copy, Debug, Default, Deserialize, CandidType)]
-struct IncomingCoordinate {
-    lat: f64,
-    long: f64,
-}
-
-/// On the BE we actually store a Coordinate using OrderedFloat, so that we can use it in a BTreeMap
-/// And later do an optimised search algoirthm for finding points within a specific location
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, PartialOrd, Ord)]
-struct Coordinate {
-    lat: OrderedFloat<f64>,
-    long: OrderedFloat<f64>,
-}
-
-/// This is used to return to FE, IncomingCoordinate which impliments CandidType
-#[derive(Clone, Debug, CandidType, Deserialize)]
-struct LocatedSignal {
-    location: IncomingCoordinate,
-    signal: Signal,
-}
-
-#[derive(Clone, Debug, CandidType, Deserialize, PartialEq)]
-struct Signal {
-    messages: Vec<Message>,
-    signal_type: SignalType,
-}
-
-#[derive(Clone, Debug, CandidType, Deserialize, PartialEq)]
-enum SignalType {
-    chat,
-    trade,
-    event,
-}
-
+// vec of signals they've  voted on...
 // Enables us to look up and search by location
-type SignalStore = BTreeMap<Coordinate, Signal>;
-// Allows administrative priviledges to principles over their signals
-type UserSignalStore = BTreeMap<Principal, Vec<Signal>>;
+type UserToSignalStore = BTreeMap<Principal, Vec<Signal>>;
+type SignalRatingStore = BTreeMap<Signal, i32>;
 
 thread_local! {
     static SIGNAL_STORE: RefCell<SignalStore> = RefCell::default();
     static USER_SIGNAL_STORE: RefCell<UserSignalStore> = RefCell::default();
-}
-
-#[derive(Clone, Debug, Default, CandidType, Deserialize, PartialEq)]
-struct Message {
-    pub identity: String, // this could be a User from users.rs
-    pub contents: String,
-    pub time: u64,
 }
 
 fn caller() -> Principal {
@@ -206,7 +165,6 @@ fn get_all_signals() -> Vec<LocatedSignal> {
 
             all_signals.push(signal)
         })
-        // .collect::<Coordinate, Vec<_>>()
     });
 
     return all_signals;
@@ -238,18 +196,3 @@ fn add_new_message(location: IncomingCoordinate, contents: String) -> Signal {
 
     return signal;
 }
-
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-
-//     #[test]
-//     fn test_add_new_message() {
-//         let location = Coordinate {
-//             lat: 1,
-//             long: 2
-//         };
-//         let result = add_new_message(location, String::from("new test"));
-//         println!("{:?}", result);
-//     }
-// }

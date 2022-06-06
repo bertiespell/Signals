@@ -1,5 +1,7 @@
+use crate::types::*;
+
 use ic_cdk::{
-    api::call::{ManualReply},
+    api::call::ManualReply,
     export::{
         candid::{CandidType, Deserialize},
         Principal,
@@ -10,17 +12,8 @@ use std::cell::RefCell;
 use std::collections::BTreeMap;
 
 pub mod signal;
+pub mod types;
 pub mod users;
-
-type IdStore = BTreeMap<String, Principal>;
-type ProfileStore = BTreeMap<Principal, Profile>;
-
-#[derive(Clone, Debug, Default, CandidType, Deserialize)]
-struct Profile {
-    pub name: String,
-    pub description: String,
-    pub keywords: Vec<String>,
-}
 
 thread_local! {
     static PROFILE_STORE: RefCell<ProfileStore> = RefCell::default();
