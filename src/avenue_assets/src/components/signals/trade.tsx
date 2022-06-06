@@ -9,12 +9,17 @@ import {
 	UserCircleIcon as UserCircleIconSolid,
 } from "@heroicons/react/solid";
 import { rust_avenue } from "../../../../declarations/rust_avenue";
+import { UserContext } from "../../context/user";
+import { ActorSubclass } from "@dfinity/agent";
+import { _SERVICE } from "../../../../declarations/rust_avenue/rust_avenue.did";
 
 function classNames(...classes: any) {
 	return classes.filter(Boolean).join(" ");
 }
 
 export default function Trade() {
+	const { authenticatedActor } = useContext(UserContext);
+
 	const { activeContent } = useContext<{
 		activeContent: ActiveContent<Trade>;
 	}>(MapContext as any);
@@ -53,11 +58,10 @@ export default function Trade() {
 
 	const sendMessage = async (e: Event, message: string) => {
 		e.preventDefault();
-		if (activeContent?.signalMetadata) {
-			const signal = await rust_avenue.add_new_message(
-				activeContent?.signalMetadata?.location,
-				message
-			);
+		if (activeContent?.signalMetadata && authenticatedActor) {
+			const signal = await (
+				authenticatedActor as unknown as ActorSubclass<_SERVICE>
+			).add_new_message(activeContent?.signalMetadata?.location, message);
 			const newActivity: Array<Activity> = [];
 			signal.messages.slice(1).map((message) => {
 				console.log(message);

@@ -49,4 +49,6 @@ service : {
     "add_new_message": (Coordinate_2, text) -> (Signal_2);
     "get_all_signals": () -> (vec Located_Signal_2) query;
     "whoami": () -> (principal) query;
+    "get_signals_for_user": (principal) -> (vec Signal_2) query;
+    "delete_signal": (Coordinate_2) -> ();
 }

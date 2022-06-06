@@ -9,6 +9,9 @@ import {
 import { ActiveContent, MapContext } from "../../context/map";
 import { rust_avenue } from "../../../../declarations/rust_avenue";
 import { Chat } from "../../utils/mapSignalTypes";
+import { UserContext } from "../../context/user";
+import { ActorSubclass } from "@dfinity/agent";
+import { _SERVICE } from "../../../../declarations/rust_avenue/rust_avenue.did";
 
 export type Person = {
 	name: string;
@@ -38,16 +41,17 @@ export default function Chat() {
 	const { activeContent } = useContext<{
 		activeContent: ActiveContent<Chat>;
 	}>(MapContext as any);
+	const { authenticatedActor } = useContext(UserContext);
+
 	const [newMessage, setNewMessage] = useState("");
 	const [activity, setActivity] = useState<Array<Activity>>([]);
 
 	const sendMessage = async (e: Event, message: string) => {
 		e.preventDefault();
-		if (activeContent?.signalMetadata) {
-			const signal = await rust_avenue.add_new_message(
-				activeContent?.signalMetadata?.location,
-				message
-			);
+		if (activeContent?.signalMetadata && authenticatedActor) {
+			const signal = await (
+				authenticatedActor as unknown as ActorSubclass<_SERVICE>
+			).add_new_message(activeContent?.signalMetadata?.location, message);
 			const newActivity: Array<Activity> = [];
 			signal.messages.map((message) => {
 				newActivity.push({
