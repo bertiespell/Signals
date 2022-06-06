@@ -1,15 +1,8 @@
 use crate::types::*;
 
-use ic_cdk::{
-    api::call::ManualReply,
-    export::{
-        candid::{CandidType, Deserialize},
-        Principal,
-    },
-};
+use ic_cdk::api::call::ManualReply;
 use ic_cdk_macros::*;
 use std::cell::RefCell;
-use std::collections::BTreeMap;
 
 pub mod ratings;
 pub mod signal;

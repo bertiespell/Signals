@@ -18,6 +18,32 @@ thread_local! {
     static USER_GIVEN_RATING_STORE: RefCell<UserGivenRatingsStore> = RefCell::default();
     static SIGNAL_RATINGS_STORE: RefCell<SignalRatingsStore> = RefCell::default();
     static SIGNALS_TO_TOKEN_STORE: RefCell<SignalsToTokensStore> = RefCell::default();
+    static SYSTEM_PARAMS: RefCell<SystemParams> = RefCell::default();
+
+}
+
+#[init]
+fn init() {
+    ic_cdk::setup();
+
+    // start the system with default params
+    SYSTEM_PARAMS.with(|system_params| {
+        system_params.replace(SystemParams::default());
+    })
+}
+
+impl Default for SystemParams {
+    fn default() -> Self {
+        SystemParams {
+            downvotes_required_before_delete: -10,
+            upvotes_required_before_token_minting: 10,
+            transfer_fee: SignalsTokens { amount_e8s: 10_000 },
+            proposal_vote_threshold: SignalsTokens {
+                amount_e8s: 10_000_000,
+            },
+            proposal_submission_deposit: SignalsTokens { amount_e8s: 10_000 },
+        }
+    }
 }
 
 fn caller() -> Principal {
@@ -106,7 +132,11 @@ fn leave_rating(location: IncomingCoordinate, positive: bool) {
 
             // take action for above or below thresholds
             SIGNALS_TO_TOKEN_STORE.with(|signals_to_token_store| {
-                if score >= 10 {
+                if score
+                    >= SYSTEM_PARAMS.with(|system_params| {
+                        system_params.take().upvotes_required_before_token_minting
+                    })
+                {
                     // transfer takens if we haven't already
                     if *signals_to_token_store
                         .borrow_mut()
@@ -119,7 +149,10 @@ fn leave_rating(location: IncomingCoordinate, positive: bool) {
                             .insert(ordered_location, true);
                     }
                     // TODO: transfer tokens
-                } else if score <= -10 {
+                } else if score
+                    <= SYSTEM_PARAMS
+                        .with(|system_params| system_params.take().downvotes_required_before_delete)
+                {
                     // delete the signal if it has too many negative ratings
                     internal_delete_signal(location, get_user_for_signal_coordinates(location));
                     SIGNAL_RATINGS_STORE

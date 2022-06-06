@@ -1,14 +1,7 @@
 use crate::types::*;
-use ic_cdk::{
-    api::time,
-    export::{
-        candid::{CandidType, Deserialize},
-        Principal,
-    },
-};
+use ic_cdk::{api::time, export::Principal};
 use ic_cdk_macros::*;
 use std::cell::RefCell;
-use std::collections::BTreeMap;
 
 use ordered_float::OrderedFloat;
 

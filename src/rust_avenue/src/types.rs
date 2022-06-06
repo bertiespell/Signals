@@ -1,13 +1,8 @@
-use ic_cdk::{
-    api::time,
-    export::{
-        candid::{CandidType, Deserialize},
-        Principal,
-    },
+use ic_cdk::export::{
+    candid::{CandidType, Deserialize},
+    Principal,
 };
-use ic_cdk_macros::*;
 use ordered_float::OrderedFloat;
-use std::cell::RefCell;
 use std::collections::BTreeMap;
 
 pub type IdStore = BTreeMap<String, Principal>;
@@ -80,7 +75,7 @@ pub struct SignalsTokens {
     pub amount_e8s: u64,
 }
 
-#[derive(Clone, Default, Debug, CandidType, Deserialize)]
+#[derive(Clone, Debug, CandidType, Deserialize)]
 pub struct SystemParams {
     pub downvotes_required_before_delete: i32,
     pub upvotes_required_before_token_minting: i32,
