@@ -7,7 +7,6 @@ import {
 } from "../../../declarations/rust_avenue";
 import { Actor, ActorSubclass, HttpAgent } from "@dfinity/agent";
 import { _SERVICE } from "../../../declarations/avenue_assets/avenue_assets.did";
-// import { _SERVICE } from "../../../declarations/rust_avenue/rust_avenue.did";
 
 export const UserContext = React.createContext<{
 	login: any;
@@ -40,11 +39,6 @@ const UserProvider = ({ children }: any) => {
 		setAuthenticatedActor(whoami_actor);
 
 		const whoami = await rust_avenue.whoami();
-		console.log(
-			"whoami differences 1: actor 2: standard rust_avenue",
-			actorwhoami,
-			whoami
-		);
 	};
 	const internetIdentityLogin = async () => {
 		const createdAuthClient = await AuthClient.create();
@@ -61,8 +55,6 @@ const UserProvider = ({ children }: any) => {
 	};
 
 	const login = async () => {
-		console.log("We're not authenticated", authClient);
-
 		const login = await authClient?.login({
 			onSuccess: async () => {
 				handleAuthenticated(authClient);

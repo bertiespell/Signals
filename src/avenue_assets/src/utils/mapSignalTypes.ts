@@ -31,12 +31,12 @@ export enum PinType {
 	Event = "event",
 }
 
-export type SignalType_2 = { trade: null } | { chat: null } | { event: null };
+export type SignalType_2 = { Trade: null } | { Chat: null } | { Event: null };
 
 export const mapSignalToType = (pinType: PinType): SignalType_2 => {
-    if (pinType === PinType.Chat) return { chat: null };
-    if (pinType === PinType.Trade) return { trade: null };
-    if (pinType === PinType.Event) return { event: null };
+    if (pinType === PinType.Chat) return { Chat: null };
+    if (pinType === PinType.Trade) return { Trade: null };
+    if (pinType === PinType.Event) return { Event: null };
     throw Error("Unknown signal type");
 };
 
@@ -63,15 +63,15 @@ export const mapSignalTypeToIcon = (L: any, signalType: SignalType_2) => {
         popupAnchor: [-3, -76],
     });
 
-    if (Object.keys(signalType)[0] === "chat") return chatIcon;
-    if (Object.keys(signalType)[0] === "event") return eventIcon;
-    if (Object.keys(signalType)[0] === "trade") return tradeIcon;
+    if (Object.keys(signalType)[0] === "Chat") return chatIcon;
+    if (Object.keys(signalType)[0] === "Event") return eventIcon;
+    if (Object.keys(signalType)[0] === "Trade") return tradeIcon;
     throw Error("Unknown signal type");
 };
 
 export const mapActiveContentToPinType = (activeContent: ActiveContent<SignalType>): PinType => {
-    if (Object.keys(activeContent.signalMetadata?.signal.signal_type as any)[0] === "chat") return PinType.Chat;
-    if (Object.keys(activeContent.signalMetadata?.signal.signal_type as any)[0] === "event") return PinType.Event;
-    if (Object.keys(activeContent.signalMetadata?.signal.signal_type as any)[0] === "trade") return PinType.Trade;
+    if (Object.keys(activeContent.signalMetadata?.signal_type as any)[0] === "Chat") return PinType.Chat;
+    if (Object.keys(activeContent.signalMetadata?.signal_type as any)[0] === "Event") return PinType.Event;
+    if (Object.keys(activeContent.signalMetadata?.signal_type as any)[0] === "Trade") return PinType.Trade;
     throw Error("Unknown signal type");
 }

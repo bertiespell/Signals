@@ -28,7 +28,7 @@ export default function Event() {
 	const [activity, setActivity] = useState<Array<Activity>>([]);
 	const addContent = () => {
 		const newActivity = activity.concat();
-		activeContent?.signalMetadata?.signal.messages.map((message) => {
+		activeContent?.signalMetadata?.messages.map((message) => {
 			newActivity.push({
 				comment: message.contents,
 				date: message.time,
@@ -77,11 +77,9 @@ export default function Event() {
 		setEvent(null as any);
 		if (activeContent?.signalMetadata) {
 			setEvent({
-				contents:
-					activeContent?.signalMetadata?.signal.signalData.contents,
-				identity:
-					activeContent.signalMetadata.signal.signalData.identity,
-				time: activeContent.signalMetadata.signal.signalData.time,
+				contents: activeContent?.signalMetadata?.metadata,
+				identity: activeContent.signalMetadata.user.toString(),
+				time: activeContent.signalMetadata.created_at,
 			});
 		}
 		addContent();

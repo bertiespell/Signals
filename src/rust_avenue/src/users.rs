@@ -1,11 +1,5 @@
 use crate::types::*;
-use ic_cdk::{
-    api::call::ManualReply,
-    export::{
-        candid::{CandidType, Deserialize},
-        Principal,
-    },
-};
+use ic_cdk::export::Principal;
 use ic_cdk_macros::*;
 use std::cell::RefCell;
 use std::collections::BTreeMap;
@@ -21,14 +15,14 @@ fn whoami() -> Principal {
     return ic_cdk::api::caller();
 }
 
-fn caller() -> Principal {
-    let caller = ic_cdk::api::caller();
-    // The anonymous principal is not allowed to do certain actions, such as create chats or add messages.
-    if caller == Principal::anonymous() {
-        panic!("Anonymous principal not allowed to make calls.")
-    }
-    caller
-}
+// fn caller() -> Principal {
+//     let caller = ic_cdk::api::caller();
+//     // The anonymous principal is not allowed to do certain actions, such as create chats or add messages.
+//     if caller == Principal::anonymous() {
+//         panic!("Anonymous principal not allowed to make calls.")
+//     }
+//     caller
+// }
 
 // #[query(name = "getSelf")]
 // fn get_user_self() -> User {

@@ -77,23 +77,20 @@ export default function Chat() {
 
 		// first message has some additional metadata
 		newActivity.push({
-			comment: activeContent?.signalMetadata?.signal?.signalData.contents
-				.contents as string,
-			date: activeContent?.signalMetadata?.signal?.signalData
-				.time as string,
+			comment: activeContent?.signalMetadata?.metadata.contents as string,
+			date: activeContent?.signalMetadata?.created_at as string,
 			type: "comment",
 			imageUrl:
 				"https://img.icons8.com/external-kiranshastry-lineal-color-kiranshastry/64/undefined/external-user-interface-kiranshastry-lineal-color-kiranshastry.png",
 			id: uuidv4().toString(),
 			person: {
-				name: activeContent?.signalMetadata?.signal.signalData
-					.identity as string,
+				name: activeContent?.signalMetadata?.user.toString() as string,
 				href: "",
 			},
 		});
 
 		// the rest of the messages can be pushed like this
-		activeContent?.signalMetadata?.signal.messages.map((message) => {
+		activeContent?.signalMetadata?.messages.map((message) => {
 			newActivity.push({
 				comment: message.contents,
 				date: message.time,
@@ -127,10 +124,7 @@ export default function Chat() {
 				>
 					<div>
 						<h3 className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-							{
-								activeContent?.signalMetadata?.signal
-									?.signalData.contents.title
-							}
+							{activeContent?.signalMetadata?.metadata.title}
 						</h3>
 
 						<div className="divide-y divide-gray-200">

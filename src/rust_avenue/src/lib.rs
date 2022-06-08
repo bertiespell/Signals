@@ -4,10 +4,14 @@ use ic_cdk::api::call::ManualReply;
 use ic_cdk_macros::*;
 use std::cell::RefCell;
 
+pub mod dao;
+pub mod dao_store;
+pub mod heartbeat;
 pub mod ratings;
 pub mod signal;
 pub mod types;
 pub mod users;
+pub mod utils;
 
 thread_local! {
     static PROFILE_STORE: RefCell<ProfileStore> = RefCell::default();

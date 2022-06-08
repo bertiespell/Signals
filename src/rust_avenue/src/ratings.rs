@@ -1,9 +1,12 @@
 use crate::types::*;
+use crate::utils::caller;
 use ic_cdk::export::Principal;
 use ic_cdk_macros::*;
 use ordered_float::OrderedFloat;
 use std::cell::RefCell;
 use std::collections::BTreeMap;
+
+use crate::dao_store::SIGNAL_DAO;
 
 use crate::signal::{get_user_for_signal_coordinates, internal_delete_signal};
 
@@ -18,41 +21,6 @@ thread_local! {
     static USER_GIVEN_RATING_STORE: RefCell<UserGivenRatingsStore> = RefCell::default();
     static SIGNAL_RATINGS_STORE: RefCell<SignalRatingsStore> = RefCell::default();
     static SIGNALS_TO_TOKEN_STORE: RefCell<SignalsToTokensStore> = RefCell::default();
-    static SYSTEM_PARAMS: RefCell<SystemParams> = RefCell::default();
-
-}
-
-#[init]
-fn init() {
-    ic_cdk::setup();
-
-    // start the system with default params
-    SYSTEM_PARAMS.with(|system_params| {
-        system_params.replace(SystemParams::default());
-    })
-}
-
-impl Default for SystemParams {
-    fn default() -> Self {
-        SystemParams {
-            downvotes_required_before_delete: -10,
-            upvotes_required_before_token_minting: 10,
-            transfer_fee: SignalsTokens { amount_e8s: 10_000 },
-            proposal_vote_threshold: SignalsTokens {
-                amount_e8s: 10_000_000,
-            },
-            proposal_submission_deposit: SignalsTokens { amount_e8s: 10_000 },
-        }
-    }
-}
-
-fn caller() -> Principal {
-    let caller = ic_cdk::api::caller();
-    // The anonymous principal is not allowed to do certain actions, such as create chats or add messages.
-    // if caller == Principal::anonymous() {
-    //     panic!("Anonymous principal not allowed to make calls.")
-    // }
-    caller
 }
 
 /**
@@ -133,13 +101,16 @@ fn leave_rating(location: IncomingCoordinate, positive: bool) {
             // take action for above or below thresholds
             SIGNALS_TO_TOKEN_STORE.with(|signals_to_token_store| {
                 if score
-                    >= SYSTEM_PARAMS.with(|system_params| {
-                        system_params.take().upvotes_required_before_token_minting
+                    >= SIGNAL_DAO.with(|signal_dao| {
+                        signal_dao
+                            .borrow()
+                            .system_params
+                            .upvotes_required_before_token_minting
                     })
                 {
                     // transfer takens if we haven't already
                     if *signals_to_token_store
-                        .borrow_mut()
+                        .borrow()
                         .get(&ordered_location)
                         .clone()
                         .unwrap_or_else(|| &false)
@@ -147,11 +118,26 @@ fn leave_rating(location: IncomingCoordinate, positive: bool) {
                         signals_to_token_store
                             .borrow_mut()
                             .insert(ordered_location, true);
+
+                        let user_principle = get_user_for_signal_coordinates(location);
+
+                        // reward tokens for upvoted signal
+                        SIGNAL_DAO.with(|service| {
+                            let token_amount = service
+                                .borrow()
+                                .system_params
+                                .tokens_received_for_upvoted_signal;
+                            let mut service = service.borrow_mut();
+                            service.mint(user_principle, token_amount)
+                        });
                     }
-                    // TODO: transfer tokens
                 } else if score
-                    <= SYSTEM_PARAMS
-                        .with(|system_params| system_params.take().downvotes_required_before_delete)
+                    <= SIGNAL_DAO.with(|signal_dao| {
+                        signal_dao
+                            .borrow()
+                            .system_params
+                            .downvotes_required_before_delete
+                    })
                 {
                     // delete the signal if it has too many negative ratings
                     internal_delete_signal(location, get_user_for_signal_coordinates(location));

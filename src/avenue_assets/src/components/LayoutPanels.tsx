@@ -17,7 +17,7 @@ export default function LayoutPanels() {
 	const mapContentTypeToPanel = (
 		activeContent?: ActiveContent<SignalType>
 	) => {
-		if (activeContent?.signalMetadata?.signal.signal_type) {
+		if (activeContent?.signalMetadata?.signal_type) {
 			const signalType = mapActiveContentToPinType(activeContent);
 			if (signalType === PinType.Chat)
 				return (

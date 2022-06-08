@@ -19,38 +19,157 @@ type Coordinate_2 = record {
 };
 
 type SignalType_2 = variant {
-  chat;
-  trade;
-  event;
+  Chat;
+  Trade;
+  Event;
 };
 
 type Signal_2 = record {
+    "created_at": nat64;
+    "updated_at": nat64;
+    "user": principal;
+    "location": Coordinate_2;
+    "metadata": text;
+    "id": int;
     "messages": vec Message_2;
     "signal_type": SignalType_2;
 };
 
 type Signal = Signal_2;
 
-type Located_Signal_2 = record {
-    "location": Coordinate_2;
-    "signal": Signal_2;
+type BasicDaoStableStorage = record {
+    accounts: vec Account;
+    proposals: vec Proposal;
+    system_params: SystemParams;
 };
 
-type Located_Signal = Located_Signal_2;
+type Tokens = record {
+    amount_e8s: nat64;
+};
+
+type ProposalState = variant {
+    // The proposal is open for voting
+    Open;
+
+    // Enough "yes" votes have been cast to accept the proposal, and it will soon be executed
+    Accepted;
+
+    // Enough "no" votes have been cast to reject the proposal, and it will not be executed
+    Rejected;
+
+    // The proposal is currently being executed
+    Executing;
+
+    // The proposal has been successfully executed
+    Succeeded;
+
+    // A failure occurred while executing the proposal
+    Failed: text;
+};
+
+type Proposal = record {
+    id: nat64;
+    timestamp: nat64;
+    proposer: principal;
+    payload: ProposalPayload;
+    state: ProposalState;
+    votes_yes: Tokens;
+    votes_no: Tokens;
+    voters: vec principal;
+};
+
+type ProposalPayload = record {
+    canister_id: principal;
+    method: text;
+    message: blob;
+};
+
+type SubmitProposalResult = variant {
+    Ok: nat64;
+    Err: text;
+};
+
+type Vote = variant {
+    Yes;
+    No;
+};
+
+type Account = record {
+    owner: principal;
+    tokens: Tokens;
+};
+
+type TransferArgs = record {
+    to: principal;
+    amount: Tokens;
+};
+
+type TransferResult = variant {
+    Ok;
+    Err: text;
+};
+
+type VoteArgs = record {
+    proposal_id: nat64;
+    vote: Vote;
+};
+
+type VoteResult = variant {
+    Ok: ProposalState;
+    Err: text;
+};
+
+type SystemParams = record {
+    tokens_received_for_signal_creation: nat64;
+    tokens_received_for_upvoted_signal: nat64;
+    downvotes_required_before_delete: int32;
+    upvotes_required_before_token_minting: int32;
+    transfer_fee: Tokens;
+    proposal_vote_threshold: Tokens;
+    proposal_submission_deposit: Tokens;
+};
+
+type UpdateSystemParamsPayload = record {
+    tokens_received_for_signal_creation: opt nat64;
+    tokens_received_for_upvoted_signal: opt nat64;
+    downvotes_required_before_delete: opt int32;
+    upvotes_required_before_token_minting: opt int32;
+    transfer_fee: opt Tokens;
+    proposal_vote_threshold: opt Tokens;
+    proposal_submission_deposit: opt Tokens;
+};
 
 service : {
+    // User related
     "getSelf": () -> (Profile_2) query;
     "get": (text) -> (Profile_2) query;
     "update": (Profile_2) -> ();
     "search": (text) -> (opt Profile_2) query;
     "greet": (text) -> (text) query;
+
+    // signal related
     "create_new_chat": (Coordinate_2, text, SignalType_2) -> (Signal_2);
     "get_signal": (Coordinate_2) -> (Signal_2);
     "add_new_message": (Coordinate_2, text) -> (Signal_2);
-    "get_all_signals": () -> (vec Located_Signal_2) query;
+    "get_all_signals": () -> (vec Signal_2) query;
     "whoami": () -> (principal) query;
     "get_signals_for_user": (principal) -> (vec Signal_2) query;
     "delete_signal": (Coordinate_2) -> ();
+    "get_user_for_signal_coordinates": (Coordinate_2) -> (principal) query;
+
+    // Ratings related functionality
     "leave_rating": (Coordinate_2, bool) -> ();
     "get_rating_for_signal": (Coordinate_2) -> (int32) query;
+
+    // DAO related functionality
+    get_system_params: () -> (SystemParams);
+    transfer: (TransferArgs) -> (TransferResult);
+    account_balance: () -> (Tokens) query;
+    list_accounts: () -> (vec Account) query;
+    submit_proposal: (ProposalPayload) -> (SubmitProposalResult);
+    get_proposal: (nat64) -> (opt Proposal);
+    list_proposals: () -> (vec Proposal);
+    vote: (VoteArgs) -> (VoteResult);
+    update_system_params: (UpdateSystemParamsPayload) -> ();
+    create_account: (principal, nat64) -> ();
 }
