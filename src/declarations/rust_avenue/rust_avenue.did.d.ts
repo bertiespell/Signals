@@ -30,6 +30,7 @@ export interface Proposal {
   'votes_yes' : Tokens,
   'payload' : ProposalPayload,
 }
+export interface ProposalParams { 'amount' : bigint }
 export interface ProposalPayload {
   'method' : string,
   'canister_id' : Principal,
@@ -58,11 +59,11 @@ export interface Signal_2 {
 export type SubmitProposalResult = { 'Ok' : bigint } |
   { 'Err' : string };
 export interface SystemParams {
-  'tokens_received_for_signal_creation' : bigint,
+  'tokens_received_for_signal_creation' : ProposalParams,
   'transfer_fee' : Tokens,
-  'upvotes_required_before_token_minting' : number,
-  'downvotes_required_before_delete' : number,
-  'tokens_received_for_upvoted_signal' : bigint,
+  'upvotes_required_before_token_minting' : ProposalParams,
+  'downvotes_required_before_delete' : ProposalParams,
+  'tokens_received_for_upvoted_signal' : ProposalParams,
   'proposal_vote_threshold' : Tokens,
   'proposal_submission_deposit' : Tokens,
 }
@@ -71,11 +72,11 @@ export interface TransferArgs { 'to' : Principal, 'amount' : Tokens }
 export type TransferResult = { 'Ok' : null } |
   { 'Err' : string };
 export interface UpdateSystemParamsPayload {
-  'tokens_received_for_signal_creation' : [] | [bigint],
+  'tokens_received_for_signal_creation' : [] | [ProposalParams],
   'transfer_fee' : [] | [Tokens],
-  'upvotes_required_before_token_minting' : [] | [number],
-  'downvotes_required_before_delete' : [] | [number],
-  'tokens_received_for_upvoted_signal' : [] | [bigint],
+  'upvotes_required_before_token_minting' : [] | [ProposalParams],
+  'downvotes_required_before_delete' : [] | [ProposalParams],
+  'tokens_received_for_upvoted_signal' : [] | [ProposalParams],
   'proposal_vote_threshold' : [] | [Tokens],
   'proposal_submission_deposit' : [] | [Tokens],
 }

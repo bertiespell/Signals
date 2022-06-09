@@ -40,7 +40,7 @@ export type Activity = {
 		type: "comment",
 		person: { name: "Eduardo Benz", href: "#" },
 		imageUrl:
-			"https://images.unsplash.com/photo-1520785643438-5bf77931f493?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80",
+			"https://img.icons8.com/external-kiranshastry-lineal-color-kiranshastry/64/undefined/external-user-interface-kiranshastry-lineal-color-kiranshastry.png",
 		comment:
 			"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tincidunt nunc ipsum tempor purus vitae id. Morbi in vestibulum nec varius. Et diam cursus quis sed purus nam. ",
 		date: "6d ago",
@@ -306,7 +306,7 @@ export default function PinContent({ contentType }: { contentType: PinType }) {
 										<div className="relative">
 											<img
 												className="h-10 w-10 rounded-full bg-gray-400 flex items-center justify-center ring-8 ring-white"
-												src="https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
+												src="https://img.icons8.com/external-kiranshastry-lineal-color-kiranshastry/64/undefined/external-user-interface-kiranshastry-lineal-color-kiranshastry.png"
 												alt=""
 											/>
 

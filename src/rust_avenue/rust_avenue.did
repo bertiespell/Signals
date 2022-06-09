@@ -47,6 +47,10 @@ type Tokens = record {
     amount_e8s: nat64;
 };
 
+type ProposalParams = record {
+    amount: nat64;
+};
+
 type ProposalState = variant {
     // The proposal is open for voting
     Open;
@@ -120,20 +124,20 @@ type VoteResult = variant {
 };
 
 type SystemParams = record {
-    tokens_received_for_signal_creation: nat64;
-    tokens_received_for_upvoted_signal: nat64;
-    downvotes_required_before_delete: int32;
-    upvotes_required_before_token_minting: int32;
+    tokens_received_for_signal_creation: ProposalParams;
+    tokens_received_for_upvoted_signal: ProposalParams;
+    downvotes_required_before_delete: ProposalParams;
+    upvotes_required_before_token_minting: ProposalParams;
     transfer_fee: Tokens;
     proposal_vote_threshold: Tokens;
     proposal_submission_deposit: Tokens;
 };
 
 type UpdateSystemParamsPayload = record {
-    tokens_received_for_signal_creation: opt nat64;
-    tokens_received_for_upvoted_signal: opt nat64;
-    downvotes_required_before_delete: opt int32;
-    upvotes_required_before_token_minting: opt int32;
+    tokens_received_for_signal_creation: opt ProposalParams;
+    tokens_received_for_upvoted_signal: opt ProposalParams;
+    downvotes_required_before_delete: opt ProposalParams;
+    upvotes_required_before_token_minting: opt ProposalParams;
     transfer_fee: opt Tokens;
     proposal_vote_threshold: opt Tokens;
     proposal_submission_deposit: opt Tokens;
@@ -146,7 +150,7 @@ service : {
     "update": (Profile_2) -> ();
     "search": (text) -> (opt Profile_2) query;
     "greet": (text) -> (text) query;
-
+    
     // signal related
     "create_new_chat": (Coordinate_2, text, SignalType_2) -> (Signal_2);
     "get_signal": (Coordinate_2) -> (Signal_2);

@@ -127,7 +127,7 @@ async fn create_new_chat(
                 .system_params
                 .tokens_received_for_signal_creation;
             let mut service = service.borrow_mut();
-            service.mint(principal_id, token_amount)
+            service.mint(principal_id, token_amount.amount)
         });
 
         return signal.clone();
@@ -136,8 +136,13 @@ async fn create_new_chat(
 
 #[query]
 fn get_signals_for_user(principal: Principal) -> Vec<Signal> {
-    return USER_SIGNAL_STORE
-        .with(|user_store| user_store.borrow().get(&principal).cloned().unwrap());
+    return USER_SIGNAL_STORE.with(|user_store| {
+        user_store
+            .borrow()
+            .get(&principal)
+            .cloned()
+            .unwrap_or_else(|| vec![])
+    });
 }
 
 #[query]

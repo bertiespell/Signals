@@ -71,6 +71,11 @@ pub struct Message {
 }
 
 #[derive(Clone, Copy, Debug, Default, CandidType, Deserialize, PartialEq, PartialOrd)]
+pub struct ProposalParams {
+    pub amount: u64,
+}
+
+#[derive(Clone, Copy, Debug, Default, CandidType, Deserialize, PartialEq, PartialOrd)]
 pub struct SignalsTokens {
     pub amount_e8s: u64,
 }
@@ -108,10 +113,10 @@ impl Mul<u64> for SignalsTokens {
 
 #[derive(Clone, Debug, CandidType, Deserialize)]
 pub struct SystemParams {
-    pub tokens_received_for_signal_creation: u64,
-    pub tokens_received_for_upvoted_signal: u64,
-    pub downvotes_required_before_delete: i32,
-    pub upvotes_required_before_token_minting: i32,
+    pub tokens_received_for_signal_creation: ProposalParams,
+    pub tokens_received_for_upvoted_signal: ProposalParams,
+    pub downvotes_required_before_delete: ProposalParams,
+    pub upvotes_required_before_token_minting: ProposalParams,
 
     // The fee incurred by transferring tokens
     pub transfer_fee: SignalsTokens,
@@ -127,10 +132,10 @@ pub struct SystemParams {
 
 #[derive(Clone, Debug, CandidType, Deserialize)]
 pub struct UpdateSystemParamsPayload {
-    pub tokens_received_for_signal_creation: Option<u64>,
-    pub tokens_received_for_upvoted_signal: Option<u64>,
-    pub downvotes_required_before_delete: Option<i32>,
-    pub upvotes_required_before_token_minting: Option<i32>,
+    pub tokens_received_for_signal_creation: Option<ProposalParams>,
+    pub tokens_received_for_upvoted_signal: Option<ProposalParams>,
+    pub downvotes_required_before_delete: Option<ProposalParams>,
+    pub upvotes_required_before_token_minting: Option<ProposalParams>,
     pub transfer_fee: Option<SignalsTokens>,
     pub proposal_vote_threshold: Option<SignalsTokens>,
     pub proposal_submission_deposit: Option<SignalsTokens>,

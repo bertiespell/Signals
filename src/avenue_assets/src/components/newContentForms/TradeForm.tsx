@@ -30,6 +30,7 @@ export default function TradeForm() {
 							send your signal to the network.
 						</p>
 					</div>
+
 					<div className="p-5 col-span-6 sm:col-span-3">
 						<label
 							htmlFor="item-title"
@@ -45,6 +46,38 @@ export default function TradeForm() {
 							onChange={(e) => setTitle(e.target.value)}
 							className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 						/>
+					</div>
+					<div className="p-5 col-span-6 sm:col-span-3">
+						<label
+							htmlFor="item-price"
+							className="block text-sm font-medium text-gray-700"
+						>
+							Price
+						</label>
+						<div className="mt-1 relative rounded-md shadow-sm">
+							<input
+								type="text"
+								name="price"
+								id="price"
+								className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-4 pr-12 sm:text-sm border-gray-300 rounded-md"
+								placeholder="0.00"
+								value={price}
+								onChange={(e) => setPrice(e.target.value)}
+							/>
+							<div className="absolute inset-y-0 right-0 flex items-center">
+								<label htmlFor="currency" className="sr-only">
+									Currency
+								</label>
+								<select
+									id="currency"
+									name="currency"
+									className="focus:ring-indigo-500 focus:border-indigo-500 h-full py-0 pl-2 pr-7 border-transparent bg-transparent text-gray-500 sm:text-sm rounded-md"
+								>
+									<option>USD</option>
+									<option>ICP</option>
+								</select>
+							</div>
+						</div>
 					</div>
 					<div className="col-span-3 p-5 ">
 						<label
@@ -65,30 +98,7 @@ export default function TradeForm() {
 							/>
 						</div>
 					</div>
-					<div className="mt-1 relative rounded-md shadow-sm">
-						<input
-							type="text"
-							name="price"
-							id="price"
-							className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-4 pr-12 sm:text-sm border-gray-300 rounded-md"
-							placeholder="0.00"
-							value={price}
-							onChange={(e) => setPrice(e.target.value)}
-						/>
-						<div className="absolute inset-y-0 right-0 flex items-center">
-							<label htmlFor="currency" className="sr-only">
-								Currency
-							</label>
-							<select
-								id="currency"
-								name="currency"
-								className="focus:ring-indigo-500 focus:border-indigo-500 h-full py-0 pl-2 pr-7 border-transparent bg-transparent text-gray-500 sm:text-sm rounded-md"
-							>
-								<option>USD</option>
-								<option>ICP</option>
-							</select>
-						</div>
-					</div>
+
 					<div className="mt-6 flex items-center justify-end space-x-4">
 						<button
 							type="submit"

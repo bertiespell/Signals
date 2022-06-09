@@ -1,5 +1,5 @@
 {
-  "name": "Avenue",
+  "name": "avenue",
   "version": "0.1.1",
   "description": "A way to discover local friends and send signal messages using ICP",
   "keywords": [
@@ -62,8 +62,8 @@
     "flowbite-datepicker": "^1.2.1",
     "leaflet": "^1.8.0",
     "postcss-loader": "^7.0.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "^18.1.0",
+    "react-dom": "^18.0.0",
     "react-router-dom": "^6.3.0",
     "ts-node": "^10.8.0",
     "uuid": "^8.3.2"

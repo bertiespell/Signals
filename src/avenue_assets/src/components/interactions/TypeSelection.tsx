@@ -30,38 +30,47 @@ export default function TypeSelection({
 					Select the signal type that best fits your message:
 				</p>
 			</div>
-			<div className="flex flex-col justify-center items-center p-5">
+			<div className="flex flex-col justify-center items-center p-2">
 				<button
 					type="button"
-					className="w-1/3 m-3 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-manatee hover:bg-manatee focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-manatee"
+					className="w-1/2 m-3 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white  bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-manatee"
 					onClick={() => selectType(PinType.Chat)}
 				>
-					<ChatIcon
-						className="-ml-1 mr-3 h-5 w-5"
-						aria-hidden="true"
-					/>
+					<div className="flex-shrink-0 flex items-center px-4">
+						<img
+							className="h-8 w-auto"
+							src="../../event-two.png"
+							alt="Workflow"
+						/>
+					</div>
 					Chat
 				</button>
 				<button
 					type="button"
-					className="w-1/3 m-3 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+					className="w-1/2 m-3 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 					onClick={() => selectType(PinType.Trade)}
 				>
-					<MailIcon
-						className="-ml-1 mr-3 h-5 w-5"
-						aria-hidden="true"
-					/>
+					<div className="flex-shrink-0 flex items-center px-4">
+						<img
+							className="h-8 w-auto"
+							src="../../trade-two.png"
+							alt="Workflow"
+						/>
+					</div>
 					Trade
 				</button>
 				<button
 					type="button"
-					className=" w-1/3 m-3 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+					className=" w-1/2 m-3 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white  bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
 					onClick={() => selectType(PinType.Event)}
 				>
-					<CalendarIcon
-						className="-ml-1 mr-3 h-5 w-5"
-						aria-hidden="true"
-					/>
+					<div className="flex-shrink-0 flex items-center px-4">
+						<img
+							className="h-8 w-auto"
+							src="../../chat-five.png"
+							alt="Workflow"
+						/>
+					</div>
 					Event
 				</button>
 			</div>

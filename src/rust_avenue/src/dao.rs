@@ -17,10 +17,10 @@ impl Default for SystemParams {
     fn default() -> Self {
         SystemParams {
             // TODO: arbitrarily lower these for testing purposes
-            tokens_received_for_signal_creation: 1,
-            tokens_received_for_upvoted_signal: 1,
-            downvotes_required_before_delete: -1,
-            upvotes_required_before_token_minting: 1,
+            tokens_received_for_signal_creation: ProposalParams { amount: 1 },
+            tokens_received_for_upvoted_signal: ProposalParams { amount: 1 },
+            downvotes_required_before_delete: ProposalParams { amount: 1 },
+            upvotes_required_before_token_minting: ProposalParams { amount: 1 },
             transfer_fee: SignalsTokens { amount_e8s: 0 },
             proposal_vote_threshold: SignalsTokens { amount_e8s: 1 },
             proposal_submission_deposit: SignalsTokens { amount_e8s: 0 },
@@ -176,6 +176,19 @@ impl SignalDaoService {
     pub fn update_system_params(&mut self, payload: UpdateSystemParamsPayload) {
         if caller() != ic_cdk::id() {
             return;
+        }
+
+        if let Some(tokens_received_for_signal_creation) =
+            payload.tokens_received_for_signal_creation
+        {
+            self.system_params.tokens_received_for_signal_creation =
+                tokens_received_for_signal_creation;
+        }
+
+        if let Some(tokens_received_for_upvoted_signal) = payload.tokens_received_for_upvoted_signal
+        {
+            self.system_params.tokens_received_for_upvoted_signal =
+                tokens_received_for_upvoted_signal;
         }
 
         if let Some(upvotes_required_before_token_minting) =

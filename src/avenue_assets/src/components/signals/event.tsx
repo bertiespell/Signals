@@ -321,7 +321,7 @@ export default function Event() {
 											<div className="relative">
 												<img
 													className="h-10 w-10 rounded-full bg-gray-400 flex items-center justify-center ring-8 ring-white"
-													src="https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
+													src="https://img.icons8.com/external-kiranshastry-lineal-color-kiranshastry/64/undefined/external-user-interface-kiranshastry-lineal-color-kiranshastry.png"
 													alt=""
 												/>
 

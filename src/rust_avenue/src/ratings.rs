@@ -106,7 +106,8 @@ fn leave_rating(location: IncomingCoordinate, positive: bool) {
                             .borrow()
                             .system_params
                             .upvotes_required_before_token_minting
-                    })
+                            .amount
+                    }) as i32
                 {
                     // transfer takens if we haven't already
                     if *signals_to_token_store
@@ -128,16 +129,17 @@ fn leave_rating(location: IncomingCoordinate, positive: bool) {
                                 .system_params
                                 .tokens_received_for_upvoted_signal;
                             let mut service = service.borrow_mut();
-                            service.mint(user_principle, token_amount)
+                            service.mint(user_principle, token_amount.amount)
                         });
                     }
                 } else if score
-                    <= SIGNAL_DAO.with(|signal_dao| {
+                    <= -(SIGNAL_DAO.with(|signal_dao| {
                         signal_dao
                             .borrow()
                             .system_params
                             .downvotes_required_before_delete
-                    })
+                            .amount
+                    }) as i32)
                 {
                     // delete the signal if it has too many negative ratings
                     internal_delete_signal(location, get_user_for_signal_coordinates(location));

@@ -17,8 +17,12 @@ import { UserContext } from "./user";
 type MapContextType<T extends SignalType> = {
 	pinType: PinType;
 	activeContent: ActiveContent<T> | undefined;
+	newPinContent: ActiveContent<T> | undefined;
+	setActiveContent: any;
 	setPinType: any;
 	sendSignal: any;
+	allSignals: Array<ActiveContent<T>>;
+	map: any;
 };
 
 export const MapContext = React.createContext<MapContextType<SignalType>>(
@@ -61,14 +65,17 @@ const MapProvider = <T extends SignalType>({ children }: any) => {
 	const [mapInitialised, setMapInitialized] = useState(false);
 	const [map, setMap] = useState();
 	const [allMarkers, setAllMarkers] = useState<Array<Marker>>([]);
+	const [allSignals, setAllSignals] = useState<Array<ActiveContent<T>>>([]);
+
+	const [newPinContent, setNewPinContent] = useState<ActiveContent<T>>();
 
 	const setKnownSignals = async () => {
 		const signals: Array<Signal<any>> = await (
 			rust_avenue as any
 		).get_all_signals();
 
+		let allSignals: Array<ActiveContent<T>> = [];
 		signals.map((signal) => {
-			console.log(signal);
 			// when we reset data structure we can remove this try block
 			try {
 				let created_at_unix_timestamp = Number(
@@ -97,7 +104,6 @@ const MapProvider = <T extends SignalType>({ children }: any) => {
 						const time = new Date(
 							Number(message_time.slice(0, 10)) * 1000
 						).toString();
-						console.log(message_time, time);
 						return { ...message, time };
 					}
 				);
@@ -107,6 +113,13 @@ const MapProvider = <T extends SignalType>({ children }: any) => {
 					created_at,
 					updated_at,
 					metadata: JSON.parse(signal.metadata),
+					messages,
+				};
+
+				const activeContent = {
+					marker,
+					isNewPin: false,
+					signalMetadata: formattedSignal,
 				};
 
 				var marker = L.marker(
@@ -117,18 +130,16 @@ const MapProvider = <T extends SignalType>({ children }: any) => {
 				)
 					.addTo(map)
 					.on("click", () => {
-						setActiveContent({
-							marker,
-							isNewPin: false,
-							signalMetadata: formattedSignal,
-						});
+						setActiveContent(activeContent);
 					});
-
 				const newMarkers = allMarkers.concat();
 				newMarkers.push(marker);
 				setAllMarkers(newMarkers);
+				activeContent.marker = marker;
+				allSignals.push(activeContent);
 			} catch {}
 		});
+		setAllSignals(allSignals);
 	};
 
 	useEffect(() => {
@@ -142,48 +153,65 @@ const MapProvider = <T extends SignalType>({ children }: any) => {
 		window.navigator.geolocation.getCurrentPosition(
 			(location) => {
 				if (!mapInitialised) {
-					setMapInitialized(true);
-					// initialize the map to this view
-					var map = L.map("map").setView(
-						[location.coords.latitude, location.coords.longitude],
-						13
-					);
-					setMap(map);
-
-					L.tileLayer(
-						"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-						{
-							maxZoom: 19,
-							attribution: "© OpenStreetMap",
-						}
-					).addTo(map);
-
-					// create a marker in the center
-					var marker = L.marker(
-						[location.coords.latitude, location.coords.longitude],
-						{
-							draggable: true,
-							icon: L.icon({
-								iconUrl:
-									"https://unpkg.com/leaflet@1.0.3/dist/images/marker-icon.png",
-								className: "blinking",
-								iconSize: [37, 58],
-							}),
-						}
-					)
-						.addTo(map)
-						.on("click", () =>
-							setActiveContent({
-								marker,
-								isNewPin: true,
-								signalMetadata: null,
-							})
+					try {
+						setMapInitialized(true);
+						// initialize the map to this view
+						var map = L.map("map").setView(
+							[
+								location.coords.latitude,
+								location.coords.longitude,
+							],
+							13
 						);
-					setActiveContent({
-						marker,
-						isNewPin: true,
-						signalMetadata: null,
-					});
+						setMap(map);
+
+						L.tileLayer(
+							"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+							{
+								maxZoom: 19,
+								attribution: "© OpenStreetMap",
+							}
+						).addTo(map);
+
+						// create a marker in the center
+						var marker = L.marker(
+							[
+								location.coords.latitude,
+								location.coords.longitude,
+							],
+							{
+								draggable: true,
+								icon: L.icon({
+									iconUrl:
+										"https://unpkg.com/leaflet@1.0.3/dist/images/marker-icon.png",
+									className: "blinking",
+									iconSize: [37, 58],
+								}),
+							}
+						)
+							.addTo(map)
+							.on("click", () =>
+								setActiveContent({
+									marker,
+									isNewPin: true,
+									signalMetadata: null,
+								})
+							)
+							.on("drag", () => {
+								setActiveContent({
+									marker,
+									isNewPin: true,
+									signalMetadata: null,
+								});
+							});
+						const content = {
+							marker,
+							isNewPin: true,
+							signalMetadata: null,
+						};
+						setActiveContent(content);
+						setNewPinContent(content);
+					} catch {}
 				}
 			},
 			(error) => {
@@ -229,6 +257,10 @@ const MapProvider = <T extends SignalType>({ children }: any) => {
 				pinType,
 				setPinType,
 				sendSignal,
+				newPinContent,
+				setActiveContent,
+				allSignals,
+				map,
 			}}
 		>
 			{children}

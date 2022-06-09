@@ -52,12 +52,13 @@ export const idlFactory = ({ IDL }) => {
     'votes_yes' : Tokens,
     'payload' : ProposalPayload,
   });
+  const ProposalParams = IDL.Record({ 'amount' : IDL.Nat64 });
   const SystemParams = IDL.Record({
-    'tokens_received_for_signal_creation' : IDL.Nat64,
+    'tokens_received_for_signal_creation' : ProposalParams,
     'transfer_fee' : Tokens,
-    'upvotes_required_before_token_minting' : IDL.Int32,
-    'downvotes_required_before_delete' : IDL.Int32,
-    'tokens_received_for_upvoted_signal' : IDL.Nat64,
+    'upvotes_required_before_token_minting' : ProposalParams,
+    'downvotes_required_before_delete' : ProposalParams,
+    'tokens_received_for_upvoted_signal' : ProposalParams,
     'proposal_vote_threshold' : Tokens,
     'proposal_submission_deposit' : Tokens,
   });
@@ -69,11 +70,11 @@ export const idlFactory = ({ IDL }) => {
   const TransferArgs = IDL.Record({ 'to' : IDL.Principal, 'amount' : Tokens });
   const TransferResult = IDL.Variant({ 'Ok' : IDL.Null, 'Err' : IDL.Text });
   const UpdateSystemParamsPayload = IDL.Record({
-    'tokens_received_for_signal_creation' : IDL.Opt(IDL.Nat64),
+    'tokens_received_for_signal_creation' : IDL.Opt(ProposalParams),
     'transfer_fee' : IDL.Opt(Tokens),
-    'upvotes_required_before_token_minting' : IDL.Opt(IDL.Int32),
-    'downvotes_required_before_delete' : IDL.Opt(IDL.Int32),
-    'tokens_received_for_upvoted_signal' : IDL.Opt(IDL.Nat64),
+    'upvotes_required_before_token_minting' : IDL.Opt(ProposalParams),
+    'downvotes_required_before_delete' : IDL.Opt(ProposalParams),
+    'tokens_received_for_upvoted_signal' : IDL.Opt(ProposalParams),
     'proposal_vote_threshold' : IDL.Opt(Tokens),
     'proposal_submission_deposit' : IDL.Opt(Tokens),
   });

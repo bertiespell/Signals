@@ -13,8 +13,23 @@ export default function Starting({
 			</h3>
 			<div className="mt-5 prose prose-indigo text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
 				<p className="text-lg text-gray-500">
-					Drag the pin to the location where you'd like to leave a
-					signal.
+					Welcome to Signals. A unique SocialFi space for making local
+					connections, creating decentralized communities and
+					discovering events.
+				</p>
+				<p className="text-lg text-gray-500">
+					Signals encourages real world personal interactions,
+					allowing users to broadcast signals into their environment.
+				</p>
+				<p className="text-lg text-gray-500">
+					Signals is a DAO. The more you interact with the network,
+					the greater say you have in how it's governed. Signals is a
+					rich multi-purpose platform, you can learn more about how
+					Signals works here.
+				</p>
+				<p className="text-lg text-gray-500">
+					To get started, simply drag the pin to the location where
+					you'd like to leave a signal.
 				</p>
 				<p className="text-lg text-gray-500">
 					Once you're happy with the location of your pin, click the

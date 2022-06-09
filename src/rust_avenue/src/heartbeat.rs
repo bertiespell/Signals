@@ -42,7 +42,6 @@ async fn execute_proposal(proposal: Proposal) -> Result<(), String> {
     ic_cdk::api::call::call_raw(
         proposal.payload.canister_id,
         &proposal.payload.method,
-        // TODO: check this
         &proposal.payload.message.clone(),
         0,
     )

@@ -52,6 +52,17 @@ export default function EventForm() {
 						className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 					/>
 				</div>
+				<div className="p-5 col-span-6 sm:col-span-3">
+					<input
+						type="date"
+						id="event-date"
+						name="event-start"
+						value={date}
+						onChange={(e) => setDate(e.target.value)}
+						min="2022-05-01"
+						max="2025-12-31"
+					></input>
+				</div>
 				<div className="col-span-3 p-5 ">
 					<label
 						htmlFor="about"
@@ -71,17 +82,7 @@ export default function EventForm() {
 						/>
 					</div>
 				</div>
-				<div className="p-5 col-span-6 sm:col-span-3">
-					<input
-						type="date"
-						id="event-date"
-						name="event-start"
-						value={date}
-						onChange={(e) => setDate(e.target.value)}
-						min="2022-05-01"
-						max="2025-12-31"
-					></input>
-				</div>
+
 				<div className="mt-6 flex items-center justify-end space-x-4">
 					<button
 						type="submit"
