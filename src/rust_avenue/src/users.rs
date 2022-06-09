@@ -1,4 +1,5 @@
 use crate::types::*;
+use crate::utils::caller;
 use ic_cdk::export::Principal;
 use ic_cdk_macros::*;
 use std::cell::RefCell;
@@ -15,50 +16,42 @@ fn whoami() -> Principal {
     return ic_cdk::api::caller();
 }
 
-// fn caller() -> Principal {
-//     let caller = ic_cdk::api::caller();
-//     // The anonymous principal is not allowed to do certain actions, such as create chats or add messages.
-//     if caller == Principal::anonymous() {
-//         panic!("Anonymous principal not allowed to make calls.")
-//     }
-//     caller
-// }
+#[query(name = "getSelf")]
+fn get_user_self() -> User {
+    let id = caller();
+    USER_STORE.with(|user_store| {
+        user_store
+            .borrow()
+            .get(&id)
+            .cloned()
+            .unwrap_or_else(|| User::default())
+    })
+}
 
-// #[query(name = "getSelf")]
-// fn get_user_self() -> User {
-//     let id = caller();
-//     USER_STORE.with(|user_store| {
-//         user_store
-//             .borrow()
-//             .get(&id)
-//             .cloned()
-//             .unwrap_or_else(|| User::default())
-//     })
-// }
+#[query]
+fn get(name: String) -> User {
+    let found_user = User::default();
+    USER_STORE.with(|user_store| {
+        user_store
+            .borrow()
+            .values()
+            .cloned()
+            .collect::<Vec<User>>()
+            .iter()
+            .map(|user| {
+                if user.name == name {
+                    found_user = user.clone();
+                }
+            })
+    });
+    return found_user;
+}
 
-// #[query]
-// fn get(name: String) -> User {
-//     USER_STORE.with(|user_store| {
-//         user_store
-//             .borrow()
-//             .get(&name)
-//             .and_then(|id| user_store.borrow().get(id).cloned())
-//             .unwrap_or_else(|| User::default())
-//     });
+#[update]
+fn update(user: User) {
+    let id = caller();
 
-//     USER_STORE.with(|user_store| {
-//         user_store
-//             .borrow()
-//             .get(&name)
-//             .cloned()
-//             .unwrap()
-//     })
-// }
-
-// #[update]
-// fn update(user: User) {
-//     let id = caller();
-//     USER_STORE.with(|user_store| {
-//         user_store.borrow_mut().insert(principal_id, user);
-//     });
-// }
+    USER_STORE.with(|user_store| {
+        user_store.borrow_mut().insert(id, user);
+    });
+}

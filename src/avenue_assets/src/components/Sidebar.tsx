@@ -32,7 +32,8 @@ type NavItem = {
 
 export default function Sidebar() {
 	const { setShowMap } = useContext(ShowMapContext);
-	const { setActiveContent, newPinContent } = useContext(MapContext);
+	const { setActiveContent, newPinContent, createNewActivePin, map } =
+		useContext(MapContext);
 	let navigate = useNavigate();
 
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -59,8 +60,12 @@ export default function Sidebar() {
 		if (nav_item.name === "Home") {
 			setShowMap(true);
 		} else if (nav_item.name === "New Signal") {
-			setActiveContent(newPinContent);
-			setShowMap(true);
+			if (!newPinContent) {
+				createNewActivePin();
+			} else {
+				setActiveContent(newPinContent);
+				setShowMap(true);
+			}
 		} else {
 			setShowMap(false);
 		}
@@ -193,12 +198,18 @@ export default function Sidebar() {
 			{/* Static sidebar for desktop */}
 			<div className="hidden lg:flex lg:flex-shrink-0">
 				<div className="flex flex-col w-20">
-					<div className="flex-1 flex flex-col min-h-0 overflow-y-auto bg-indigo-600">
+					<div
+						className="flex-1 flex flex-col min-h-0 overflow-y-auto "
+						style={{ backgroundColor: "#0075b0" }}
+					>
 						<div className="flex-1">
-							<div className="bg-indigo-700 py-4 flex items-center justify-center">
+							<div
+								className=" py-4 flex items-center justify-center"
+								style={{ backgroundColor: "#0075b0" }}
+							>
 								<img
-									className="h-8 w-auto"
-									src="https://tailwindui.com/img/logos/workflow-mark.svg?color=white"
+									className="w-max"
+									src="../../signal-logo.png"
 									alt="Workflow"
 								/>
 							</div>

@@ -1,22 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { AuthClient } from "@dfinity/auth-client";
 import {
-	idlFactory,
 	rust_avenue,
 	canisterId,
+	createActor,
 } from "../../../declarations/rust_avenue";
 import { Actor, ActorSubclass, HttpAgent } from "@dfinity/agent";
-import { _SERVICE } from "../../../declarations/avenue_assets/avenue_assets.did";
+import { Principal } from "@dfinity/principal";
+import { _SERVICE } from "../../../declarations/rust_avenue/rust_avenue.did";
 
 export const UserContext = React.createContext<{
 	login: any;
 	authenticatedActor: ActorSubclass<_SERVICE> | undefined;
-}>({ login: undefined, authenticatedActor: undefined });
+	authenticatedUser: Principal | undefined;
+}>({
+	login: undefined,
+	authenticatedActor: undefined,
+	authenticatedUser: undefined,
+});
 
 const UserProvider = ({ children }: any) => {
 	const [authClient, setAuthClient] = useState<AuthClient>();
 	const [authenticatedActor, setAuthenticatedActor] =
 		useState<ActorSubclass<_SERVICE>>();
+
+	const [authenticatedUser, setAuthenticatedUser] = useState<Principal>();
 
 	useEffect(() => {
 		internetIdentityLogin();
@@ -28,17 +36,18 @@ const UserProvider = ({ children }: any) => {
 
 	const handleAuthenticated = async (authClient: AuthClient) => {
 		const identity = await authClient.getIdentity();
-		const agent = new HttpAgent({ identity });
 
-		const whoami_actor = Actor.createActor<_SERVICE>(idlFactory, {
-			agent,
-			canisterId: canisterId as string,
+		const whoami_actor = createActor(canisterId as string, {
+			agentOptions: {
+				identity,
+			},
 		});
 
-		const actorwhoami = await (whoami_actor as any).whoami();
+		const actorwhoami = await whoami_actor.whoami();
+
 		setAuthenticatedActor(whoami_actor);
 
-		const whoami = await rust_avenue.whoami();
+		setAuthenticatedUser(actorwhoami);
 	};
 	const internetIdentityLogin = async () => {
 		const createdAuthClient = await AuthClient.create();
@@ -51,6 +60,7 @@ const UserProvider = ({ children }: any) => {
 		} else {
 			console.log("Starting!");
 			// login();
+			// render
 		}
 	};
 
@@ -68,7 +78,9 @@ const UserProvider = ({ children }: any) => {
 	};
 
 	return (
-		<UserContext.Provider value={{ login, authenticatedActor }}>
+		<UserContext.Provider
+			value={{ login, authenticatedActor, authenticatedUser }}
+		>
 			{children}
 		</UserContext.Provider>
 	);

@@ -145,18 +145,16 @@ type UpdateSystemParamsPayload = record {
 
 service : {
     // User related
-    "getSelf": () -> (Profile_2) query;
     "get": (text) -> (Profile_2) query;
     "update": (Profile_2) -> ();
-    "search": (text) -> (opt Profile_2) query;
-    "greet": (text) -> (text) query;
+    "get_user_self": (text) -> (text) query;
+    "whoami": () -> (principal) query;
     
     // signal related
     "create_new_chat": (Coordinate_2, text, SignalType_2) -> (Signal_2);
     "get_signal": (Coordinate_2) -> (Signal_2);
     "add_new_message": (Coordinate_2, text) -> (Signal_2);
     "get_all_signals": () -> (vec Signal_2) query;
-    "whoami": () -> (principal) query;
     "get_signals_for_user": (principal) -> (vec Signal_2) query;
     "delete_signal": (Coordinate_2) -> ();
     "get_user_for_signal_coordinates": (Coordinate_2) -> (principal) query;

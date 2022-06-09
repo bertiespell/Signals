@@ -1,66 +1,129 @@
-import { GlobalInternetComputer } from "@dfinity/agent";
 import { IDL } from "@dfinity/candid";
-import { encode, Nat64 } from "@dfinity/candid/lib/cjs/idl";
+import { encode } from "@dfinity/candid/lib/cjs/idl";
 import { Principal } from "@dfinity/principal";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { rust_avenue, canisterId } from "../../../declarations/rust_avenue";
+import {
+	Proposal,
+	Signal_2,
+	SubmitProposalResult,
+	Tokens,
+} from "../../../declarations/rust_avenue/rust_avenue.did";
 
-export const DaoContext = React.createContext({});
+export type DaoContextType = {
+	whoami: Principal | undefined;
+	userSignals: Array<Signal_2> | undefined;
+	proposals: Array<Proposal> | undefined;
+	accountBalance: Tokens | undefined;
+	makeProposal:
+		| ((
+				proposed_change: string,
+				proposed_change_arg: string,
+				proposed_amount: number
+		  ) => Promise<SubmitProposalResult>)
+		| undefined;
+	voteProposal: ((proposal: Proposal) => Promise<void>) | undefined;
+};
+
+export const DaoContext = React.createContext<DaoContextType>({} as any);
 
 const DaoProvider = ({ children }: any) => {
+	const [whoami, setWhoami] = useState<Principal>();
+	const [userSignals, setUserSignals] = useState<Array<Signal_2>>([]);
+	const [proposals, setProposals] = useState<Array<Proposal>>();
+	const [accountBalance, setAccountBalance] = useState<Tokens>();
+	const [makeProposal, setMakeProposal] =
+		useState<
+			(
+				proposed_change: string,
+				proposed_change_arg: string,
+				proposed_amount: number
+			) => Promise<SubmitProposalResult>
+		>();
+	const [voteProposal, setVoteProposal] =
+		useState<(proposal: Proposal) => Promise<void>>();
+
 	const daoInit = async () => {
-		const profile = {};
 		const whoami = await rust_avenue.whoami();
-		const account_balance = await rust_avenue.account_balance();
+		setWhoami(whoami);
+		const accountBalance = await rust_avenue.account_balance();
+		setAccountBalance(accountBalance);
 		const proposals = await rust_avenue.list_proposals();
-		proposals.forEach((proposal) => {
+		setProposals(proposals);
+
+		const voteProposal = async (proposal: Proposal) => {
 			if (Object.keys(proposal.state)[0] === "Open") {
-				console.log("proposal open lets vote!", proposal);
-				rust_avenue.vote({
+				await rust_avenue.vote({
 					vote: { Yes: null },
 					proposal_id: proposal.id,
 				});
 			}
-		});
-		const signals = await rust_avenue.get_signals_for_user(whoami);
+		};
+		setVoteProposal(voteProposal);
 
-		const proposal_for_signal_tokens = () => {
-			const proposed_change = "tokens_received_for_signal_creation";
-			const proposed_change_arg = "amount";
-			const proposed_amount = 15;
+		const userSignals = await rust_avenue.get_signals_for_user(whoami);
+		setUserSignals(userSignals);
 
-			return encode(
-				[
-					IDL.Record({
-						[proposed_change]: IDL.Opt(
-							IDL.Record({ [proposed_change_arg]: IDL.Nat64 })
-						),
-					}),
-				],
-				[
-					{
-						[proposed_change]: [
-							{ [proposed_change_arg]: proposed_amount },
-						],
-					},
-				]
-			);
+		/**
+		 * proposed_change: "tokens_received_for_signal_creation"
+		 * proposed_change_arg: "amount"
+		 * proposed_amount: 15
+		 */
+		const makeProposal = async (
+			proposed_change: string,
+			proposed_change_arg: string,
+			proposed_amount: number
+		): Promise<SubmitProposalResult> => {
+			const proposal_for_signal_tokens = () => {
+				return encode(
+					[
+						IDL.Record({
+							[proposed_change]: IDL.Opt(
+								IDL.Record({ [proposed_change_arg]: IDL.Nat64 })
+							),
+						}),
+					],
+					[
+						{
+							[proposed_change]: [
+								{ [proposed_change_arg]: proposed_amount },
+							],
+						},
+					]
+				);
+			};
+
+			return await rust_avenue.submit_proposal({
+				canister_id: Principal.fromText(canisterId as string),
+				method: "update_system_params",
+				message: proposal_for_signal_tokens()
+					.toString()
+					.split(",")
+					.map((value) => Number(value)),
+			});
 		};
 
-		const proposal = await rust_avenue.submit_proposal({
-			canister_id: Principal.fromText(canisterId as string),
-			method: "update_system_params",
-			message: proposal_for_signal_tokens()
-				.toString()
-				.split(",")
-				.map((value) => Number(value)),
-		});
-
-		console.log(proposal);
+		setMakeProposal(makeProposal);
 	};
 
-	daoInit();
-	return <DaoContext.Provider value={{}}>{children}</DaoContext.Provider>;
+	useEffect(() => {
+		daoInit();
+	}, []);
+
+	return (
+		<DaoContext.Provider
+			value={{
+				whoami,
+				userSignals,
+				proposals,
+				accountBalance,
+				makeProposal,
+				voteProposal,
+			}}
+		>
+			{children}
+		</DaoContext.Provider>
+	);
 };
 
 export default DaoProvider;

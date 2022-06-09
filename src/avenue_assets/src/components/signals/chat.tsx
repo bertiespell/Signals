@@ -7,10 +7,8 @@ import {
 	UserCircleIcon as UserCircleIconSolid,
 } from "@heroicons/react/solid";
 import { ActiveContent, MapContext } from "../../context/map";
-import { rust_avenue } from "../../../../declarations/rust_avenue";
 import { Chat } from "../../utils/mapSignalTypes";
 import { UserContext } from "../../context/user";
-import { ActorSubclass } from "@dfinity/agent";
 import { _SERVICE } from "../../../../declarations/rust_avenue/rust_avenue.did";
 
 export type Person = {
@@ -38,39 +36,31 @@ function classNames(...classes: any) {
 }
 
 export default function Chat() {
-	const { activeContent } = useContext<{
+	const { activeContent, sendMessage } = useContext<{
+		sendMessage: any;
 		activeContent: ActiveContent<Chat>;
 	}>(MapContext as any);
 	const { authenticatedActor } = useContext(UserContext);
+	const { allSignals } = useContext(MapContext);
+
+	useEffect(() => {
+		setNewMessage("");
+		setActivity([]);
+		addChat();
+	}, [allSignals, activeContent]);
+
+	const sendMessageEv = async (e: Event, message: string) => {
+		e.preventDefault();
+		if (activeContent?.signalMetadata && authenticatedActor) {
+			sendMessage(activeContent, message);
+			setNewMessage("");
+			setActivity([]);
+			addChat();
+		}
+	};
 
 	const [newMessage, setNewMessage] = useState("");
 	const [activity, setActivity] = useState<Array<Activity>>([]);
-
-	const sendMessage = async (e: Event, message: string) => {
-		e.preventDefault();
-		if (activeContent?.signalMetadata && authenticatedActor) {
-			const signal = await (
-				authenticatedActor as unknown as ActorSubclass<_SERVICE>
-			).add_new_message(activeContent?.signalMetadata?.location, message);
-			const newActivity: Array<Activity> = [];
-			signal.messages.map((message) => {
-				newActivity.push({
-					comment: message.contents,
-					date: message.time as any,
-					type: "comment",
-					imageUrl:
-						"https://img.icons8.com/external-kiranshastry-lineal-color-kiranshastry/64/undefined/external-user-interface-kiranshastry-lineal-color-kiranshastry.png",
-					id: uuidv4().toString(),
-					person: {
-						name: message.identity,
-						href: "",
-					},
-				});
-			});
-			setNewMessage("");
-			setActivity(newActivity);
-		}
-	};
 
 	const addChat = () => {
 		const newActivity: Array<Activity> = [];
@@ -107,13 +97,6 @@ export default function Chat() {
 
 		setActivity(newActivity);
 	};
-
-	useEffect(() => {
-		// when activeContent changes we need to reset the state to be blank
-		setNewMessage("");
-		setActivity([]);
-		addChat();
-	}, [activeContent]);
 
 	return (
 		<>
@@ -376,7 +359,7 @@ export default function Chat() {
 														type="submit"
 														className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
 														onClick={(e) =>
-															sendMessage(
+															sendMessageEv(
 																e as any,
 																newMessage
 															)

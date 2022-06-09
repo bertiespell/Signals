@@ -20,14 +20,16 @@ function classNames(...classes: any) {
 export default function Event() {
 	const { authenticatedActor } = useContext(UserContext);
 
-	const { activeContent } = useContext<{
+	const { activeContent, sendMessage } = useContext<{
 		activeContent: ActiveContent<EventSignal>;
+		allSignals: any;
+		sendMessage: any;
 	}>(MapContext as any);
 	const [event, setEvent] = useState<SignalPin<EventSignal>>();
 	const [newMessage, setNewMessage] = useState("");
 	const [activity, setActivity] = useState<Array<Activity>>([]);
 	const addContent = () => {
-		const newActivity = activity.concat();
+		const newActivity: Array<Activity> = [];
 		activeContent?.signalMetadata?.messages.map((message) => {
 			newActivity.push({
 				comment: message.contents,
@@ -45,45 +47,27 @@ export default function Event() {
 		});
 	};
 
-	const sendMessage = async (e: Event, message: string) => {
-		e.preventDefault();
-		if (activeContent?.signalMetadata && authenticatedActor) {
-			const signal = await (
-				authenticatedActor as unknown as ActorSubclass<_SERVICE>
-			).add_new_message(activeContent?.signalMetadata?.location, message);
-			const newActivity: Array<Activity> = [];
-			signal.messages.slice(1).map((message) => {
-				newActivity.push({
-					comment: message.contents,
-					date: message.time as any,
-					type: "comment",
-					imageUrl:
-						"https://img.icons8.com/external-kiranshastry-lineal-color-kiranshastry/64/undefined/external-user-interface-kiranshastry-lineal-color-kiranshastry.png",
-					id: uuidv4().toString(),
-					person: {
-						name: message.identity,
-						href: "",
-					},
-				});
-			});
-			setNewMessage("");
-			setActivity(newActivity);
-		}
-	};
-
 	useEffect(() => {
 		setNewMessage("");
 		setActivity([]);
-		setEvent(null as any);
-		if (activeContent?.signalMetadata) {
-			setEvent({
-				contents: activeContent?.signalMetadata?.metadata,
-				identity: activeContent.signalMetadata.user.toString(),
-				time: activeContent.signalMetadata.created_at,
-			});
-		}
 		addContent();
+		if (!event) {
+			if (activeContent?.signalMetadata) {
+				setEvent({
+					contents: activeContent?.signalMetadata?.metadata,
+					identity: activeContent.signalMetadata.user.toString(),
+					time: activeContent.signalMetadata.created_at,
+				});
+			}
+		}
 	}, [activeContent]);
+
+	const sendMessageEv = async (e: Event, message: string) => {
+		e.preventDefault();
+		if (activeContent?.signalMetadata && authenticatedActor) {
+			sendMessage(activeContent, message);
+		}
+	};
 
 	return (
 		<div className="p-5 pt-20 mt-8 lg:mt-0">
@@ -361,7 +345,7 @@ export default function Event() {
 														type="submit"
 														className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
 														onClick={(e) =>
-															sendMessage(
+															sendMessageEv(
 																e as any,
 																newMessage
 															)
