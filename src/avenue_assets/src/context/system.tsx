@@ -52,6 +52,10 @@ const SystemProvider = ({ children }: any) => {
 	const [displayData, setDisplayData] = useState<Array<DisplayData>>([]);
 	const [loadingSystemData, setLoadingSystemData] = useState(true);
 
+	useEffect(() => {
+		getSystemParams();
+	}, [authenticatedActor]);
+
 	const mapSystemParamsToDisplayData = (
 		systemParams: SystemParams
 	): Array<DisplayData> => {
@@ -78,10 +82,6 @@ const SystemProvider = ({ children }: any) => {
 			}
 		}
 	};
-
-	useEffect(() => {
-		getSystemParams();
-	}, [authenticatedActor]);
 
 	return (
 		<SystemContext.Provider value={{ loadingSystemData, displayData }}>

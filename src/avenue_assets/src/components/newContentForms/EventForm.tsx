@@ -1,10 +1,3 @@
-// export type EventSignal = {
-//     date: string;
-//     title: string;
-//     description: string;
-// }
-// import Datepicker from "flowbite-datepicker/Datepicker";
-
 import { useContext, useState } from "react";
 import { MapContext } from "../../context/map";
 
@@ -88,7 +81,11 @@ export default function EventForm() {
 						type="submit"
 						className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
 						onClick={(e) =>
-							sendSignal(e, { title, description, date })
+							sendSignal(e as any, {
+								title,
+								description,
+								date,
+							})
 						}
 					>
 						Send Signal

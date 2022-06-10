@@ -1,24 +1,6 @@
 export default function About() {
 	return (
 		<div className="overflow-y-auto">
-			<div className="">
-				{/* <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
-					<img
-						className="h-64 w-full object-right sm:h-72 md:h-96 lg:w-full lg:h-full"
-						src="../../lighthouse.png"
-						alt=""
-					/>
-				</div> */}
-				{/* 
-				<a href="#">
-					<span className="sr-only">Workflow</span>
-					<img
-						className="max-h-1/6"
-						src="../../lighthouse.png"
-						alt=""
-					/>
-				</a> */}
-			</div>
 			<div
 				className={`min-w-0 flex-1 h-full flex flex-col  lg:order-last p-8`}
 			>
@@ -131,7 +113,7 @@ export default function About() {
 								Bertie Spell
 							</a>
 						</p>
-					</div>{" "}
+					</div>
 				</div>
 			</div>
 		</div>

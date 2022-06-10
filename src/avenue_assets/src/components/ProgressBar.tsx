@@ -1,6 +1,7 @@
 import { CheckIcon } from "@heroicons/react/solid";
 import { useEffect, useState } from "react";
-import { CreationState } from "./InteractionBox";
+
+import { defaultSteps } from "../utils/defaults";
 
 function classNames(...classes: any) {
 	return classes.filter(Boolean).join(" ");
@@ -10,32 +11,7 @@ export default function ProgressBar({
 	setInteractionState,
 	interactionState,
 }: any) {
-	const defaultSteps = [
-		{
-			stage: CreationState.Starting,
-			href: "#",
-			status: "current",
-			name: "Step 1",
-		},
-		{
-			stage: CreationState.TypeSelection,
-			href: "#",
-			status: "",
-			name: "Step 2",
-		},
-		{
-			stage: CreationState.AddContent,
-			href: "#",
-			status: "",
-			name: "Step 3",
-		},
-	];
 	const [steps, setSteps] = useState(defaultSteps);
-
-	const onClick = (e: any, step: any, stepIdx: number) => {
-		e.preventDefault();
-		setInteractionState(step.stage);
-	};
 
 	useEffect(() => {
 		const newSteps = steps.concat();
@@ -54,6 +30,11 @@ export default function ProgressBar({
 		});
 		setSteps(newSteps);
 	}, [interactionState]);
+
+	const onClick = (e: any, step: any, stepIdx: number) => {
+		e.preventDefault();
+		setInteractionState(step.stage);
+	};
 
 	return (
 		<nav aria-label="Progress">

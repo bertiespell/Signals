@@ -28,9 +28,7 @@ const UserProvider = ({ children }: any) => {
 	const [authClient, setAuthClient] = useState<AuthClient>();
 	const [authenticatedActor, setAuthenticatedActor] =
 		useState<ActorSubclass<_SERVICE>>();
-
 	const [authenticatedUser, setAuthenticatedUser] = useState<Principal>();
-
 	const [user, setUser] = useState<Profile_2>();
 
 	useEffect(() => {
@@ -52,25 +50,20 @@ const UserProvider = ({ children }: any) => {
 
 	const handleAuthenticated = async (authClient: AuthClient) => {
 		const identity = await authClient.getIdentity();
-
 		const whoami_actor = createActor(canisterId as string, {
 			agentOptions: {
 				identity,
 			},
 		});
-
 		const actorwhoami = await whoami_actor.whoami();
-
 		setAuthenticatedActor(whoami_actor);
-
 		setAuthenticatedUser(actorwhoami);
 	};
+
 	const internetIdentityLogin = async () => {
 		const createdAuthClient = await AuthClient.create();
 		setAuthClient(createdAuthClient);
-
 		const authenticated = await createdAuthClient.isAuthenticated();
-
 		if (authenticated) {
 			handleAuthenticated(createdAuthClient);
 		}

@@ -1,8 +1,7 @@
 import { useNavigate } from "react-router-dom";
-
-import { MailOpenIcon } from "@heroicons/react/outline";
 import { useContext, useEffect, useState } from "react";
-import { ActiveContent, MapContext } from "../../context/map";
+
+import { MapContext } from "../../context/map";
 import {
 	Chat,
 	mapActiveContentToPinType,
@@ -10,6 +9,7 @@ import {
 } from "../../utils/mapSignalTypes";
 import { ShowMapContext } from "../../context/show-map";
 import { LocationMarkerIcon } from "@heroicons/react/solid";
+import { ActiveContent } from "../../utils/types";
 
 export default function ListChats() {
 	let navigate = useNavigate();

@@ -70,8 +70,6 @@ pub fn internal_delete_signal(location: IncomingCoordinate, principal_id: Princi
                 .borrow_mut()
                 .insert(principal_id, signals.clone());
         });
-    } else {
-        panic!("Cannot delete a signal you do not own")
     }
 }
 

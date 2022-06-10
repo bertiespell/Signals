@@ -1,8 +1,7 @@
 import { useNavigate } from "react-router-dom";
-
-import { MailOpenIcon } from "@heroicons/react/outline";
 import { useContext, useEffect, useState } from "react";
-import { ActiveContent, MapContext } from "../../context/map";
+
+import { MapContext } from "../../context/map";
 import {
 	EventSignal,
 	mapActiveContentToPinType,
@@ -10,11 +9,11 @@ import {
 } from "../../utils/mapSignalTypes";
 import { ShowMapContext } from "../../context/show-map";
 import { LocationMarkerIcon } from "@heroicons/react/solid";
+import { ActiveContent } from "../../utils/types";
 
 export default function ListEvents() {
 	let navigate = useNavigate();
 	const { setShowMap } = useContext(ShowMapContext);
-
 	const { allSignals, setActiveContent, map } = useContext<{
 		allSignals: Array<ActiveContent<EventSignal>>;
 		setActiveContent: any;
@@ -25,13 +24,6 @@ export default function ListEvents() {
 		[]
 	);
 
-	const navigateToSignal = (signal: ActiveContent<EventSignal>) => {
-		setActiveContent(signal);
-		map.setView(signal.marker.getLatLng(), 13);
-		setShowMap(true);
-		navigate("/");
-	};
-
 	useEffect(() => {
 		const chat_signals = allSignals
 			.concat()
@@ -40,6 +32,13 @@ export default function ListEvents() {
 			);
 		setSignals(chat_signals);
 	}, [allSignals]);
+
+	const navigateToSignal = (signal: ActiveContent<EventSignal>) => {
+		setActiveContent(signal);
+		map.setView(signal.marker.getLatLng(), 13);
+		setShowMap(true);
+		navigate("/");
+	};
 
 	return (
 		<div className="flex-1 flex overflow-hidden w-max ">

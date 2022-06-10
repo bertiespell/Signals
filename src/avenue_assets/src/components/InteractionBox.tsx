@@ -1,7 +1,5 @@
-import { Marker } from "leaflet";
 import { useContext, useState } from "react";
 import { MapContext } from "../context/map";
-import PinContent from "./interactions/PinContent";
 import Starting from "./interactions/Starting";
 import TypeSelection from "./interactions/TypeSelection";
 import ChatForm from "./newContentForms/ChatForm";

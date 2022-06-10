@@ -1,12 +1,8 @@
 import { ActorSubclass } from "@dfinity/agent";
-import { Principal } from "@dfinity/principal";
 import { Marker } from "leaflet";
 import React, { useContext, useEffect, useState } from "react";
 import { rust_avenue } from "../../../declarations/rust_avenue";
-import {
-	SignalType_2,
-	_SERVICE,
-} from "../../../declarations/rust_avenue/rust_avenue.did";
+import { _SERVICE } from "../../../declarations/rust_avenue/rust_avenue.did";
 import {
 	EventSignal,
 	mapSignalToType,
@@ -18,78 +14,30 @@ import {
 } from "../utils/mapSignalTypes";
 import { UserContext } from "./user";
 import { v4 as uuidv4 } from "uuid";
+import { ActiveContent, MapContextType, Message, Signal } from "../utils/types";
+import { defaultLocation } from "../utils/defaults";
 
-type MapContextType<T extends SignalType> = {
-	pinType: PinType;
-	activeContent: ActiveContent<T> | undefined;
-	newPinContent: ActiveContent<T> | undefined;
-	setActiveContent: any;
-	setPinType: any;
-	sendSignal: any;
-	allSignals: Array<ActiveContent<T>>;
-	map: any;
-	sendMessage: any;
-	createNewActivePin: any;
-	setRefReady: any;
-};
+const L = (window as any).L;
 
 export const MapContext = React.createContext<MapContextType<SignalType>>(
 	{} as any
 );
 
-const L = (window as any).L;
-
-type Message = {
-	contents: string;
-	identity: string;
-	time: string;
-};
-
-type Signal<T extends SignalType> = {
-	created_at: string;
-	updated_at: string;
-	id: number;
-	metadata: T;
-	user: Principal;
-	messages: Array<Message>;
-	location: {
-		lat: number;
-		long: number;
-	};
-	signal_type: SignalType_2;
-};
-
-export type ActiveContent<T extends SignalType> = {
-	id: string;
-	marker: Marker;
-	signalMetadata: Signal<T> | null;
-	isNewPin: boolean;
-};
-
-const defaultLocation = {
-	coords: {
-		latitude: 51.508039,
-		longitude: -0.128069,
-	},
-	timestamp: Date.now(),
-};
-
-const MapProvider = <T extends SignalType>({ children }: any) => {
+const MapProvider = ({ children }: any) => {
 	const { authenticatedActor, authenticatedUser } = useContext(UserContext);
 
-	const [activeContent, setActiveContent] = useState<ActiveContent<T>>();
-
+	const [activeContent, setActiveContent] =
+		useState<ActiveContent<SignalType>>();
+	const [pinType, setPinType] = useState(PinType.Chat);
 	const [mapInitialised, setMapInitialized] = useState(false);
 	const [map, setMap] = useState();
 	const [allMarkers, setAllMarkers] = useState<Array<Marker>>([]);
-	const [allSignals, setAllSignals] = useState<Array<ActiveContent<T>>>([]);
-
-	const [newPinContent, setNewPinContent] = useState<ActiveContent<T>>();
+	const [allSignals, setAllSignals] = useState<
+		Array<ActiveContent<SignalType>>
+	>([]);
+	const [newPinContent, setNewPinContent] =
+		useState<ActiveContent<SignalType>>();
 	const [refReady, setRefAsReady] = useState(false);
-
-	const setRefReady = () => {
-		setRefAsReady(true);
-	};
 
 	useEffect(() => {
 		if (!mapInitialised && refReady) {
@@ -109,8 +57,22 @@ const MapProvider = <T extends SignalType>({ children }: any) => {
 		}
 	}, [refReady]);
 
+	useEffect(() => {
+		if (map) {
+			setKnownSignals();
+		}
+	}, [map]);
+
+	useEffect(() => {
+		getLocationWithMap();
+	}, [refReady, mapInitialised, map]);
+
+	const setRefReady = () => {
+		setRefAsReady(true);
+	};
+
 	const sendMessage = async (
-		activeContent: ActiveContent<T>,
+		activeContent: ActiveContent<SignalType>,
 		message: string
 	) => {
 		const updateActiveContent = () => {
@@ -147,7 +109,7 @@ const MapProvider = <T extends SignalType>({ children }: any) => {
 		}
 	};
 
-	const transformSignal = (signal: Signal<any>) => {
+	const transformSignal = (signal: Signal<SignalType>) => {
 		// when we reset data structure we can remove this try block
 
 		let created_at_unix_timestamp = Number(signal.created_at).toString();
@@ -174,11 +136,11 @@ const MapProvider = <T extends SignalType>({ children }: any) => {
 			return { ...message, time };
 		});
 
-		const formattedSignal: Signal<T> = {
+		const formattedSignal: Signal<SignalType> = {
 			...signal,
 			created_at,
 			updated_at,
-			metadata: JSON.parse(signal.metadata),
+			metadata: JSON.parse(signal.metadata as any),
 			messages,
 		};
 
@@ -210,19 +172,13 @@ const MapProvider = <T extends SignalType>({ children }: any) => {
 			rust_avenue as any
 		).get_all_signals();
 
-		let allSignals: Array<ActiveContent<T>> = [];
+		let allSignals: Array<ActiveContent<SignalType>> = [];
 		signals.map((signal) => {
 			const activeContent = transformSignal(signal);
 			allSignals.push(activeContent);
 		});
 		setAllSignals(allSignals);
 	};
-
-	useEffect(() => {
-		if (map) {
-			setKnownSignals();
-		}
-	}, [map]);
 
 	const createNewActivePin = () => {
 		if (!allSignals.find((signal) => signal.isNewPin === true)) {
@@ -327,12 +283,6 @@ const MapProvider = <T extends SignalType>({ children }: any) => {
 		}
 	};
 
-	useEffect(() => {
-		getLocationWithMap();
-	}, [refReady, mapInitialised, map]);
-
-	const [pinType, setPinType] = useState(PinType.Chat);
-
 	const sendSignal = async (
 		e: Event,
 		contents: EventSignal | Trade | Chat
@@ -356,7 +306,7 @@ const MapProvider = <T extends SignalType>({ children }: any) => {
 				setNewPinContent(undefined);
 
 				// add it to known signals
-				let newAllSignals: Array<ActiveContent<T>> =
+				let newAllSignals: Array<ActiveContent<SignalType>> =
 					allSignals.concat();
 				const newActiveContent = transformSignal(signal);
 				newAllSignals.push(newActiveContent);

@@ -5,11 +5,9 @@ import { useContext, useEffect, useState } from "react";
 import SystemParams from "../components/SystemParams";
 import { DaoContext } from "../context/dao";
 import { UserContext } from "../context/user";
-import { Profile_2 } from "../../../declarations/rust_avenue/rust_avenue.did";
 
 export default function Profile() {
 	const { proposals } = useContext(DaoContext);
-
 	const { authenticatedUser, authenticatedActor, login, user } =
 		useContext(UserContext);
 
@@ -17,20 +15,6 @@ export default function Profile() {
 	const [showLogin, setShowLogin] = useState(true);
 	const [username, setUserName] = useState("");
 
-	const updateUsername = async (e: any) => {
-		e.preventDefault();
-		if (user) {
-			await authenticatedActor?.update_user({
-				name: username,
-				profile_pic_url: user?.profile_pic_url,
-			});
-		}
-	};
-
-	const checkBalance = async () => {
-		const accountBalance = await authenticatedActor?.account_balance();
-		setAccountBalance(accountBalance?.amount.toString());
-	};
 	useEffect(() => {
 		if (authenticatedUser && !authenticatedUser?.isAnonymous()) {
 			checkBalance();
@@ -68,6 +52,21 @@ export default function Profile() {
 			// console.log(e);
 		}
 	}, [proposals]);
+
+	const updateUsername = async (e: any) => {
+		e.preventDefault();
+		if (user) {
+			await authenticatedActor?.update_user({
+				name: username,
+				profile_pic_url: user?.profile_pic_url,
+			});
+		}
+	};
+
+	const checkBalance = async () => {
+		const accountBalance = await authenticatedActor?.account_balance();
+		setAccountBalance(accountBalance?.amount.toString());
+	};
 
 	return (
 		<>

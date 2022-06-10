@@ -28,9 +28,8 @@ export type DaoContextType = {
 export const DaoContext = React.createContext<DaoContextType>({} as any);
 
 const DaoProvider = ({ children }: any) => {
-	const { authenticatedActor, authenticatedUser } = useContext(UserContext);
+	const { authenticatedActor } = useContext(UserContext);
 
-	const [whoami, setWhoami] = useState<Principal>();
 	const [userSignals, setUserSignals] = useState<Array<Signal_2>>([]);
 	const [proposals, setProposals] = useState<Array<Proposal>>();
 	const [accountBalance, setAccountBalance] = useState<Tokens>();

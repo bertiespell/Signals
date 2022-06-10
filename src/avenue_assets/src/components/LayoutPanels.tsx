@@ -1,17 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { ActiveContent, MapContext } from "../context/map";
+import { MapContext } from "../context/map";
 import { ShowMapContext } from "../context/show-map";
 import Map from "../Map";
-import {
-	mapActiveContentToPinType,
-	PinType,
-	SignalType,
-} from "../utils/mapSignalTypes";
+
 import InteractionBox from "./InteractionBox";
-import Chat from "./signals/chat";
-import Event from "./signals/event";
-import Trade from "./signals/trade";
+
 import { useLocation } from "react-router-dom";
+import SignalContainer from "./signals/signal-container";
 
 export default function LayoutPanels() {
 	const location = useLocation();
@@ -19,32 +14,6 @@ export default function LayoutPanels() {
 	const { showMap } = useContext(ShowMapContext);
 
 	const [visibility, setVisibility] = useState("visible");
-
-	const mapContentTypeToPanel = (
-		activeContent?: ActiveContent<SignalType>
-	) => {
-		if (activeContent?.signalMetadata?.signal_type) {
-			const signalType = mapActiveContentToPinType(activeContent);
-			if (signalType === PinType.Chat)
-				return (
-					<>
-						<Chat></Chat>
-					</>
-				);
-			if (signalType === PinType.Trade)
-				return (
-					<>
-						<Trade></Trade>
-					</>
-				);
-			if (signalType === PinType.Event)
-				return (
-					<>
-						<Event></Event>
-					</>
-				);
-		}
-	};
 
 	useEffect(() => {
 		if (location.pathname !== "/") {
@@ -57,7 +26,6 @@ export default function LayoutPanels() {
 
 	return (
 		<>
-			{/* Primary column */}
 			<section
 				aria-labelledby="primary-heading"
 				className={`min-w-0 flex-1 h-full flex-col ${visibility}`}
@@ -65,7 +33,6 @@ export default function LayoutPanels() {
 				<Map />
 			</section>
 
-			{/* Secondary column (hidden on smaller screens) */}
 			<aside
 				className={`hidden lg:block lg:flex-shrink-0 lg:order-first ${visibility}`}
 			>
@@ -75,7 +42,9 @@ export default function LayoutPanels() {
 					{activeContent?.isNewPin ? (
 						<InteractionBox />
 					) : (
-						<>{mapContentTypeToPanel(activeContent)}</>
+						<>
+							<SignalContainer />
+						</>
 					)}
 				</div>
 			</aside>

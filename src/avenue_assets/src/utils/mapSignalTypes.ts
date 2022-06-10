@@ -1,4 +1,4 @@
-import { ActiveContent } from "../context/map";
+import { ActiveContent } from "./types";
 
 export type SignalPin<T> = {
     contents: T;
@@ -22,7 +22,7 @@ export type Chat = {
 export type Trade = {
     title: string;
     description: string;
-    price: number;
+    price: string;
 }
 
 export enum PinType {

@@ -10,12 +10,19 @@ import {
 	ThumbUpIcon as ThumbUpIconSolid,
 } from "@heroicons/react/solid";
 import { UserContext } from "../context/user";
-import { ActiveContent } from "../context/map";
+import { MapContext } from "../context/map";
 import { Principal } from "@dfinity/principal";
+import { ActiveContent } from "../utils/types";
+
 const Rating = ({ signal }: { signal: ActiveContent<any> }) => {
+	const { activeContent } = useContext(MapContext);
 	const { authenticatedActor, authenticatedUser } = useContext(UserContext);
 
 	const [alreadyVoted, setAlreadyVoted] = useState(true);
+
+	useEffect(() => {
+		userCanRate();
+	}, [authenticatedActor, activeContent]);
 
 	const userCanRate = async () => {
 		const canRate = await authenticatedActor?.principal_can_rate_location(
@@ -29,10 +36,6 @@ const Rating = ({ signal }: { signal: ActiveContent<any> }) => {
 		setAlreadyVoted(!canRate);
 	};
 
-	useEffect(() => {
-		userCanRate();
-	}, [authenticatedActor]);
-
 	const submitRating = async (positive: boolean) => {
 		await authenticatedActor?.leave_rating(
 			{
@@ -43,6 +46,7 @@ const Rating = ({ signal }: { signal: ActiveContent<any> }) => {
 		);
 		setAlreadyVoted(true);
 	};
+
 	return (
 		<div
 			className="flex flex-row-reverse items-center"
