@@ -1,28 +1,25 @@
 export const idlFactory = ({ IDL }) => {
   const Tokens = IDL.Record({ 'amount' : IDL.Nat64 });
-  const Coordinate_2 = IDL.Record({
-    'lat' : IDL.Float64,
-    'long' : IDL.Float64,
-  });
-  const SignalType_2 = IDL.Variant({
+  const Coordinate = IDL.Record({ 'lat' : IDL.Float64, 'long' : IDL.Float64 });
+  const SignalType = IDL.Variant({
     'Event' : IDL.Null,
     'Chat' : IDL.Null,
     'Trade' : IDL.Null,
   });
-  const Message_2 = IDL.Record({
+  const Message = IDL.Record({
     'contents' : IDL.Text,
     'time' : IDL.Nat64,
     'identity' : IDL.Text,
   });
-  const Signal_2 = IDL.Record({
+  const Signal = IDL.Record({
     'id' : IDL.Int,
     'updated_at' : IDL.Nat64,
-    'signal_type' : SignalType_2,
-    'messages' : IDL.Vec(Message_2),
+    'signal_type' : SignalType,
+    'messages' : IDL.Vec(Message),
     'metadata' : IDL.Text,
     'user' : IDL.Principal,
     'created_at' : IDL.Nat64,
-    'location' : Coordinate_2,
+    'location' : Coordinate,
   });
   const ProposalState = IDL.Variant({
     'Failed' : IDL.Text,
@@ -40,6 +37,7 @@ export const idlFactory = ({ IDL }) => {
   const Proposal = IDL.Record({
     'id' : IDL.Nat64,
     'votes_no' : Tokens,
+    'metadata' : IDL.Text,
     'voters' : IDL.Vec(IDL.Principal),
     'state' : ProposalState,
     'timestamp' : IDL.Nat64,
@@ -57,7 +55,7 @@ export const idlFactory = ({ IDL }) => {
     'proposal_vote_threshold' : Tokens,
     'proposal_submission_deposit' : Tokens,
   });
-  const Profile_2 = IDL.Record({
+  const Profile = IDL.Record({
     'profile_pic_url' : IDL.Text,
     'name' : IDL.Text,
   });
@@ -82,47 +80,47 @@ export const idlFactory = ({ IDL }) => {
   const VoteResult = IDL.Variant({ 'Ok' : ProposalState, 'Err' : IDL.Text });
   return IDL.Service({
     'account_balance' : IDL.Func([], [Tokens], ['query']),
-    'add_new_message' : IDL.Func([Coordinate_2, IDL.Text], [Signal_2], []),
+    'add_new_message' : IDL.Func([Coordinate, IDL.Text], [Signal], []),
     'create_account' : IDL.Func([IDL.Principal, IDL.Nat64], [], []),
-    'create_new_chat' : IDL.Func(
-        [Coordinate_2, IDL.Text, SignalType_2],
-        [Signal_2],
+    'create_new_signal' : IDL.Func(
+        [Coordinate, IDL.Text, SignalType],
+        [Signal],
         [],
       ),
-    'delete_signal' : IDL.Func([Coordinate_2], [], []),
-    'get_all_signals' : IDL.Func([], [IDL.Vec(Signal_2)], ['query']),
+    'delete_signal' : IDL.Func([Coordinate], [], []),
+    'get_all_signals' : IDL.Func([], [IDL.Vec(Signal)], ['query']),
     'get_principal_for_signal_coordinates' : IDL.Func(
-        [Coordinate_2],
+        [Coordinate],
         [IDL.Principal],
         ['query'],
       ),
     'get_proposal' : IDL.Func([IDL.Nat64], [IDL.Opt(Proposal)], []),
-    'get_rating_for_signal' : IDL.Func([Coordinate_2], [IDL.Int32], ['query']),
-    'get_signal' : IDL.Func([Coordinate_2], [Signal_2], []),
+    'get_rating_for_signal' : IDL.Func([Coordinate], [IDL.Int32], ['query']),
+    'get_signal' : IDL.Func([Coordinate], [Signal], []),
     'get_signals_for_user' : IDL.Func(
         [IDL.Principal],
-        [IDL.Vec(Signal_2)],
+        [IDL.Vec(Signal)],
         ['query'],
       ),
     'get_system_params' : IDL.Func([], [SystemParams], []),
     'get_user_for_signal_location' : IDL.Func(
-        [Coordinate_2],
-        [Profile_2],
+        [Coordinate],
+        [Profile],
         ['query'],
       ),
-    'get_user_self' : IDL.Func([], [Profile_2], ['query']),
-    'leave_rating' : IDL.Func([Coordinate_2, IDL.Bool], [], []),
+    'get_user_self' : IDL.Func([], [Profile], ['query']),
+    'leave_rating' : IDL.Func([Coordinate, IDL.Bool], [], []),
     'list_accounts' : IDL.Func([], [IDL.Vec(Account)], ['query']),
     'list_proposals' : IDL.Func([], [IDL.Vec(Proposal)], []),
     'principal_can_rate_location' : IDL.Func(
-        [IDL.Principal, Coordinate_2],
+        [IDL.Principal, Coordinate],
         [IDL.Bool],
         ['query'],
       ),
     'submit_proposal' : IDL.Func([ProposalPayload], [SubmitProposalResult], []),
     'transfer' : IDL.Func([TransferArgs], [TransferResult], []),
     'update_system_params' : IDL.Func([UpdateSystemParamsPayload], [], []),
-    'update_user' : IDL.Func([Profile_2], [], []),
+    'update_user' : IDL.Func([Profile], [], []),
     'vote' : IDL.Func([VoteArgs], [VoteResult], []),
     'whoami' : IDL.Func([], [IDL.Principal], ['query']),
   });

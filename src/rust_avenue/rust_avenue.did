@@ -1,40 +1,35 @@
-type Message_2 = record {
+type Message = record {
     "identity": text;
     "contents": text;
     "time": nat64;
 };
 
-type Message = Message_2;
-
-type Profile_2 = record {
+type Profile = record {
     "name": text;
     "profile_pic_url": text;
 };
-type Profile = Profile_2;
 
-type Coordinate_2 = record {
+type Coordinate = record {
     "lat": float64;
     "long": float64;
 };
 
-type SignalType_2 = variant {
+type SignalType = variant {
   Chat;
   Trade;
   Event;
 };
 
-type Signal_2 = record {
+type Signal = record {
     "created_at": nat64;
     "updated_at": nat64;
     "user": principal;
-    "location": Coordinate_2;
+    "location": Coordinate;
     "metadata": text;
     "id": int;
-    "messages": vec Message_2;
-    "signal_type": SignalType_2;
+    "messages": vec Message;
+    "signal_type": SignalType;
 };
-
-type Signal = Signal_2;
 
 type BasicDaoStableStorage = record {
     accounts: vec Account;
@@ -72,6 +67,7 @@ type ProposalState = variant {
 
 type Proposal = record {
     id: nat64;
+    metadata: text;
     timestamp: nat64;
     proposer: principal;
     payload: ProposalPayload;
@@ -166,24 +162,24 @@ type ManageResult = variant {
 
 service : (custodians : opt vec principal) -> {
     // User related
-    "update_user": (Profile_2) -> ();
-    "get_user_self": () -> (Profile_2) query;
+    "update_user": (Profile) -> ();
+    "get_user_self": () -> (Profile) query;
     "whoami": () -> (principal) query;
-    "get_user_for_signal_location": (Coordinate_2) -> (Profile_2) query;
+    "get_user_for_signal_location": (Coordinate) -> (Profile) query;
     
     // signal related
-    "create_new_chat": (Coordinate_2, text, SignalType_2) -> (Signal_2);
-    "get_signal": (Coordinate_2) -> (Signal_2);
-    "add_new_message": (Coordinate_2, text) -> (Signal_2);
-    "get_all_signals": () -> (vec Signal_2) query;
-    "get_signals_for_user": (principal) -> (vec Signal_2) query;
-    "delete_signal": (Coordinate_2) -> ();
-    "get_principal_for_signal_coordinates": (Coordinate_2) -> (principal) query;
+    "create_new_signal": (Coordinate, text, SignalType) -> (Signal);
+    "get_signal": (Coordinate) -> (Signal);
+    "add_new_message": (Coordinate, text) -> (Signal);
+    "get_all_signals": () -> (vec Signal) query;
+    "get_signals_for_user": (principal) -> (vec Signal) query;
+    "delete_signal": (Coordinate) -> ();
+    "get_principal_for_signal_coordinates": (Coordinate) -> (principal) query;
 
     // Ratings related functionality
-    "leave_rating": (Coordinate_2, bool) -> ();
-    "get_rating_for_signal": (Coordinate_2) -> (int32) query;
-    "principal_can_rate_location": (principal, Coordinate_2) -> (bool) query;
+    "leave_rating": (Coordinate, bool) -> ();
+    "get_rating_for_signal": (Coordinate) -> (int32) query;
+    "principal_can_rate_location": (principal, Coordinate) -> (bool) query;
 
     // DAO related functionality
     get_system_params: () -> (SystemParams);

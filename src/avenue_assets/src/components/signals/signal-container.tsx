@@ -9,7 +9,7 @@ import {
 } from "../../utils/mapSignalTypes";
 import { UserContext } from "../../context/user";
 import {
-	Profile_2,
+	Profile,
 	_SERVICE,
 } from "../../../../declarations/rust_avenue/rust_avenue.did";
 
@@ -39,7 +39,7 @@ export default function SignalContainer() {
 	}>(MapContext as any);
 	const { authenticatedActor } = useContext(UserContext);
 	const { allSignals } = useContext(MapContext);
-	const [pinUser, setPinUser] = useState<Profile_2>();
+	const [pinUser, setPinUser] = useState<Profile>();
 	const [activity, setActivity] = useState<Array<Activity>>([]);
 
 	const getUserForSignal = async () => {

@@ -2,17 +2,17 @@ import { IDL } from "@dfinity/candid";
 import { encode } from "@dfinity/candid/lib/cjs/idl";
 import { Principal } from "@dfinity/principal";
 import React, { useContext, useEffect, useState } from "react";
-import { rust_avenue, canisterId } from "../../../declarations/rust_avenue";
+import { canisterId } from "../../../declarations/rust_avenue";
 import {
 	Proposal,
-	Signal_2,
+	Signal,
 	SubmitProposalResult,
 	Tokens,
 } from "../../../declarations/rust_avenue/rust_avenue.did";
 import { UserContext } from "./user";
 
 export type DaoContextType = {
-	userSignals: Array<Signal_2> | undefined;
+	userSignals: Array<Signal> | undefined;
 	proposals: Array<Proposal> | undefined;
 	accountBalance: Tokens | undefined;
 	makeProposal:
@@ -30,7 +30,7 @@ export const DaoContext = React.createContext<DaoContextType>({} as any);
 const DaoProvider = ({ children }: any) => {
 	const { authenticatedActor } = useContext(UserContext);
 
-	const [userSignals, setUserSignals] = useState<Array<Signal_2>>([]);
+	const [userSignals, setUserSignals] = useState<Array<Signal>>([]);
 	const [proposals, setProposals] = useState<Array<Proposal>>();
 	const [accountBalance, setAccountBalance] = useState<Tokens>();
 	const [makeProposal, setMakeProposal] =

@@ -74,7 +74,7 @@ pub fn internal_delete_signal(location: IncomingCoordinate, principal_id: Princi
 }
 
 #[update]
-async fn create_new_chat(
+async fn create_new_signal(
     location: IncomingCoordinate,
     initial_contents: String,
     signal_type: SignalType,

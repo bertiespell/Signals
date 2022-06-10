@@ -1,6 +1,6 @@
 import { Principal } from "@dfinity/principal";
 import { Marker } from "leaflet";
-import { SignalType_2 } from "../../../declarations/rust_avenue/rust_avenue.did";
+import { SignalType as RustSignalType } from "../../../declarations/rust_avenue/rust_avenue.did";
 
 import {
 	EventSignal,
@@ -48,7 +48,7 @@ export type Signal<T extends SignalType> = {
 		lat: number;
 		long: number;
 	};
-	signal_type: SignalType_2;
+	signal_type: RustSignalType;
 };
 
 export type ActiveContent<T extends SignalType> = {

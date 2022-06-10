@@ -294,7 +294,7 @@ const MapProvider = ({ children }: any) => {
 			try {
 				const signal: Signal<any> = await (
 					authenticatedActor as any
-				)?.create_new_chat(
+				)?.create_new_signal(
 					{ lat: location.lat, long: location.lng },
 					JSON.stringify(contents),
 					signalType

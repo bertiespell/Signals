@@ -9,14 +9,14 @@ import { Actor, ActorSubclass, HttpAgent } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 import {
 	_SERVICE,
-	Profile_2,
+	Profile,
 } from "../../../declarations/rust_avenue/rust_avenue.did";
 
 export const UserContext = React.createContext<{
 	login: any;
 	authenticatedActor: ActorSubclass<_SERVICE> | undefined;
 	authenticatedUser: Principal | undefined;
-	user: Profile_2 | undefined;
+	user: Profile | undefined;
 }>({
 	login: undefined,
 	authenticatedActor: undefined,
@@ -29,7 +29,7 @@ const UserProvider = ({ children }: any) => {
 	const [authenticatedActor, setAuthenticatedActor] =
 		useState<ActorSubclass<_SERVICE>>();
 	const [authenticatedUser, setAuthenticatedUser] = useState<Principal>();
-	const [user, setUser] = useState<Profile_2>();
+	const [user, setUser] = useState<Profile>();
 
 	useEffect(() => {
 		checkUserMetadata();
