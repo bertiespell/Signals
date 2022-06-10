@@ -1,13 +1,20 @@
+import { useContext, useEffect, useRef } from "react";
+import { MapContext } from "./context/map";
 import { Size, useWindowSize } from "./hooks/window-size";
 
 const Map = () => {
 	const size: Size = useWindowSize();
+	const myRef = useRef(null);
+
+	const { setRefReady } = useContext(MapContext);
+
+	useEffect(() => {
+		setRefReady();
+	}, []);
 
 	return (
 		<main>
-			<div className="max-w-7xl mx-auto ">
-				<div id="map" style={{ height: size.height }}></div>
-			</div>
+			<div ref={myRef} id="map" style={{ height: size.height }}></div>
 		</main>
 	);
 };

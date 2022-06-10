@@ -208,11 +208,21 @@ export default function Sidebar() {
 								className=" py-4 flex items-center justify-center"
 								style={{ backgroundColor: "#0075b0" }}
 							>
-								<img
-									className="w-max"
-									src="../../signal-logo.png"
-									alt="Workflow"
-								/>
+								<button
+									onClick={(e) =>
+										handleNavEvent(e, {
+											name: "About",
+											location: "/about",
+											icon: QuestionMarkCircleIcon,
+										})
+									}
+								>
+									<img
+										className="w-max"
+										src="../../signal-logo.png"
+										alt="Workflow"
+									/>
+								</button>
 							</div>
 							<nav
 								aria-label="Sidebar"

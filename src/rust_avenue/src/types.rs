@@ -20,6 +20,7 @@ pub struct Profile {
 pub struct User {
     pub name: String,
     pub profile_pic_url: String,
+    pub location: IncomingCoordinate,
 }
 
 /// The incoming coordinate is an f64 which can implement CandidType
@@ -77,7 +78,7 @@ pub struct ProposalParams {
 
 #[derive(Clone, Copy, Debug, Default, CandidType, Deserialize, PartialEq, PartialOrd)]
 pub struct SignalsTokens {
-    pub amount_e8s: u64,
+    pub amount: u64,
 }
 
 impl Add for SignalsTokens {
@@ -85,20 +86,20 @@ impl Add for SignalsTokens {
 
     fn add(self, other: Self) -> Self {
         SignalsTokens {
-            amount_e8s: self.amount_e8s + other.amount_e8s,
+            amount: self.amount + other.amount,
         }
     }
 }
 
 impl AddAssign for SignalsTokens {
     fn add_assign(&mut self, other: Self) {
-        self.amount_e8s += other.amount_e8s;
+        self.amount += other.amount;
     }
 }
 
 impl SubAssign for SignalsTokens {
     fn sub_assign(&mut self, other: Self) {
-        self.amount_e8s -= other.amount_e8s;
+        self.amount -= other.amount;
     }
 }
 
@@ -106,7 +107,7 @@ impl Mul<u64> for SignalsTokens {
     type Output = SignalsTokens;
     fn mul(self, rhs: u64) -> Self {
         SignalsTokens {
-            amount_e8s: self.amount_e8s * rhs,
+            amount: self.amount * rhs,
         }
     }
 }

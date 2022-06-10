@@ -6,6 +6,7 @@ module.exports = {
 	content: [
 		"./src/avenue_assets/**/*.{js,jsx,ts,tsx}",
 		"node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}",
+		"./node_modules/flowbite/**/*.js",
 	],
 	theme: {
 		extend: {

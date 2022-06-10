@@ -21,23 +21,22 @@ impl Default for SystemParams {
             tokens_received_for_upvoted_signal: ProposalParams { amount: 1 },
             downvotes_required_before_delete: ProposalParams { amount: 1 },
             upvotes_required_before_token_minting: ProposalParams { amount: 1 },
-            transfer_fee: SignalsTokens { amount_e8s: 0 },
-            proposal_vote_threshold: SignalsTokens { amount_e8s: 1 },
-            proposal_submission_deposit: SignalsTokens { amount_e8s: 0 },
+            transfer_fee: SignalsTokens { amount: 0 },
+            proposal_vote_threshold: SignalsTokens { amount: 1 },
+            proposal_submission_deposit: SignalsTokens { amount: 0 },
         }
     }
 }
 
 impl SignalDaoService {
     pub fn create_account(&mut self, user: Principal, amount: u64) {
-        self.accounts
-            .insert(user, SignalsTokens { amount_e8s: amount });
+        self.accounts.insert(user, SignalsTokens { amount: amount });
     }
 
     pub fn mint(&mut self, user: Principal, amount: u64) {
         match self.accounts.get_mut(&user) {
             Some(tokens) => {
-                *tokens = *tokens + SignalsTokens { amount_e8s: amount };
+                *tokens = *tokens + SignalsTokens { amount: amount };
             }
             None => {
                 self.create_account(user, amount);

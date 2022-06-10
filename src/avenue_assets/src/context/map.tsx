@@ -30,6 +30,7 @@ type MapContextType<T extends SignalType> = {
 	map: any;
 	sendMessage: any;
 	createNewActivePin: any;
+	setRefReady: any;
 };
 
 export const MapContext = React.createContext<MapContextType<SignalType>>(
@@ -65,6 +66,14 @@ export type ActiveContent<T extends SignalType> = {
 	isNewPin: boolean;
 };
 
+const defaultLocation = {
+	coords: {
+		latitude: 51.508039,
+		longitude: -0.128069,
+	},
+	timestamp: Date.now(),
+};
+
 const MapProvider = <T extends SignalType>({ children }: any) => {
 	const { authenticatedActor, authenticatedUser } = useContext(UserContext);
 
@@ -76,6 +85,29 @@ const MapProvider = <T extends SignalType>({ children }: any) => {
 	const [allSignals, setAllSignals] = useState<Array<ActiveContent<T>>>([]);
 
 	const [newPinContent, setNewPinContent] = useState<ActiveContent<T>>();
+	const [refReady, setRefAsReady] = useState(false);
+
+	const setRefReady = () => {
+		setRefAsReady(true);
+	};
+
+	useEffect(() => {
+		if (!mapInitialised && refReady) {
+			setMapInitialized(true);
+			const location = defaultLocation;
+
+			var map = L.map("map").setView(
+				[location.coords.latitude, location.coords.longitude],
+				13
+			);
+			setMap(map);
+			L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+				maxZoom: 19,
+			}).addTo(map);
+			map.attributionControl.setPrefix("");
+			addNewPin(location as any, map);
+		}
+	}, [refReady]);
 
 	const sendMessage = async (
 		activeContent: ActiveContent<T>,
@@ -194,7 +226,6 @@ const MapProvider = <T extends SignalType>({ children }: any) => {
 
 	const createNewActivePin = () => {
 		if (!allSignals.find((signal) => signal.isNewPin === true)) {
-			// create a new pin
 			const location = (map as any).getCenter();
 			addNewPin(
 				{
@@ -248,40 +279,57 @@ const MapProvider = <T extends SignalType>({ children }: any) => {
 		setNewPinContent(active as any);
 	};
 
-	useEffect(() => {
-		// get browser's current location
-		window.navigator.geolocation.getCurrentPosition(
-			(location) => {
-				if (!mapInitialised) {
-					try {
-						setMapInitialized(true);
-						// initialize the map to this view
-						var map = L.map("map").setView(
-							[
-								location.coords.latitude,
-								location.coords.longitude,
-							],
-							13
-						);
-						setMap(map);
+	const setLocation = (location: GeolocationPosition, map: any) => {
+		if (refReady && map) {
+			if (!mapInitialised && refReady && map) {
+				setMapInitialized(true);
+				var map = L.map("map").setView(
+					[location.coords.latitude, location.coords.longitude],
+					13
+				);
+				setMap(map);
+				L.tileLayer(
+					"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+					{
+						maxZoom: 19,
+					}
+				).addTo(map);
+				map.attributionControl.setPrefix("");
+				addNewPin(location, map);
+			} else {
+				map.setView(
+					[location.coords.latitude, location.coords.longitude],
+					13
+				);
+				deleteActiveContent();
 
-						L.tileLayer(
-							"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-							{
-								maxZoom: 19,
-								attribution: "© OpenStreetMap",
-							}
-						).addTo(map);
-
-						addNewPin(location, map);
-					} catch {}
-				}
-			},
-			(error) => {
-				console.log("error", error);
+				addNewPin(location, map);
 			}
-		);
-	});
+		}
+	};
+
+	const deleteActiveContent = () => {
+		if (activeContent) {
+			activeContent.isNewPin = false;
+			if (map) {
+				(map as any).removeLayer(activeContent?.marker);
+			}
+		}
+	};
+
+	const getLocationWithMap = async () => {
+		if (map) {
+			const curried = (location: any) => {
+				setLocation(location, map);
+			};
+
+			await window.navigator.geolocation.getCurrentPosition(curried);
+		}
+	};
+
+	useEffect(() => {
+		getLocationWithMap();
+	}, [refReady, mapInitialised, map]);
 
 	const [pinType, setPinType] = useState(PinType.Chat);
 
@@ -344,6 +392,7 @@ const MapProvider = <T extends SignalType>({ children }: any) => {
 				map,
 				sendMessage,
 				createNewActivePin,
+				setRefReady,
 			}}
 		>
 			{children}

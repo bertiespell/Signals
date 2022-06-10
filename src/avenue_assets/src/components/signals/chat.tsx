@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import {
@@ -10,6 +10,7 @@ import { ActiveContent, MapContext } from "../../context/map";
 import { Chat } from "../../utils/mapSignalTypes";
 import { UserContext } from "../../context/user";
 import { _SERVICE } from "../../../../declarations/rust_avenue/rust_avenue.did";
+import Rating from "../Rating";
 
 export type Person = {
 	name: string;
@@ -36,6 +37,8 @@ function classNames(...classes: any) {
 }
 
 export default function Chat() {
+	const myRef = useRef(null);
+
 	const { activeContent, sendMessage } = useContext<{
 		sendMessage: any;
 		activeContent: ActiveContent<Chat>;
@@ -47,11 +50,14 @@ export default function Chat() {
 		setNewMessage("");
 		setActivity([]);
 		addChat();
+		if (myRef) {
+			(myRef as any).current.scrollIntoView();
+		}
 	}, [allSignals, activeContent]);
 
 	const sendMessageEv = async (e: Event, message: string) => {
 		e.preventDefault();
-		if (activeContent?.signalMetadata && authenticatedActor) {
+		if (activeContent?.signalMetadata && authenticatedActor && message) {
 			sendMessage(activeContent, message);
 			setNewMessage("");
 			setActivity([]);
@@ -110,6 +116,8 @@ export default function Chat() {
 							{activeContent?.signalMetadata?.metadata.title}
 						</h3>
 
+						<Rating signal={activeContent} />
+
 						<div className="divide-y divide-gray-200">
 							<div className="pt-6">
 								{/* Activity feed*/}
@@ -148,20 +156,11 @@ export default function Chat() {
 																<div className="min-w-0 flex-1">
 																	<div>
 																		<div className="text-sm">
-																			<a
-																				href={
-																					item
-																						.person
-																						.href
-																				}
-																				className="font-medium text-gray-900"
-																			>
-																				{
-																					item
-																						.person
-																						.name
-																				}
-																			</a>
+																			{
+																				item
+																					.person
+																					.name
+																			}
 																		</div>
 																		<p className="mt-0.5 text-sm text-gray-500">
 																			Commented{" "}
@@ -354,7 +353,10 @@ export default function Chat() {
 														}
 													/>
 												</div>
-												<div className="mt-6 flex items-center justify-end space-x-4">
+												<div
+													className="mt-6 flex items-center justify-end space-x-4"
+													ref={myRef}
+												>
 													<button
 														type="submit"
 														className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"

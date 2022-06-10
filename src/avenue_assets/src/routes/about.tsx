@@ -112,6 +112,20 @@ export default function About() {
 							so feel free to reach out.
 						</p>
 						<p className="text-lg text-gray-500">
+							Who am I? I'm a full stack developer, I've worked
+							helping to build a 3D graphics library, a blockchain
+							and most recently building backend and payment
+							systems for millions of users at Sketch. I'm really
+							passionate about trying to use blockchain to solve
+							real world problems, and building beautiful products
+							that really benefit people. I'm currently in the
+							process of turning my ideas into something more
+							concrete, I hope to find a path to be able to
+							sustain myself building in this space... so, if you
+							know of any, or want to link up, let me know. You
+							can find me on any of the links below.
+						</p>
+						<p className="text-lg text-gray-500">
 							Made with &lt;3 by{" "}
 							<a href="https://linktr.ee/bertiespell">
 								Bertie Spell

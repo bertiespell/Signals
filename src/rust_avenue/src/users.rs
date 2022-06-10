@@ -29,26 +29,18 @@ fn get_user_self() -> User {
 }
 
 #[query]
-fn get(name: String) -> User {
-    let found_user = User::default();
+fn get_from_principal(principal: Principal) -> User {
     USER_STORE.with(|user_store| {
         user_store
             .borrow()
-            .values()
+            .get(&principal)
             .cloned()
-            .collect::<Vec<User>>()
-            .iter()
-            .map(|user| {
-                if user.name == name {
-                    found_user = user.clone();
-                }
-            })
-    });
-    return found_user;
+            .unwrap_or_else(|| User::default())
+    })
 }
 
 #[update]
-fn update(user: User) {
+fn update_user(user: User) {
     let id = caller();
 
     USER_STORE.with(|user_store| {

@@ -60,14 +60,9 @@ export default function LayoutPanels() {
 			{/* Primary column */}
 			<section
 				aria-labelledby="primary-heading"
-				className={`min-w-0 flex-1 h-full flex flex-col overflow-y-auto lg:order-last ${visibility}`}
+				className={`min-w-0 flex-1 h-full flex-col ${visibility}`}
 			>
-				<h1 id="primary-heading" className="sr-only">
-					Account
-				</h1>
-				<div>
-					<Map />
-				</div>
+				<Map />
 			</section>
 
 			{/* Secondary column (hidden on smaller screens) */}

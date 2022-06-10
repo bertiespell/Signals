@@ -57,7 +57,7 @@ export const mapSignalTypeToIcon = (L: any, signalType: SignalType_2) => {
     });
 
     var tradeIcon = L.icon({
-        iconUrl: "../../trade-two.png",
+        iconUrl: "../../basket.png",
         iconSize: [40, 40],
         iconAnchor: [40, 40],
         popupAnchor: [-3, -76],

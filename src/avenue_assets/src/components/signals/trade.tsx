@@ -10,6 +10,7 @@ import {
 } from "@heroicons/react/solid";
 import { UserContext } from "../../context/user";
 import { _SERVICE } from "../../../../declarations/rust_avenue/rust_avenue.did";
+import Rating from "../Rating";
 
 function classNames(...classes: any) {
 	return classes.filter(Boolean).join(" ");
@@ -70,50 +71,18 @@ export default function Trade() {
 
 	const sendMessageEv = async (e: Event, message: string) => {
 		e.preventDefault();
-		if (activeContent?.signalMetadata && authenticatedActor) {
+		if (activeContent?.signalMetadata && authenticatedActor && message) {
 			sendMessage(activeContent, message);
 		}
 	};
-
-	// const sendMessage = async (e: Event, message: string) => {
-	// 	e.preventDefault();
-	// 	if (activeContent?.signalMetadata && authenticatedActor) {
-	// 		const signal = await (
-	// 			authenticatedActor as unknown as ActorSubclass<_SERVICE>
-	// 		).add_new_message(activeContent?.signalMetadata?.location, message);
-	// 		const newActivity: Array<Activity> = [];
-	// 		signal.messages.slice(1).map((message) => {
-	// 			console.log(message);
-	// 			newActivity.push({
-	// 				comment: message.contents,
-	// 				date: message.time as any,
-	// 				type: "comment",
-	// 				imageUrl:
-	// 					"https://img.icons8.com/external-kiranshastry-lineal-color-kiranshastry/64/undefined/external-user-interface-kiranshastry-lineal-color-kiranshastry.png",
-	// 				id: uuidv4().toString(),
-	// 				person: {
-	// 					name: message.identity,
-	// 					href: "",
-	// 				},
-	// 			});
-	// 		});
-	// 		setNewMessage("");
-	// 		setActivity(newActivity);
-	// 	}
-	// };
-
-	// useEffect(() => {
-	// 	setNewMessage("");
-	// 	setActivity([]);
-	// 	setTrade(null as any);
-	// 	addContent();
-	// }, [activeContent]);
 
 	return (
 		<div className="p-5 pt-20 mt-8 lg:mt-0">
 			<h3 className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
 				{trade?.contents.title}
 			</h3>
+			<Rating signal={activeContent} />
+
 			<div className="mt-5 prose prose-indigo text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
 				<p className="text-lg text-gray-500">
 					{trade?.contents.description}

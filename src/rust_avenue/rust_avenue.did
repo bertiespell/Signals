@@ -8,8 +8,7 @@ type Message = Message_2;
 
 type Profile_2 = record {
     "name": text;
-    "description": text;
-    "keywords": vec text;
+    "profile_pic_url": text;
 };
 type Profile = Profile_2;
 
@@ -44,7 +43,7 @@ type BasicDaoStableStorage = record {
 };
 
 type Tokens = record {
-    amount_e8s: nat64;
+    amount: nat64;
 };
 
 type ProposalParams = record {
@@ -143,10 +142,31 @@ type UpdateSystemParamsPayload = record {
     proposal_submission_deposit: opt Tokens;
 };
 
-service : {
+type EventPass = record {
+    canister : principal;
+    index : TokenIndex;
+};
+
+type TokenIndex = nat64;
+
+type Error = variant {
+    CanisterError : record { 
+        message : text;
+    };
+    CannotNotify;
+    NoSuchToken;
+    NotOwner;
+    Unauthorized;
+};
+
+type ManageResult = variant {
+    Ok;
+    Err : Error;
+};
+
+service : (custodians : opt vec principal) -> {
     // User related
-    "get": (text) -> (Profile_2) query;
-    "update": (Profile_2) -> ();
+    "update_user": (Profile_2) -> ();
     "get_user_self": (text) -> (text) query;
     "whoami": () -> (principal) query;
     
@@ -162,6 +182,7 @@ service : {
     // Ratings related functionality
     "leave_rating": (Coordinate_2, bool) -> ();
     "get_rating_for_signal": (Coordinate_2) -> (int32) query;
+    "principal_can_rate_location": (principal, Coordinate_2) -> (bool) query;
 
     // DAO related functionality
     get_system_params: () -> (SystemParams);
@@ -174,4 +195,15 @@ service : {
     vote: (VoteArgs) -> (VoteResult);
     update_system_params: (UpdateSystemParamsPayload) -> ();
     create_account: (principal, nat64) -> ();
+
+    // Event passes
+    // is_authorized : () -> (bool) query;
+    // bought_passes : () -> (vec EventPass) query;
+    // set_authorized : (principal, bool) -> (ManageResult);
+    // transfer : (EventPass, principal, notify: opt bool) -> (ManageResult);
+    // register : (EventPass) -> (ManageResult);
+
+    // callbacks
+    // onDIP721Received : (principal, principal, TokenIndex, blob) -> ();
+    // tokenTransferNotification : (text, variant { address : text; "principal" : principal; }, nat, blob) -> (opt nat);
 }

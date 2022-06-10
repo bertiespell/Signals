@@ -7,6 +7,7 @@ import {
 import App from './App';
 import '../assets/main.css';
 import About from './routes/about';
+import "flowbite";
 
 
 const root = ReactDOM.createRoot(

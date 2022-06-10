@@ -53,7 +53,7 @@ export default function TypeSelection({
 					<div className="flex-shrink-0 flex items-center px-4">
 						<img
 							className="h-8 w-auto"
-							src="../../trade-two.png"
+							src="../../basket.png"
 							alt="Workflow"
 						/>
 					</div>

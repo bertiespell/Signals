@@ -66,11 +66,24 @@ Then `npm start` on the FE (which is where the actor is looking in the User Cont
 -   Create ways to pay in ICP via app for Trades
 -   Create NFT ticketed app for Events
 -   Give users greater control over their signals - you should be able to edit and delete your own
--   IPFS integration
+-   IPFS integration for profile pics, and also for the marketplace
 -   buying and selling
 -   better ways to launch DAOs
 -   Add bookmarks/favourites to chats
 -   list the chats you're in
+-   Paginate data
+-   Add polling for messages to support real time chat
+-   Make the code generally a lot better lol
+-   Add searches for signals (by description, chat content, etc)
+-   Add searchs for location (currently you have to scroll the map, it's better UX to search for places you're interested in)
+-   Make the app mobile friends, I've kind of ignored this for now
+-   Use React Leaflet instead of all the custom stuff I added https://react-leaflet.js.org/docs/example-draggable-marker/
+
+Extension Ideas
+
+-   Integrate with other companies/solutions working on "Proof of location" (IMO this is still a big open question not just for blockchain but tech in general)
+-   Proper DAO launcher (using DAO templates)
+-   Intergrate proper buying/selling of items and marketplace
 
 Welcome to Signals
 

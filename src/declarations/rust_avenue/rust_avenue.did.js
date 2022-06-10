@@ -1,5 +1,5 @@
 export const idlFactory = ({ IDL }) => {
-  const Tokens = IDL.Record({ 'amount_e8s' : IDL.Nat64 });
+  const Tokens = IDL.Record({ 'amount' : IDL.Nat64 });
   const Coordinate_2 = IDL.Record({
     'lat' : IDL.Float64,
     'long' : IDL.Float64,
@@ -23,11 +23,6 @@ export const idlFactory = ({ IDL }) => {
     'user' : IDL.Principal,
     'created_at' : IDL.Nat64,
     'location' : Coordinate_2,
-  });
-  const Profile_2 = IDL.Record({
-    'name' : IDL.Text,
-    'description' : IDL.Text,
-    'keywords' : IDL.Vec(IDL.Text),
   });
   const ProposalState = IDL.Variant({
     'Failed' : IDL.Text,
@@ -78,6 +73,10 @@ export const idlFactory = ({ IDL }) => {
     'proposal_vote_threshold' : IDL.Opt(Tokens),
     'proposal_submission_deposit' : IDL.Opt(Tokens),
   });
+  const Profile_2 = IDL.Record({
+    'profile_pic_url' : IDL.Text,
+    'name' : IDL.Text,
+  });
   const Vote = IDL.Variant({ 'No' : IDL.Null, 'Yes' : IDL.Null });
   const VoteArgs = IDL.Record({ 'vote' : Vote, 'proposal_id' : IDL.Nat64 });
   const VoteResult = IDL.Variant({ 'Ok' : ProposalState, 'Err' : IDL.Text });
@@ -91,8 +90,6 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'delete_signal' : IDL.Func([Coordinate_2], [], []),
-    'get' : IDL.Func([IDL.Text], [Profile_2], ['query']),
-    'getSelf' : IDL.Func([], [Profile_2], ['query']),
     'get_all_signals' : IDL.Func([], [IDL.Vec(Signal_2)], ['query']),
     'get_proposal' : IDL.Func([IDL.Nat64], [IDL.Opt(Proposal)], []),
     'get_rating_for_signal' : IDL.Func([Coordinate_2], [IDL.Int32], ['query']),
@@ -108,17 +105,21 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Principal],
         ['query'],
       ),
-    'greet' : IDL.Func([IDL.Text], [IDL.Text], ['query']),
+    'get_user_self' : IDL.Func([IDL.Text], [IDL.Text], ['query']),
     'leave_rating' : IDL.Func([Coordinate_2, IDL.Bool], [], []),
     'list_accounts' : IDL.Func([], [IDL.Vec(Account)], ['query']),
     'list_proposals' : IDL.Func([], [IDL.Vec(Proposal)], []),
-    'search' : IDL.Func([IDL.Text], [IDL.Opt(Profile_2)], ['query']),
+    'principal_can_rate_location' : IDL.Func(
+        [IDL.Principal, Coordinate_2],
+        [IDL.Bool],
+        ['query'],
+      ),
     'submit_proposal' : IDL.Func([ProposalPayload], [SubmitProposalResult], []),
     'transfer' : IDL.Func([TransferArgs], [TransferResult], []),
-    'update' : IDL.Func([Profile_2], [], []),
     'update_system_params' : IDL.Func([UpdateSystemParamsPayload], [], []),
+    'update_user' : IDL.Func([Profile_2], [], []),
     'vote' : IDL.Func([VoteArgs], [VoteResult], []),
     'whoami' : IDL.Func([], [IDL.Principal], ['query']),
   });
 };
-export const init = ({ IDL }) => { return []; };
+export const init = ({ IDL }) => { return [IDL.Opt(IDL.Vec(IDL.Principal))]; };

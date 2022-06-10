@@ -8,6 +8,14 @@ export interface BasicDaoStableStorage {
   'proposals' : Array<Proposal>,
 }
 export interface Coordinate_2 { 'lat' : number, 'long' : number }
+export type Error = { 'CanisterError' : { 'message' : string } } |
+  { 'CannotNotify' : null } |
+  { 'NoSuchToken' : null } |
+  { 'Unauthorized' : null } |
+  { 'NotOwner' : null };
+export interface EventPass { 'canister' : Principal, 'index' : TokenIndex }
+export type ManageResult = { 'Ok' : null } |
+  { 'Err' : Error };
 export type Message = Message_2;
 export interface Message_2 {
   'contents' : string,
@@ -15,11 +23,7 @@ export interface Message_2 {
   'identity' : string,
 }
 export type Profile = Profile_2;
-export interface Profile_2 {
-  'name' : string,
-  'description' : string,
-  'keywords' : Array<string>,
-}
+export interface Profile_2 { 'profile_pic_url' : string, 'name' : string }
 export interface Proposal {
   'id' : bigint,
   'votes_no' : Tokens,
@@ -67,7 +71,8 @@ export interface SystemParams {
   'proposal_vote_threshold' : Tokens,
   'proposal_submission_deposit' : Tokens,
 }
-export interface Tokens { 'amount_e8s' : bigint }
+export type TokenIndex = bigint;
+export interface Tokens { 'amount' : bigint }
 export interface TransferArgs { 'to' : Principal, 'amount' : Tokens }
 export type TransferResult = { 'Ok' : null } |
   { 'Err' : string };
@@ -94,8 +99,6 @@ export interface _SERVICE {
     Signal_2,
   >,
   'delete_signal' : ActorMethod<[Coordinate_2], undefined>,
-  'get' : ActorMethod<[string], Profile_2>,
-  'getSelf' : ActorMethod<[], Profile_2>,
   'get_all_signals' : ActorMethod<[], Array<Signal_2>>,
   'get_proposal' : ActorMethod<[bigint], [] | [Proposal]>,
   'get_rating_for_signal' : ActorMethod<[Coordinate_2], number>,
@@ -103,15 +106,18 @@ export interface _SERVICE {
   'get_signals_for_user' : ActorMethod<[Principal], Array<Signal_2>>,
   'get_system_params' : ActorMethod<[], SystemParams>,
   'get_user_for_signal_coordinates' : ActorMethod<[Coordinate_2], Principal>,
-  'greet' : ActorMethod<[string], string>,
+  'get_user_self' : ActorMethod<[string], string>,
   'leave_rating' : ActorMethod<[Coordinate_2, boolean], undefined>,
   'list_accounts' : ActorMethod<[], Array<Account>>,
   'list_proposals' : ActorMethod<[], Array<Proposal>>,
-  'search' : ActorMethod<[string], [] | [Profile_2]>,
+  'principal_can_rate_location' : ActorMethod<
+    [Principal, Coordinate_2],
+    boolean,
+  >,
   'submit_proposal' : ActorMethod<[ProposalPayload], SubmitProposalResult>,
   'transfer' : ActorMethod<[TransferArgs], TransferResult>,
-  'update' : ActorMethod<[Profile_2], undefined>,
   'update_system_params' : ActorMethod<[UpdateSystemParamsPayload], undefined>,
+  'update_user' : ActorMethod<[Profile_2], undefined>,
   'vote' : ActorMethod<[VoteArgs], VoteResult>,
   'whoami' : ActorMethod<[], Principal>,
 }

@@ -8,10 +8,9 @@ import {
 	TagIcon,
 	UserCircleIcon as UserCircleIconSolid,
 } from "@heroicons/react/solid";
-import { rust_avenue } from "../../../../declarations/rust_avenue";
 import { UserContext } from "../../context/user";
-import { ActorSubclass } from "@dfinity/agent";
 import { _SERVICE } from "../../../../declarations/rust_avenue/rust_avenue.did";
+import Rating from "../Rating";
 
 function classNames(...classes: any) {
 	return classes.filter(Boolean).join(" ");
@@ -64,7 +63,7 @@ export default function Event() {
 
 	const sendMessageEv = async (e: Event, message: string) => {
 		e.preventDefault();
-		if (activeContent?.signalMetadata && authenticatedActor) {
+		if (activeContent?.signalMetadata && authenticatedActor && message) {
 			sendMessage(activeContent, message);
 		}
 	};
@@ -74,6 +73,8 @@ export default function Event() {
 			<h3 className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
 				{event?.contents.title}
 			</h3>
+			<Rating signal={activeContent} />
+
 			<div className="mt-5 prose prose-indigo text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
 				<p className="text-lg text-gray-500">
 					{event?.contents.description}
