@@ -7,9 +7,9 @@ use ordered_float::OrderedFloat;
 use std::cell::RefCell;
 
 thread_local! {
-    static SIGNAL_STORE: RefCell<SignalStore> = RefCell::default();
-    static USER_SIGNAL_STORE: RefCell<UserSignalStore> = RefCell::default();
-    static CURRENT_ID: RefCell<i128> = RefCell::default();
+    pub static SIGNAL_STORE: RefCell<SignalStore> = RefCell::default();
+    pub static USER_SIGNAL_STORE: RefCell<UserSignalStore> = RefCell::default();
+    pub static CURRENT_ID: RefCell<i128> = RefCell::default();
 }
 
 #[init]
@@ -28,7 +28,7 @@ fn delete_signal(location: IncomingCoordinate) {
         ic_cdk::trap("You're not authorized to delete this signal");
     }
 
-    let user = get_user_for_signal_coordinates(location);
+    let user = get_principal_for_signal_coordinates(location);
 
     if caller() != user {
         ic_cdk::trap("You're not authorized to delete this signal");
@@ -206,7 +206,7 @@ fn add_new_message(location: IncomingCoordinate, contents: String) -> Signal {
 }
 
 #[query]
-pub fn get_user_for_signal_coordinates(location: IncomingCoordinate) -> Principal {
+pub fn get_principal_for_signal_coordinates(location: IncomingCoordinate) -> Principal {
     let signal = get_signal(location);
 
     return signal.user;

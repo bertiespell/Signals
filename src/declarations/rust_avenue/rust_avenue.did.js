@@ -57,6 +57,10 @@ export const idlFactory = ({ IDL }) => {
     'proposal_vote_threshold' : Tokens,
     'proposal_submission_deposit' : Tokens,
   });
+  const Profile_2 = IDL.Record({
+    'profile_pic_url' : IDL.Text,
+    'name' : IDL.Text,
+  });
   const Account = IDL.Record({ 'owner' : IDL.Principal, 'tokens' : Tokens });
   const SubmitProposalResult = IDL.Variant({
     'Ok' : IDL.Nat64,
@@ -73,10 +77,6 @@ export const idlFactory = ({ IDL }) => {
     'proposal_vote_threshold' : IDL.Opt(Tokens),
     'proposal_submission_deposit' : IDL.Opt(Tokens),
   });
-  const Profile_2 = IDL.Record({
-    'profile_pic_url' : IDL.Text,
-    'name' : IDL.Text,
-  });
   const Vote = IDL.Variant({ 'No' : IDL.Null, 'Yes' : IDL.Null });
   const VoteArgs = IDL.Record({ 'vote' : Vote, 'proposal_id' : IDL.Nat64 });
   const VoteResult = IDL.Variant({ 'Ok' : ProposalState, 'Err' : IDL.Text });
@@ -91,6 +91,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'delete_signal' : IDL.Func([Coordinate_2], [], []),
     'get_all_signals' : IDL.Func([], [IDL.Vec(Signal_2)], ['query']),
+    'get_principal_for_signal_coordinates' : IDL.Func(
+        [Coordinate_2],
+        [IDL.Principal],
+        ['query'],
+      ),
     'get_proposal' : IDL.Func([IDL.Nat64], [IDL.Opt(Proposal)], []),
     'get_rating_for_signal' : IDL.Func([Coordinate_2], [IDL.Int32], ['query']),
     'get_signal' : IDL.Func([Coordinate_2], [Signal_2], []),
@@ -100,12 +105,12 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'get_system_params' : IDL.Func([], [SystemParams], []),
-    'get_user_for_signal_coordinates' : IDL.Func(
+    'get_user_for_signal_location' : IDL.Func(
         [Coordinate_2],
-        [IDL.Principal],
+        [Profile_2],
         ['query'],
       ),
-    'get_user_self' : IDL.Func([IDL.Text], [IDL.Text], ['query']),
+    'get_user_self' : IDL.Func([], [Profile_2], ['query']),
     'leave_rating' : IDL.Func([Coordinate_2, IDL.Bool], [], []),
     'list_accounts' : IDL.Func([], [IDL.Vec(Account)], ['query']),
     'list_proposals' : IDL.Func([], [IDL.Vec(Proposal)], []),

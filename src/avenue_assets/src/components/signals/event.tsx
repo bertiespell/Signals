@@ -9,7 +9,10 @@ import {
 	UserCircleIcon as UserCircleIconSolid,
 } from "@heroicons/react/solid";
 import { UserContext } from "../../context/user";
-import { _SERVICE } from "../../../../declarations/rust_avenue/rust_avenue.did";
+import {
+	_SERVICE,
+	Profile_2,
+} from "../../../../declarations/rust_avenue/rust_avenue.did";
 import Rating from "../Rating";
 
 function classNames(...classes: any) {
@@ -18,6 +21,18 @@ function classNames(...classes: any) {
 
 export default function Event() {
 	const { authenticatedActor } = useContext(UserContext);
+	const [pinUser, setPinUser] = useState<Profile_2>();
+
+	const getUserForSignal = async () => {
+		const user = await authenticatedActor?.get_user_for_signal_location(
+			activeContent.signalMetadata?.location as any
+		);
+		setPinUser(user);
+	};
+
+	useEffect(() => {
+		getUserForSignal();
+	}, [authenticatedActor]);
 
 	const { activeContent, sendMessage } = useContext<{
 		activeContent: ActiveContent<EventSignal>;
@@ -83,6 +98,17 @@ export default function Event() {
 			<div className="mt-5 prose prose-indigo text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
 				<p className="text-lg text-gray-500">{event?.contents.date}</p>
 			</div>
+			<div className="mt-5 prose prose-indigo text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
+				<p className="text-lg text-gray-500">
+					Posted by{" "}
+					{pinUser?.name ? (
+						pinUser?.name
+					) : (
+						<>{activeContent?.signalMetadata?.user.toString()}</>
+					)}
+				</p>
+			</div>
+
 			<div className="mt-10 row-span-3">
 				<section
 					aria-labelledby="activity-title"

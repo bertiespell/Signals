@@ -9,7 +9,10 @@ import {
 import { ActiveContent, MapContext } from "../../context/map";
 import { Chat } from "../../utils/mapSignalTypes";
 import { UserContext } from "../../context/user";
-import { _SERVICE } from "../../../../declarations/rust_avenue/rust_avenue.did";
+import {
+	Profile_2,
+	_SERVICE,
+} from "../../../../declarations/rust_avenue/rust_avenue.did";
 import Rating from "../Rating";
 
 export type Person = {
@@ -45,6 +48,18 @@ export default function Chat() {
 	}>(MapContext as any);
 	const { authenticatedActor } = useContext(UserContext);
 	const { allSignals } = useContext(MapContext);
+	const [pinUser, setPinUser] = useState<Profile_2>();
+
+	const getUserForSignal = async () => {
+		const user = await authenticatedActor?.get_user_for_signal_location(
+			activeContent.signalMetadata?.location as any
+		);
+		setPinUser(user);
+	};
+
+	useEffect(() => {
+		getUserForSignal();
+	}, [authenticatedActor]);
 
 	useEffect(() => {
 		setNewMessage("");
@@ -70,22 +85,6 @@ export default function Chat() {
 
 	const addChat = () => {
 		const newActivity: Array<Activity> = [];
-
-		// first message has some additional metadata
-		newActivity.push({
-			comment: activeContent?.signalMetadata?.metadata.contents as string,
-			date: activeContent?.signalMetadata?.created_at as string,
-			type: "comment",
-			imageUrl:
-				"https://img.icons8.com/external-kiranshastry-lineal-color-kiranshastry/64/undefined/external-user-interface-kiranshastry-lineal-color-kiranshastry.png",
-			id: uuidv4().toString(),
-			person: {
-				name: activeContent?.signalMetadata?.user.toString() as string,
-				href: "",
-			},
-		});
-
-		// the rest of the messages can be pushed like this
 		activeContent?.signalMetadata?.messages.map((message) => {
 			newActivity.push({
 				comment: message.contents,
@@ -115,6 +114,19 @@ export default function Chat() {
 						<h3 className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
 							{activeContent?.signalMetadata?.metadata.title}
 						</h3>
+						<p>
+							{activeContent?.signalMetadata?.metadata.contents}
+						</p>
+						<p>
+							Posted by{" "}
+							{pinUser?.name ? (
+								pinUser?.name
+							) : (
+								<>
+									{activeContent?.signalMetadata?.user.toString()}
+								</>
+							)}
+						</p>
 
 						<Rating signal={activeContent} />
 
@@ -193,20 +205,13 @@ export default function Chat() {
 																</div>
 																<div className="min-w-0 flex-1 py-1.5">
 																	<div className="text-sm text-gray-500">
-																		<a
-																			href={
-																				item
-																					.person
-																					.href
-																			}
-																			className="font-medium text-gray-900"
-																		>
+																		<div className="font-medium text-gray-900">
 																			{
 																				item
 																					.person
 																					.name
 																			}
-																		</a>{" "}
+																		</div>{" "}
 																		assigned{" "}
 																		<a
 																			href={

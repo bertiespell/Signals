@@ -7,16 +7,21 @@ import {
 } from "../../../declarations/rust_avenue";
 import { Actor, ActorSubclass, HttpAgent } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
-import { _SERVICE } from "../../../declarations/rust_avenue/rust_avenue.did";
+import {
+	_SERVICE,
+	Profile_2,
+} from "../../../declarations/rust_avenue/rust_avenue.did";
 
 export const UserContext = React.createContext<{
 	login: any;
 	authenticatedActor: ActorSubclass<_SERVICE> | undefined;
 	authenticatedUser: Principal | undefined;
+	user: Profile_2 | undefined;
 }>({
 	login: undefined,
 	authenticatedActor: undefined,
 	authenticatedUser: undefined,
+	user: undefined,
 });
 
 const UserProvider = ({ children }: any) => {
@@ -26,6 +31,12 @@ const UserProvider = ({ children }: any) => {
 
 	const [authenticatedUser, setAuthenticatedUser] = useState<Principal>();
 
+	const [user, setUser] = useState<Profile_2>();
+
+	useEffect(() => {
+		checkUserMetadata();
+	}, [authenticatedActor]);
+
 	useEffect(() => {
 		internetIdentityLogin();
 	}, []);
@@ -33,6 +44,11 @@ const UserProvider = ({ children }: any) => {
 	useEffect(() => {
 		if (authClient) login();
 	}, [authClient]);
+
+	const checkUserMetadata = async () => {
+		const userDetails = await authenticatedActor?.get_user_self();
+		setUser(userDetails);
+	};
 
 	const handleAuthenticated = async (authClient: AuthClient) => {
 		const identity = await authClient.getIdentity();
@@ -57,15 +73,11 @@ const UserProvider = ({ children }: any) => {
 
 		if (authenticated) {
 			handleAuthenticated(createdAuthClient);
-		} else {
-			console.log("Starting!");
-			// login();
-			// render
 		}
 	};
 
 	const login = async () => {
-		const login = await authClient?.login({
+		await authClient?.login({
 			onSuccess: async () => {
 				handleAuthenticated(authClient);
 			},
@@ -79,7 +91,7 @@ const UserProvider = ({ children }: any) => {
 
 	return (
 		<UserContext.Provider
-			value={{ login, authenticatedActor, authenticatedUser }}
+			value={{ login, authenticatedActor, authenticatedUser, user }}
 		>
 			{children}
 		</UserContext.Provider>

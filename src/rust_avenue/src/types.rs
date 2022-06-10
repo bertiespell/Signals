@@ -20,7 +20,6 @@ pub struct Profile {
 pub struct User {
     pub name: String,
     pub profile_pic_url: String,
-    pub location: IncomingCoordinate,
 }
 
 /// The incoming coordinate is an f64 which can implement CandidType
@@ -64,9 +63,9 @@ pub type SignalStore = BTreeMap<Coordinate, Signal>;
 // Allows administrative priviledges to principles over their signals
 pub type UserSignalStore = BTreeMap<Principal, Vec<Signal>>;
 
-#[derive(Clone, Debug, Default, CandidType, Deserialize, PartialEq)]
+#[derive(Clone, Debug, CandidType, Deserialize, PartialEq)]
 pub struct Message {
-    pub identity: String, // this could be a User from users.rs
+    pub identity: String,
     pub contents: String,
     pub time: u64,
 }

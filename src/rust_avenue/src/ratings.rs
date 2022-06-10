@@ -8,7 +8,7 @@ use std::collections::BTreeMap;
 
 use crate::dao_store::SIGNAL_DAO;
 
-use crate::signal::{get_user_for_signal_coordinates, internal_delete_signal};
+use crate::signal::{get_principal_for_signal_coordinates, internal_delete_signal};
 
 use std::mem;
 
@@ -175,7 +175,7 @@ fn leave_rating(location: IncomingCoordinate, positive: bool) {
                             .borrow_mut()
                             .insert(ordered_location, true);
 
-                        let user_principle = get_user_for_signal_coordinates(location);
+                        let user_principle = get_principal_for_signal_coordinates(location);
 
                         // reward tokens for upvoted signal
                         SIGNAL_DAO.with(|service| {
@@ -197,7 +197,10 @@ fn leave_rating(location: IncomingCoordinate, positive: bool) {
                     }) as i32)
                 {
                     // delete the signal if it has too many negative ratings
-                    internal_delete_signal(location, get_user_for_signal_coordinates(location));
+                    internal_delete_signal(
+                        location,
+                        get_principal_for_signal_coordinates(location),
+                    );
                     SIGNAL_RATINGS_STORE
                         .with(|signal_store| signal_store.borrow_mut().remove(&ordered_location));
                     SIGNALS_TO_TOKEN_STORE
