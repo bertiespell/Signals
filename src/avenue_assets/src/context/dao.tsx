@@ -7,6 +7,7 @@ import {
 	Proposal,
 	Signal,
 	SubmitProposalResult,
+	SystemParams,
 	Tokens,
 } from "../../../declarations/rust_avenue/rust_avenue.did";
 import { UserContext } from "./user";
@@ -15,14 +16,15 @@ export type DaoContextType = {
 	userSignals: Array<Signal> | undefined;
 	proposals: Array<Proposal> | undefined;
 	accountBalance: Tokens | undefined;
-	makeProposal:
-		| ((
-				proposed_change: string,
-				proposed_change_arg: string,
-				proposed_amount: number
-		  ) => Promise<SubmitProposalResult>)
+	makeProposal: (
+		proposed_change: string,
+		proposed_amount: number
+	) => Promise<SubmitProposalResult | undefined>;
+	voteProposal:
+		| ((proposal_id: bigint, inFavour: boolean) => Promise<void>)
 		| undefined;
-	voteProposal: ((proposal: Proposal) => Promise<void>) | undefined;
+	systemParams: SystemParams | undefined;
+	fetchProposals: () => Promise<void>;
 };
 
 export const DaoContext = React.createContext<DaoContextType>({} as any);
@@ -33,82 +35,84 @@ const DaoProvider = ({ children }: any) => {
 	const [userSignals, setUserSignals] = useState<Array<Signal>>([]);
 	const [proposals, setProposals] = useState<Array<Proposal>>();
 	const [accountBalance, setAccountBalance] = useState<Tokens>();
-	const [makeProposal, setMakeProposal] =
-		useState<
-			(
-				proposed_change: string,
-				proposed_change_arg: string,
-				proposed_amount: number
-			) => Promise<SubmitProposalResult>
-		>();
-	const [voteProposal, setVoteProposal] =
-		useState<(proposal: Proposal) => Promise<void>>();
+	const [systemParams, setSystemParams] = useState<SystemParams>();
+
+	const getSystemParams = async () => {
+		if (authenticatedActor) {
+			const systemParams = await authenticatedActor.get_system_params();
+			console.log(systemParams);
+			setSystemParams(systemParams);
+		}
+	};
+	useEffect(() => {
+		getSystemParams();
+	}, [authenticatedActor]);
+
+	const makeProposal = async (
+		proposed_change: string,
+		proposed_amount: number
+	): Promise<SubmitProposalResult | undefined> => {
+		const proposal_for_signal_tokens = () => {
+			return encode(
+				[
+					IDL.Record({
+						[proposed_change]: IDL.Opt(
+							IDL.Record({
+								["amount"]: IDL.Nat64,
+							})
+						),
+					}),
+				],
+				[
+					{
+						[proposed_change]: [{ ["amount"]: proposed_amount }],
+					},
+				]
+			);
+		};
+		if (authenticatedActor) {
+			return await authenticatedActor.submit_proposal({
+				canister_id: Principal.fromText(canisterId as string),
+				method: "update_system_params",
+				metadata: proposed_change,
+				message: proposal_for_signal_tokens()
+					.toString()
+					.split(",")
+					.map((value) => Number(value)),
+			});
+		}
+	};
+
+	const voteProposal = async (proposal_id: bigint, inFavour: boolean) => {
+		const vote = inFavour ? { Yes: null } : { No: null };
+		await authenticatedActor?.vote({
+			vote,
+			proposal_id,
+		});
+	};
+
+	const fetchProposals = async () => {
+		try {
+			if (authenticatedActor) {
+				const proposals = await authenticatedActor.list_proposals();
+				setProposals(proposals);
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	};
 
 	const daoInit = async () => {
 		if (authenticatedActor) {
 			const whoami = await authenticatedActor.whoami();
 			const accountBalance = await authenticatedActor.account_balance();
 			setAccountBalance(accountBalance);
-			const proposals = await authenticatedActor.list_proposals();
-			setProposals(proposals);
-
-			const voteProposal = async (proposal: Proposal) => {
-				if (Object.keys(proposal.state)[0] === "Open") {
-					await authenticatedActor.vote({
-						vote: { Yes: null },
-						proposal_id: proposal.id,
-					});
-				}
-			};
-			setVoteProposal(voteProposal);
+			fetchProposals();
 
 			const userSignals = await authenticatedActor.get_signals_for_user(
 				whoami
 			);
 			setUserSignals(userSignals);
-
-			/**
-			 * proposed_change: "tokens_received_for_signal_creation"
-			 * proposed_change_arg: "amount"
-			 * proposed_amount: 15
-			 */
-			const makeProposal = async (
-				proposed_change: string,
-				proposed_change_arg: string,
-				proposed_amount: number
-			): Promise<SubmitProposalResult> => {
-				const proposal_for_signal_tokens = () => {
-					return encode(
-						[
-							IDL.Record({
-								[proposed_change]: IDL.Opt(
-									IDL.Record({
-										[proposed_change_arg]: IDL.Nat64,
-									})
-								),
-							}),
-						],
-						[
-							{
-								[proposed_change]: [
-									{ [proposed_change_arg]: proposed_amount },
-								],
-							},
-						]
-					);
-				};
-
-				return await authenticatedActor.submit_proposal({
-					canister_id: Principal.fromText(canisterId as string),
-					method: "update_system_params",
-					message: proposal_for_signal_tokens()
-						.toString()
-						.split(",")
-						.map((value) => Number(value)),
-				});
-			};
-
-			setMakeProposal(makeProposal);
 		}
 	};
 
@@ -124,6 +128,8 @@ const DaoProvider = ({ children }: any) => {
 				accountBalance,
 				makeProposal,
 				voteProposal,
+				systemParams,
+				fetchProposals,
 			}}
 		>
 			{children}

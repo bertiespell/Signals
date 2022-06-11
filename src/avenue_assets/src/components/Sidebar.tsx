@@ -64,15 +64,9 @@ export default function Sidebar() {
 	return (
 		<div className="hidden lg:flex lg:flex-shrink-0">
 			<div className="flex flex-col w-20">
-				<div
-					className="flex-1 flex flex-col min-h-0 overflow-y-auto "
-					style={{ backgroundColor: "#0075b0" }}
-				>
+				<div className="flex-1 flex flex-col min-h-0 overflow-y-auto bg-signalBlue-500">
 					<div className="flex-1">
-						<div
-							className=" py-4 flex items-center justify-center"
-							style={{ backgroundColor: "#0075b0" }}
-						>
+						<div className=" py-4 flex items-center justify-center bg-signalBlue-500">
 							<button
 								onClick={(e) =>
 									handleNavEvent(e, {
@@ -84,7 +78,7 @@ export default function Sidebar() {
 							>
 								<img
 									className="w-max"
-									src="../../signal-logo.png"
+									src="../../logo-6.png"
 									alt="Workflow"
 								/>
 							</button>
@@ -96,7 +90,7 @@ export default function Sidebar() {
 							{navigation.map((item) => (
 								<button
 									key={uuidv4()}
-									className="flex items-center p-4 rounded-lg text-indigo-200 hover:bg-indigo-700"
+									className="flex items-center p-4 rounded-lg text-signalBlue-50 hover:bg-signalBlue-700"
 									onClick={(e) => handleNavEvent(e, item)}
 								>
 									<item.icon

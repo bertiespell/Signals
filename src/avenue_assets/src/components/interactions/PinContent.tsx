@@ -9,13 +9,13 @@ export default function PinContent() {
 
 	return (
 		<div className="p-5 pt-20 mt-8 lg:mt-0">
-			<h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">
+			<h2 className="text-base text-signalBlue-600 font-semibold tracking-wide uppercase">
 				Create a chat
 			</h2>
 			<h3 className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
 				Add a Message
 			</h3>
-			<div className="mt-5 prose prose-indigo text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
+			<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
 				<p className="text-lg text-gray-500">
 					Once you add a signal it will be available for everyone to
 					view on the map. Other users will be able to interact with
@@ -44,7 +44,7 @@ export default function PinContent() {
 												alt=""
 											/>
 
-											<span className="absolute -bottom-0.5 -right-1 bg-white rounded-tl px-0.5 py-px">
+											<span className="absolute -bottom-0.5 -right-1 bg-signalBlue-1 rounded-tl px-0.5 py-px">
 												<ChatAltIcon
 													className="h-5 w-5 text-gray-400"
 													aria-hidden="true"

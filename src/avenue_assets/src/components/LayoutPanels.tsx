@@ -37,7 +37,7 @@ export default function LayoutPanels() {
 				className={`hidden lg:block lg:flex-shrink-0 lg:order-first ${visibility}`}
 			>
 				<div
-					className={`h-full relative flex flex-col w-96 border-r border-gray-200 bg-white overflow-y-auto grid-cols-1 grid-rows-8 ${visibility}`}
+					className={`h-full relative flex flex-col w-96 bg-white overflow-y-auto grid-cols-1 grid-rows-8 ${visibility}`}
 				>
 					{activeContent?.isNewPin ? (
 						<InteractionBox />

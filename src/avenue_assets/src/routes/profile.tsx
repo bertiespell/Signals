@@ -1,13 +1,12 @@
-import { IDL } from "@dfinity/candid";
-import { CogIcon, PencilAltIcon, SaveIcon } from "@heroicons/react/outline";
-import { PencilIcon } from "@heroicons/react/solid";
+import { PencilAltIcon } from "@heroicons/react/outline";
 import { useContext, useEffect, useState } from "react";
+import CreateProposal from "../components/CreateProposal";
+import ProposalList from "../components/ProposalList";
 import SystemParams from "../components/SystemParams";
 import { DaoContext } from "../context/dao";
 import { UserContext } from "../context/user";
 
 export default function Profile() {
-	const { proposals } = useContext(DaoContext);
 	const { authenticatedUser, authenticatedActor, login, user } =
 		useContext(UserContext);
 
@@ -21,37 +20,6 @@ export default function Profile() {
 			setShowLogin(false);
 		}
 	}, [authenticatedUser]);
-
-	useEffect(() => {
-		try {
-			// proposals[0].payload.message
-			// const decoded = IDL.decode(proposals[0].payload as any);
-			if (proposals) {
-				// console.log(proposals);
-				// console.log(proposals[0].payload.message, "hererere");
-				// console.log(proposals[0].payload.method);
-				// console.log(proposals[0].payload.canister_id);
-				// console.log(
-				// 	IDL.decode(
-				// 		[
-				// 			IDL.Record({
-				// 				["tokens_received_for_signal_creation"]:
-				// 					IDL.Opt(
-				// 						IDL.Record({ ["amount"]: IDL.Nat64 })
-				// 					),
-				// 			}),
-				// 		],
-				// 		proposals[0].payload.message
-				// 			.toString()
-				// 			.split(",")
-				// 			.map((value) => Number(value)) as any
-				// 	)
-				// );
-			}
-		} catch (e) {
-			// console.log(e);
-		}
-	}, [proposals]);
 
 	const updateUsername = async (e: any) => {
 		e.preventDefault();
@@ -139,7 +107,7 @@ export default function Profile() {
 														type="text"
 														name="username"
 														id="username"
-														className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-10 sm:text-sm border-gray-300 rounded-md"
+														className="focus:ring-signalBlue-500 focus:border-signalBlue-500 block w-full pr-10 sm:text-sm border-gray-300 rounded-md"
 														placeholder={user?.name}
 														onChange={(e) =>
 															setUserName(
@@ -175,18 +143,8 @@ export default function Profile() {
 							</div>
 						</div>
 						<SystemParams />
-						<div className="bg-white shadow  sm:rounded-lg mt-10">
-							<div className="px-4 py-5 sm:px-6">
-								<h3 className="text-lg leading-6 font-medium text-gray-900">
-									Proposals
-								</h3>
-								<p className="mt-1 max-w-2xl text-sm text-gray-500">
-									View, create or vote on proposals for the
-									Signals application.
-								</p>
-							</div>
-							<div className="border-t border-gray-200 px-4 py-5 sm:p-0"></div>
-						</div>
+						<CreateProposal />
+						<ProposalList />
 					</div>
 				</>
 			)}

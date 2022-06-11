@@ -181,6 +181,7 @@ pub struct Proposal {
 pub struct ProposalPayload {
     pub canister_id: Principal,
     pub method: String,
+    pub metadata: String,
     pub message: Vec<u8>,
 }
 

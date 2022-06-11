@@ -9,13 +9,13 @@ export default function ChatForm() {
 
 	return (
 		<div className="p-5 pt-20 mt-8 lg:mt-0">
-			<h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">
+			<h2 className="text-base text-signalBlue-600 font-semibold tracking-wide uppercase">
 				Create a chat
 			</h2>
 			<h3 className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
 				Add a Message
 			</h3>
-			<div className="mt-5 prose prose-indigo text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
+			<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
 				<p className="text-lg text-gray-500">
 					Once you add a signal it will be available for everyone to
 					view on the map. Other users will be able to interact with
@@ -45,7 +45,7 @@ export default function ChatForm() {
 													onChange={(e) =>
 														setTitle(e.target.value)
 													}
-													className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+													className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-signalBlue-500 focus:border-signalBlue-500 sm:text-sm"
 												/>
 											</div>
 											<div className="p-3">
@@ -66,7 +66,7 @@ export default function ChatForm() {
 																e.target.value
 															)
 														}
-														className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
+														className="shadow-sm focus:ring-signalBlue-500 focus:border-signalBlue-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
 														placeholder="Leave a first message for everyone"
 													/>
 												</div>

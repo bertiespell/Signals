@@ -31,13 +31,13 @@ export const idlFactory = ({ IDL }) => {
   });
   const ProposalPayload = IDL.Record({
     'method' : IDL.Text,
+    'metadata' : IDL.Text,
     'canister_id' : IDL.Principal,
     'message' : IDL.Vec(IDL.Nat8),
   });
   const Proposal = IDL.Record({
     'id' : IDL.Nat64,
     'votes_no' : Tokens,
-    'metadata' : IDL.Text,
     'voters' : IDL.Vec(IDL.Principal),
     'state' : ProposalState,
     'timestamp' : IDL.Nat64,

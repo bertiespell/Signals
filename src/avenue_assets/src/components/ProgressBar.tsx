@@ -53,10 +53,10 @@ export default function ProgressBar({
 									className="absolute inset-0 flex items-center"
 									aria-hidden="true"
 								>
-									<div className="h-0.5 w-full bg-indigo-600" />
+									<div className="h-0.5 w-full bg-signalBlue-600" />
 								</div>
 								<button
-									className="relative w-8 h-8 flex items-center justify-center bg-indigo-600 rounded-full hover:bg-indigo-900"
+									className="relative w-8 h-8 flex items-center justify-center bg-signalBlue-600 rounded-full hover:bg-signalBlue-900"
 									onClick={(e) => onClick(e, step, stepIdx)}
 								>
 									<CheckIcon
@@ -75,12 +75,12 @@ export default function ProgressBar({
 									<div className="h-0.5 w-full bg-gray-200" />
 								</div>
 								<button
-									className="relative w-8 h-8 flex items-center justify-center bg-white border-2 border-indigo-600 rounded-full"
+									className="relative w-8 h-8 flex items-center justify-center bg-signalBlue-1 border-2 border-signalBlue-600 rounded-full"
 									aria-current="step"
 									onClick={(e) => onClick(e, step, stepIdx)}
 								>
 									<span
-										className="h-2.5 w-2.5 bg-indigo-600 rounded-full"
+										className="h-2.5 w-2.5 bg-signalBlue-600 rounded-full"
 										aria-hidden="true"
 									/>
 									<span className="sr-only">{step.name}</span>
@@ -95,7 +95,7 @@ export default function ProgressBar({
 									<div className="h-0.5 w-full bg-gray-200" />
 								</div>
 								<button
-									className="group relative w-8 h-8 flex items-center justify-center bg-white border-2 border-gray-300 rounded-full hover:border-gray-400"
+									className="group relative w-8 h-8 flex items-center justify-center bg-signalBlue-1 border-2 border-gray-300 rounded-full hover:border-gray-400"
 									onClick={(e) => onClick(e, step, stepIdx)}
 								>
 									<span

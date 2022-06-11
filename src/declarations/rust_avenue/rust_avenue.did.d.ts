@@ -25,7 +25,6 @@ export interface Profile { 'profile_pic_url' : string, 'name' : string }
 export interface Proposal {
   'id' : bigint,
   'votes_no' : Tokens,
-  'metadata' : string,
   'voters' : Array<Principal>,
   'state' : ProposalState,
   'timestamp' : bigint,
@@ -36,6 +35,7 @@ export interface Proposal {
 export interface ProposalParams { 'amount' : bigint }
 export interface ProposalPayload {
   'method' : string,
+  'metadata' : string,
   'canister_id' : Principal,
   'message' : Array<number>,
 }

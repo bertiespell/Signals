@@ -5,13 +5,13 @@ export default function About() {
 				className={`min-w-0 flex-1 h-full flex flex-col  lg:order-last p-8`}
 			>
 				<div className="p-8">
-					<h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">
+					<h2 className="text-base text-signalBlue-600 font-semibold tracking-wide uppercase">
 						Create meaningful connections
 					</h2>
 					<h3 className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
 						Welcome to Signals
 					</h3>
-					<div className="mt-5 prose prose-indigo text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
+					<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
 						<p className="text-lg text-gray-500">
 							I was inspired to build Signals after moving to a
 							new city and finding it hard to connect with new

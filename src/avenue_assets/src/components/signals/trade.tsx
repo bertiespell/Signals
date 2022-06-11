@@ -15,17 +15,17 @@ export default function Trade(
 				</h3>
 				<Rating signal={activeContent} />
 
-				<div className="mt-5 prose prose-indigo text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
+				<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
 					<p className="text-lg text-gray-500">
 						{activeContent?.signalMetadata?.metadata.description}
 					</p>
 				</div>
-				<div className="mt-5 prose prose-indigo text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
+				<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
 					<p className="text-lg text-gray-500">
 						Price: {activeContent?.signalMetadata?.metadata.price}
 					</p>
 				</div>
-				<div className="mt-5 prose prose-indigo text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
+				<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
 					<p className="text-lg text-gray-500">
 						Sold by:{" "}
 						{pinUser?.name ? (

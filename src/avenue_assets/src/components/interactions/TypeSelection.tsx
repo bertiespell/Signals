@@ -10,7 +10,7 @@ export default function TypeSelection({
 			<h3 className="mt-2 text-xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
 				Choose Signal Type
 			</h3>
-			<div className="mt-5 prose prose-indigo text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
+			<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
 				<p className="text-lg text-gray-500">
 					Signals can be left for a variety of uses. Perhaps you just
 					want to leave a message somewhere for someone to find.
@@ -32,7 +32,7 @@ export default function TypeSelection({
 			<div className="flex flex-col justify-center items-center p-2">
 				<button
 					type="button"
-					className="w-1/2 m-3 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white  bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-manatee"
+					className="w-1/2 m-3 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white  bg-signalBlue-200 hover:bg-signalBlue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-manatee"
 					onClick={() => selectType(PinType.Chat)}
 				>
 					<div className="flex-shrink-0 flex items-center px-4">
@@ -46,7 +46,7 @@ export default function TypeSelection({
 				</button>
 				<button
 					type="button"
-					className="w-1/2 m-3 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+					className="w-1/2 m-3 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-signalBlue-200 hover:bg-signalBlue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-signalBlue-200"
 					onClick={() => selectType(PinType.Trade)}
 				>
 					<div className="flex-shrink-0 flex items-center px-4">
@@ -60,7 +60,7 @@ export default function TypeSelection({
 				</button>
 				<button
 					type="button"
-					className=" w-1/2 m-3 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white  bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+					className=" w-1/2 m-3 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-base font-medium rounded-md text-white  bg-signalBlue-200 hover:bg-signalBlue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-signalBlue-200"
 					onClick={() => selectType(PinType.Event)}
 				>
 					<div className="flex-shrink-0 flex items-center px-4">

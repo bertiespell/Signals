@@ -4,6 +4,7 @@ import {
 	rust_avenue,
 	canisterId,
 	createActor,
+	idlFactory,
 } from "../../../declarations/rust_avenue";
 import { Actor, ActorSubclass, HttpAgent } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
@@ -50,11 +51,14 @@ const UserProvider = ({ children }: any) => {
 
 	const handleAuthenticated = async (authClient: AuthClient) => {
 		const identity = await authClient.getIdentity();
-		const whoami_actor = createActor(canisterId as string, {
-			agentOptions: {
-				identity,
-			},
+		const agent = new HttpAgent({ identity });
+		// TODO: remove this line from production envs
+		await agent.fetchRootKey();
+		const whoami_actor = Actor.createActor<_SERVICE>(idlFactory, {
+			agent,
+			canisterId: canisterId as string,
 		});
+
 		const actorwhoami = await whoami_actor.whoami();
 		setAuthenticatedActor(whoami_actor);
 		setAuthenticatedUser(actorwhoami);

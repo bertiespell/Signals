@@ -67,7 +67,6 @@ type ProposalState = variant {
 
 type Proposal = record {
     id: nat64;
-    metadata: text;
     timestamp: nat64;
     proposer: principal;
     payload: ProposalPayload;
@@ -81,6 +80,7 @@ type ProposalPayload = record {
     canister_id: principal;
     method: text;
     message: blob;
+    metadata: text;
 };
 
 type SubmitProposalResult = variant {

@@ -45,7 +45,7 @@ export default function ListEvents() {
 			<div className="w-max min-w-0 flex-1 h-full flex flex-col overflow-y-auto lg:order-last ">
 				<div className="p-10">
 					<div className="p-10">
-						<h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">
+						<h2 className="text-base text-signalBlue-600 font-semibold tracking-wide uppercase">
 							Create connections
 						</h2>
 						<h3 className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
@@ -60,7 +60,7 @@ export default function ListEvents() {
 							{signals.map((signal) => (
 								<li
 									key={signal.signalMetadata?.id}
-									className="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200"
+									className="col-span-1 bg-signalBlue-1 rounded-lg shadow divide-y divide-gray-200"
 								>
 									<div className="w-full flex items-center justify-between p-6 space-x-6">
 										<div className="flex-1 truncate">

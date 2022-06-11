@@ -11,13 +11,13 @@ export default function TradeForm() {
 		<>
 			<form>
 				<div className="p-5 pt-20 mt-8 lg:mt-0">
-					<h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">
+					<h2 className="text-base text-signalBlue-600 font-semibold tracking-wide uppercase">
 						Create a signal
 					</h2>
 					<h3 className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
 						List item for trade
 					</h3>
-					<div className="mt-5 prose prose-indigo text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
+					<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
 						<p className="text-lg text-gray-500">
 							Fill in a few details about your item so that we can
 							send your signal to the network.
@@ -37,7 +37,7 @@ export default function TradeForm() {
 							id="item-title"
 							value={title}
 							onChange={(e) => setTitle(e.target.value)}
-							className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+							className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-signalBlue-500 focus:border-signalBlue-500 sm:text-sm"
 						/>
 					</div>
 					<div className="p-5 col-span-6 sm:col-span-3">
@@ -52,7 +52,7 @@ export default function TradeForm() {
 								type="text"
 								name="price"
 								id="price"
-								className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-4 pr-12 sm:text-sm border-gray-300 rounded-md"
+								className="focus:ring-signalBlue-500 focus:border-signalBlue-500 block w-full pl-4 pr-12 sm:text-sm border-gray-300 rounded-md"
 								placeholder="0.00"
 								value={price}
 								onChange={(e) => setPrice(e.target.value)}
@@ -64,7 +64,7 @@ export default function TradeForm() {
 								<select
 									id="currency"
 									name="currency"
-									className="focus:ring-indigo-500 focus:border-indigo-500 h-full py-0 pl-2 pr-7 border-transparent bg-transparent text-gray-500 sm:text-sm rounded-md"
+									className="focus:ring-signalBlue-500 focus:border-signalBlue-500 h-full py-0 pl-2 pr-7 border-transparent bg-transparent text-gray-500 sm:text-sm rounded-md"
 								>
 									<option>USD</option>
 									<option>ICP</option>
@@ -86,7 +86,7 @@ export default function TradeForm() {
 								rows={8}
 								value={description}
 								onChange={(e) => setDescription(e.target.value)}
-								className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
+								className="shadow-sm focus:ring-signalBlue-500 focus:border-signalBlue-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
 								placeholder="Add some details about your item..."
 							/>
 						</div>

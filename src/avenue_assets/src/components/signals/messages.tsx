@@ -53,7 +53,7 @@ export default function MessagesList({
 																alt=""
 															/>
 
-															<span className="absolute -bottom-0.5 -right-1 bg-white rounded-tl px-0.5 py-px">
+															<span className="absolute -bottom-0.5 -right-1 bg-signalBlue-1 rounded-tl px-0.5 py-px">
 																<ChatAltIcon
 																	className="h-5 w-5 text-gray-400"
 																	aria-hidden="true"
@@ -108,7 +108,7 @@ export default function MessagesList({
 												alt=""
 											/>
 
-											<span className="absolute -bottom-0.5 -right-1 bg-white rounded-tl px-0.5 py-px">
+											<span className="absolute -bottom-0.5 -right-1 bg-signalBlue-1 rounded-tl px-0.5 py-px">
 												<ChatAltIcon
 													className="h-5 w-5 text-gray-400"
 													aria-hidden="true"
