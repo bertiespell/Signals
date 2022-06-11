@@ -51,7 +51,7 @@ export default function ListChats() {
 							Chats
 						</h3>
 					</div>
-					<div>
+					<div className="p-10">
 						<ul
 							role="list"
 							className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
@@ -59,7 +59,7 @@ export default function ListChats() {
 							{signals.map((signal) => (
 								<li
 									key={signal.signalMetadata?.id}
-									className="col-span-1 bg-signalBlue-1 rounded-lg shadow divide-y divide-gray-200"
+									className="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200"
 								>
 									<div className="w-full flex items-center justify-between p-6 space-x-6">
 										<div className="flex-1 truncate">

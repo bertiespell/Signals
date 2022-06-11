@@ -1,11 +1,12 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { MapContext } from "../../context/map";
 import Starting from "./Interactions/Starting";
 import TypeSelection from "./Interactions/TypeSelection";
 import ChatForm from "../NewContentForms/ChatForm";
 import EventForm from "../NewContentForms/EventForm";
 import TradeForm from "../NewContentForms/TradeForm";
-import ProgressBar from "../ProgressBar";
+import ProgressBar from "./ProgressBar";
+import { UserContext } from "../../context/user";
 
 export enum CreationState {
 	Starting = "starting",
@@ -15,9 +16,17 @@ export enum CreationState {
 }
 
 export default function InteractionBox() {
+	const { authenticatedUser } = useContext(UserContext);
 	const { pinType, setPinType, activeContent } = useContext(MapContext);
 
+	const [authenicated, setAuthenicated] = useState(false);
 	const [interactionState, setInterState] = useState(CreationState.Starting);
+
+	useEffect(() => {
+		if (authenticatedUser && !authenticatedUser?.isAnonymous()) {
+			setAuthenicated(true);
+		}
+	}, [authenticatedUser]);
 
 	const createSignal = () => {
 		activeContent?.marker.dragging?.disable();
@@ -72,12 +81,16 @@ export default function InteractionBox() {
 	return (
 		<>
 			{stateToComponent[interactionState]}
-			<div className="absolute inset-x-0 bottom-0 h-16">
-				<ProgressBar
-					setInteractionState={setInteractionState}
-					interactionState={interactionState}
-				/>
-			</div>
+			{authenicated ? (
+				<div className="absolute inset-x-0 bottom-0 h-16">
+					<ProgressBar
+						setInteractionState={setInteractionState}
+						interactionState={interactionState}
+					/>
+				</div>
+			) : (
+				""
+			)}
 		</>
 	);
 }

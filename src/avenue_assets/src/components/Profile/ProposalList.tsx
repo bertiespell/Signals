@@ -55,16 +55,11 @@ export default function ProposalList() {
 				});
 			} catch {}
 		});
-		proposalDisplayData
-			.sort(
-				(proposalA, proposalB) =>
-					Number(proposalA.timestamp) - Number(proposalB.timestamp)
-			)
-			.sort((proposalA, _proposalB) => {
-				if (proposalIsOpen(proposalA as Proposal)) {
-					return -1;
-				} else return 1;
-			});
+		proposalDisplayData.sort(
+			(proposalA, proposalB) =>
+				Number(proposalB.timestamp) - Number(proposalA.timestamp)
+		);
+
 		setDisplayData(proposalDisplayData);
 	};
 

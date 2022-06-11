@@ -44,7 +44,7 @@ const MapProvider = ({ children }: any) => {
 			setMapInitialized(true);
 			const location = defaultLocation;
 
-			var map = L.map("map").setView(
+			const map = L.map("map").setView(
 				[location.coords.latitude, location.coords.longitude],
 				13
 			);
@@ -239,7 +239,7 @@ const MapProvider = ({ children }: any) => {
 		if (refReady && map) {
 			if (!mapInitialised && refReady && map) {
 				setMapInitialized(true);
-				var map = L.map("map").setView(
+				const map = L.map("map").setView(
 					[location.coords.latitude, location.coords.longitude],
 					13
 				);

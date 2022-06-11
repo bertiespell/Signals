@@ -87,9 +87,7 @@ const DaoProvider = ({ children }: any) => {
 				const proposals = await authenticatedActor.list_proposals();
 				setProposals(proposals);
 			}
-		} catch (e) {
-			console.log(e);
-		}
+		} catch {}
 	};
 
 	const daoInit = async () => {

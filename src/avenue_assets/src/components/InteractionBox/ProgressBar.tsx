@@ -1,7 +1,7 @@
 import { CheckIcon } from "@heroicons/react/solid";
 import { useEffect, useState } from "react";
 
-import { defaultSteps } from "../utils/defaults";
+import { defaultSteps } from "../../utils/defaults";
 
 function classNames(...classes: any) {
 	return classes.filter(Boolean).join(" ");

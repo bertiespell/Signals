@@ -10,7 +10,7 @@ const Map = () => {
 
 	useEffect(() => {
 		setRefReady();
-	}, []);
+	}, [setRefReady]);
 
 	return (
 		<main>

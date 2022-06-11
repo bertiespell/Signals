@@ -1,8 +1,21 @@
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "../../../context/user";
+
 export default function Starting({
 	createSignal,
 }: {
 	createSignal: () => void;
 }) {
+	const { authenticatedUser, login } = useContext(UserContext);
+
+	const [authenicated, setAuthenicated] = useState(false);
+
+	useEffect(() => {
+		if (authenticatedUser && !authenticatedUser?.isAnonymous()) {
+			setAuthenicated(true);
+		}
+	}, [authenticatedUser]);
+
 	return (
 		<div className="p-5 pt-20 mt-8 lg:mt-0">
 			<h2 className="text-base text-signalBlue-600 font-semibold tracking-wide uppercase">
@@ -27,23 +40,46 @@ export default function Starting({
 					rich multi-purpose platform, you can learn more about how
 					Signals works here.
 				</p>
-				<p className="text-lg text-gray-500">
-					To get started, simply drag the pin to the location where
-					you'd like to leave a signal.
-				</p>
-				<p className="text-lg text-gray-500">
-					Once you're happy with the location of your pin, click the
-					button below to get started.
-				</p>
-			</div>
-			<div className="mt-10 row-span-3">
-				<button
-					type="button"
-					className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-signalBlue-200 hover:bg-signalBlue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-signalBlue-500"
-					onClick={createSignal}
-				>
-					Create Signal
-				</button>
+				{authenicated ? (
+					<>
+						<p className="text-lg text-gray-500">
+							To get started, simply drag the pin to the location
+							where you'd like to leave a signal.
+						</p>
+						<p className="text-lg text-gray-500">
+							Once you're happy with the location of your pin,
+							click the button below to get started.
+						</p>
+						<div className="mt-10 row-span-3">
+							<button
+								type="button"
+								className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-signalBlue-200 hover:bg-signalBlue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-signalBlue-500"
+								onClick={createSignal}
+							>
+								Create Signal
+							</button>
+						</div>
+					</>
+				) : (
+					<>
+						<p className="text-lg text-gray-500">
+							Signals works best when you're logged in. You can
+							explore existing pins anonymously, but to add a new
+							signal, message or receive rewards you'll need to be
+							logged in.
+						</p>
+
+						<div className="mt-10 row-span-3">
+							<button
+								type="button"
+								className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-signalBlue-200 hover:bg-signalBlue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-signalBlue-500"
+								onClick={login}
+							>
+								Login
+							</button>
+						</div>
+					</>
+				)}
 			</div>
 		</div>
 	);

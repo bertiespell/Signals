@@ -17,6 +17,7 @@ import Trade from "./Trade";
 import ChatSig from "./Chat";
 import Event from "./Event";
 import { ActiveContent } from "../../utils/types";
+import { rust_avenue } from "../../../../declarations/rust_avenue";
 
 export type Person = {
 	name: string;
@@ -43,15 +44,17 @@ export default function SignalContainer() {
 	const [activity, setActivity] = useState<Array<Activity>>([]);
 
 	const getUserForSignal = async () => {
-		const user = await authenticatedActor?.get_user_for_signal_location(
-			activeContent.signalMetadata?.location as any
-		);
-		setPinUser(user);
+		if (activeContent) {
+			const user = await rust_avenue.get_user_for_signal_location(
+				activeContent.signalMetadata?.location as any
+			);
+			setPinUser(user);
+		}
 	};
 
 	useEffect(() => {
 		getUserForSignal();
-	}, [authenticatedActor]);
+	}, [activeContent]);
 
 	useEffect(() => {
 		setActivity([]);
