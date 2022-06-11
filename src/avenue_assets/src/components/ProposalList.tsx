@@ -15,7 +15,7 @@ interface ProposalDisplayData extends Proposal {
 }
 
 export default function ProposalList() {
-	const { proposals, voteProposal, fetchProposals } = useContext(DaoContext);
+	const { proposals, voteProposal } = useContext(DaoContext);
 	const { authenticatedUser } = useContext(UserContext);
 
 	const [displayData, setDisplayData] =
@@ -69,7 +69,6 @@ export default function ProposalList() {
 
 	const vote = (proposalId: bigint, inFavour: boolean) => {
 		voteProposal && voteProposal(proposalId, inFavour);
-		fetchProposals();
 		setOpen(true);
 	};
 

@@ -2,6 +2,7 @@ import { PencilAltIcon } from "@heroicons/react/outline";
 import { useContext, useEffect, useState } from "react";
 import CreateProposal from "../components/CreateProposal";
 import ProposalList from "../components/ProposalList";
+import SuccessAlert from "../components/SuccessAlert";
 import SystemParams from "../components/SystemParams";
 import { DaoContext } from "../context/dao";
 import { UserContext } from "../context/user";
@@ -13,6 +14,7 @@ export default function Profile() {
 	const [accountBalance, setAccountBalance] = useState<String>();
 	const [showLogin, setShowLogin] = useState(true);
 	const [username, setUserName] = useState("");
+	const [open, setOpen] = useState(false);
 
 	useEffect(() => {
 		if (authenticatedUser && !authenticatedUser?.isAnonymous()) {
@@ -28,6 +30,7 @@ export default function Profile() {
 				name: username,
 				profile_pic_url: user?.profile_pic_url,
 			});
+			setOpen(true);
 		}
 	};
 
@@ -145,6 +148,12 @@ export default function Profile() {
 						<SystemParams />
 						<CreateProposal />
 						<ProposalList />
+						<SuccessAlert
+							setOpen={setOpen}
+							open={open}
+							title={"Success"}
+							message={"Your username was updated."}
+						/>
 					</div>
 				</>
 			)}

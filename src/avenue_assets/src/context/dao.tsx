@@ -10,6 +10,7 @@ import {
 	SystemParams,
 	Tokens,
 } from "../../../declarations/rust_avenue/rust_avenue.did";
+import { SystemContext } from "./system";
 import { UserContext } from "./user";
 
 export type DaoContextType = {
@@ -23,7 +24,6 @@ export type DaoContextType = {
 	voteProposal:
 		| ((proposal_id: bigint, inFavour: boolean) => Promise<void>)
 		| undefined;
-	systemParams: SystemParams | undefined;
 	fetchProposals: () => Promise<void>;
 };
 
@@ -31,22 +31,11 @@ export const DaoContext = React.createContext<DaoContextType>({} as any);
 
 const DaoProvider = ({ children }: any) => {
 	const { authenticatedActor } = useContext(UserContext);
+	const { getSystemParams } = useContext(SystemContext);
 
 	const [userSignals, setUserSignals] = useState<Array<Signal>>([]);
 	const [proposals, setProposals] = useState<Array<Proposal>>();
 	const [accountBalance, setAccountBalance] = useState<Tokens>();
-	const [systemParams, setSystemParams] = useState<SystemParams>();
-
-	const getSystemParams = async () => {
-		if (authenticatedActor) {
-			const systemParams = await authenticatedActor.get_system_params();
-			console.log(systemParams);
-			setSystemParams(systemParams);
-		}
-	};
-	useEffect(() => {
-		getSystemParams();
-	}, [authenticatedActor]);
 
 	const makeProposal = async (
 		proposed_change: string,
@@ -89,6 +78,8 @@ const DaoProvider = ({ children }: any) => {
 			vote,
 			proposal_id,
 		});
+		fetchProposals();
+		getSystemParams();
 	};
 
 	const fetchProposals = async () => {
@@ -128,7 +119,6 @@ const DaoProvider = ({ children }: any) => {
 				accountBalance,
 				makeProposal,
 				voteProposal,
-				systemParams,
 				fetchProposals,
 			}}
 		>

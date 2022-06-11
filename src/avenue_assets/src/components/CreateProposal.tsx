@@ -7,10 +7,12 @@ import { XIcon } from "@heroicons/react/solid";
 import { Dialog, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/outline";
 import SuccessAlert from "./SuccessAlert";
+import { SystemContext } from "../context/system";
 
 export default function CreateProposal() {
-	const { makeProposal, fetchProposals, systemParams } =
-		useContext(DaoContext);
+	const { makeProposal, fetchProposals } = useContext(DaoContext);
+
+	const { systemParams } = useContext(SystemContext);
 
 	const [loading, setLoading] = useState(true);
 	const [contents, setContents] = useState("");

@@ -15,7 +15,7 @@ import { Principal } from "@dfinity/principal";
 import { ActiveContent } from "../utils/types";
 
 const Rating = ({ signal }: { signal: ActiveContent<any> }) => {
-	const { activeContent } = useContext(MapContext);
+	const { activeContent, setKnownSignals } = useContext(MapContext);
 	const { authenticatedActor, authenticatedUser } = useContext(UserContext);
 
 	const [alreadyVoted, setAlreadyVoted] = useState(true);
@@ -45,6 +45,7 @@ const Rating = ({ signal }: { signal: ActiveContent<any> }) => {
 			positive
 		);
 		setAlreadyVoted(true);
+		setKnownSignals();
 	};
 
 	return (

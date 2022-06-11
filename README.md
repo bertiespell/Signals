@@ -60,6 +60,43 @@ dfx canister call internet_identity init_salt
 
 Then `npm start` on the FE (which is where the actor is looking in the User Context)
 
+# DAO interacting with the DAO, to submit a proposal:
+
+We can change `transfer_fee` by calling rust_avenue's `update_system_params` method. This method takes
+a `UpdateSystemParamsPayload` as an arg, which we need to encode into a `blob` to use in `ProposalPayload`.
+Use `didc` to encode a `UpdateSystemParamsPayload`:
+
+```text
+$ didc encode '(record { transfer_fee = opt record { amount_e8s = 20_000:nat64; }; })' -f blob
+
+
+$ didc encode '(record { tokens_received_for_signal_creation = 2:nat64; })' -f blob
+
+```
+
+Output:
+
+```text
+blob "DIDL\03l\01\f2\c7\94\ae\03\01n\02l\01\b9\ef\93\80\08x\01\00\01 N\00\00\00\00\00\00"
+```
+
+We can then submit the proposal:
+
+```text
+$ dfx canister call rust_avenue submit_proposal '(record { canister_id = principal "ryjl3-tyaaa-aaaaa-aaaba-cai";
+   method = "update_system_params":text;
+   metadata = "tokens_received_for_signal_creation":text;
+   message = blob "DIDL\01l\01\87\8f\c3Ux\01\00\02\00\00\00\00\00\00\00";
+
+})'
+```
+
+Note the output proposal ID:
+
+```text
+(variant { Ok = 0 : nat64 })
+```
+
 # To do
 
 -   Show the user profile nicely, save the Principle against a username and profile pic url (stored in IPFS)
@@ -72,12 +109,14 @@ Then `npm start` on the FE (which is where the actor is looking in the User Cont
 -   Add bookmarks/favourites to chats
 -   list the chats you're in
 -   Paginate data
+-   Split functionality into different canisters
 -   Add polling for messages to support real time chat
 -   Make the code generally a lot better lol
 -   Add searches for signals (by description, chat content, etc)
 -   Add searchs for location (currently you have to scroll the map, it's better UX to search for places you're interested in)
 -   Make the app mobile friends, I've kind of ignored this for now
 -   Use React Leaflet instead of all the custom stuff I added https://react-leaflet.js.org/docs/example-draggable-marker/
+-   Add way more data validation (both BE and FE)
 
 Extension Ideas
 
@@ -98,3 +137,15 @@ Since Signals is tied to geography and your location, it makes it ideal for seve
 I'd love the opportunity to develop these ideas, and implement a production ready version of this idea. I've loved building on the ICP and have felt very inspired by the idea of building a completely decentralized app. Thanks so much for reading if you made it this far. I'm always very happy to hear feedback and of course - to make new connections - so feel free to reach out.
 
 Made with <3 by Bertie Spell
+
+Debugging: Sometimes the dfx deploy seems to go wrong :| I think it's when it's running in two places, but I'm really not sure, best effort invovles:
+
+-   dfx stop (in both internet-identity and Signals)
+-   delete .dfx folder
+-   dfx start (in Signals)
+-   dfx deploy (in Signals)
+-   dfx deploy (internet-identity)
+-   npm start (in internet-indentity) (this needs port 8000)
+-   npm start (in Signals) this now falls back to 80001
+
+If in

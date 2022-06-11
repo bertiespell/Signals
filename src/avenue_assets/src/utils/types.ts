@@ -29,6 +29,7 @@ export type MapContextType<T extends SignalType> = {
 	) => Promise<void>;
 	createNewActivePin: any;
 	setRefReady: () => void;
+	setKnownSignals: any;
 };
 
 export type Message = {

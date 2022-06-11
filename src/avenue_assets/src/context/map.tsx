@@ -343,6 +343,7 @@ const MapProvider = ({ children }: any) => {
 				sendMessage,
 				createNewActivePin,
 				setRefReady,
+				setKnownSignals,
 			}}
 		>
 			{children}

@@ -44,12 +44,16 @@ const systemDataMapper = {
 export const SystemContext = React.createContext<{
 	loadingSystemData: boolean;
 	displayData: Array<DisplayData>;
+	getSystemParams: any;
+	systemParams: SystemParams | undefined;
 }>({} as any);
 
 const SystemProvider = ({ children }: any) => {
 	const { authenticatedActor } = useContext(UserContext);
 
 	const [displayData, setDisplayData] = useState<Array<DisplayData>>([]);
+	const [systemParams, setSystemParams] = useState<SystemParams>();
+
 	const [loadingSystemData, setLoadingSystemData] = useState(true);
 
 	useEffect(() => {
@@ -76,15 +80,22 @@ const SystemProvider = ({ children }: any) => {
 			const systemParams = await authenticatedActor?.get_system_params();
 			if (systemParams) {
 				const displayData = mapSystemParamsToDisplayData(systemParams);
-
 				setDisplayData(displayData);
 				setLoadingSystemData(false);
+				setSystemParams(systemParams);
 			}
 		}
 	};
 
 	return (
-		<SystemContext.Provider value={{ loadingSystemData, displayData }}>
+		<SystemContext.Provider
+			value={{
+				loadingSystemData,
+				displayData,
+				getSystemParams,
+				systemParams,
+			}}
+		>
 			{children}
 		</SystemContext.Provider>
 	);
