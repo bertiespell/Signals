@@ -1,9 +1,4 @@
-import { useContext, useEffect, useState } from "react";
-import { DaoContext } from "../context/dao";
-import LoadingSpinner from "./Spinner";
 import { Fragment } from "react";
-import { CheckCircleIcon } from "@heroicons/react/outline";
-import { XIcon } from "@heroicons/react/solid";
 import { Dialog, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/outline";
 

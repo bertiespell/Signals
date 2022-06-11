@@ -3,10 +3,10 @@ import { MapContext } from "../context/map";
 import { ShowMapContext } from "../context/show-map";
 import Map from "../Map";
 
-import InteractionBox from "./InteractionBox";
+import InteractionBox from "./InteractionBox/InteractionBox";
 
 import { useLocation } from "react-router-dom";
-import SignalContainer from "./signals/signal-container";
+import SignalContainer from "./Signals/SignalContainer";
 
 export default function LayoutPanels() {
 	const location = useLocation();

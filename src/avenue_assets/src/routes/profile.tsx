@@ -1,9 +1,9 @@
 import { PencilAltIcon } from "@heroicons/react/outline";
 import { useContext, useEffect, useState } from "react";
-import CreateProposal from "../components/CreateProposal";
-import ProposalList from "../components/ProposalList";
+import CreateProposal from "../components/Profile/CreateProposal";
+import ProposalList from "../components/Profile/ProposalList";
 import SuccessAlert from "../components/SuccessAlert";
-import SystemParams from "../components/SystemParams";
+import SystemParams from "../components/Profile/SystemParams";
 import { DaoContext } from "../context/dao";
 import { UserContext } from "../context/user";
 

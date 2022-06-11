@@ -1,4 +1,4 @@
-import { PinType } from "../../utils/mapSignalTypes";
+import { PinType } from "../../../utils/mapSignalTypes";
 
 export default function TypeSelection({
 	selectType,

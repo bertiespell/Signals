@@ -1,10 +1,11 @@
 import { useContext } from "react";
 import * as Flowbite from "flowbite-react";
 import { QuestionMarkCircleIcon } from "@heroicons/react/outline";
-
-import { SystemParams } from "../../../declarations/rust_avenue/rust_avenue.did";
 import { v4 as uuidv4 } from "uuid";
-import { SystemContext } from "../context/system";
+
+import { SystemParams } from "../../../../declarations/rust_avenue/rust_avenue.did";
+import { SystemContext } from "../../context/system";
+import LoadingSpinner from "../Spinner";
 
 export default function SystemParams() {
 	const { loadingSystemData, displayData } = useContext(SystemContext);
@@ -20,14 +21,7 @@ export default function SystemParams() {
 				</p>
 			</div>
 			{loadingSystemData ? (
-				<div className="flex items-center justify-center p-10">
-					<div
-						className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full"
-						role="status"
-					>
-						<span className="visually-hidden"></span>
-					</div>
-				</div>
+				<LoadingSpinner />
 			) : (
 				<div className="p-5">
 					<dl className="my-5 grid grid-cols-1 gap-5 sm:grid-cols-3">

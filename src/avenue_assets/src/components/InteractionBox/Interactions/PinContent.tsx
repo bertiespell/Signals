@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 
 import { ChatAltIcon } from "@heroicons/react/solid";
-import { MapContext } from "../../context/map";
+import { MapContext } from "../../../context/map";
 
 export default function PinContent() {
 	const { sendSignal } = useContext(MapContext);

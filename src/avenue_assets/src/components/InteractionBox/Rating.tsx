@@ -9,10 +9,10 @@ import {
 	ThumbDownIcon as ThumbDownIconSolid,
 	ThumbUpIcon as ThumbUpIconSolid,
 } from "@heroicons/react/solid";
-import { UserContext } from "../context/user";
-import { MapContext } from "../context/map";
+import { UserContext } from "../../context/user";
+import { MapContext } from "../../context/map";
 import { Principal } from "@dfinity/principal";
-import { ActiveContent } from "../utils/types";
+import { ActiveContent } from "../../utils/types";
 
 const Rating = ({ signal }: { signal: ActiveContent<any> }) => {
 	const { activeContent, setKnownSignals } = useContext(MapContext);

@@ -6,12 +6,12 @@ import SystemContext from "./context/system";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import About from "./routes/about";
+import About from "./routes/About";
 import Sidebar from "./components/Sidebar";
-import Profile from "./routes/profile";
-import ListChats from "./routes/list/chats";
-import ListEvents from "./routes/list/events";
-import ListTrades from "./routes/list/trades";
+import Profile from "./routes/Profile";
+import ListChats from "./routes/list/Chats";
+import ListEvents from "./routes/list/Events";
+import ListTrades from "./routes/list/Trades";
 import LayoutPanels from "./components/LayoutPanels";
 
 const App = () => {

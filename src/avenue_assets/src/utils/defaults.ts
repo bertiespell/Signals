@@ -1,4 +1,4 @@
-import { CreationState } from "../components/InteractionBox";
+import { CreationState } from "../components/InteractionBox/InteractionBox";
 
 export const defaultSteps = [
     {

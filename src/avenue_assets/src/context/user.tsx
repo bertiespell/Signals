@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { AuthClient } from "@dfinity/auth-client";
-import {
-	rust_avenue,
-	canisterId,
-	createActor,
-	idlFactory,
-} from "../../../declarations/rust_avenue";
+import { canisterId, idlFactory } from "../../../declarations/rust_avenue";
 import { Actor, ActorSubclass, HttpAgent } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 import {

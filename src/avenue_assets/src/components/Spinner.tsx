@@ -3,7 +3,7 @@ export default function LoadingSpinner({}) {
 		<>
 			<div
 				className="flex justify-center items-center m-auto"
-				style={{ width: "6rem", height: "6rem" }}
+				style={{ width: "6rem", height: "6rem", padding: "20px" }}
 			>
 				<svg
 					role="status"

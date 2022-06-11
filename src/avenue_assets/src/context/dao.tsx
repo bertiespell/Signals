@@ -7,7 +7,6 @@ import {
 	Proposal,
 	Signal,
 	SubmitProposalResult,
-	SystemParams,
 	Tokens,
 } from "../../../declarations/rust_avenue/rust_avenue.did";
 import { SystemContext } from "./system";

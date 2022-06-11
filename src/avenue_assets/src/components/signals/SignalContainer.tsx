@@ -13,9 +13,9 @@ import {
 	_SERVICE,
 } from "../../../../declarations/rust_avenue/rust_avenue.did";
 
-import Trade from "./trade";
-import ChatSig from "./chat";
-import Event from "./event";
+import Trade from "./Trade";
+import ChatSig from "./Chat";
+import Event from "./Event";
 import { ActiveContent } from "../../utils/types";
 
 export type Person = {

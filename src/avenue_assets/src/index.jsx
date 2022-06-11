@@ -6,7 +6,7 @@ import {
   } from "react-router-dom";
 import App from './App';
 import '../assets/main.css';
-import About from './routes/about';
+import About from './routes/About';
 import "flowbite";
 
 

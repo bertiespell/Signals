@@ -1,6 +1,6 @@
 import { ChatAltIcon } from "@heroicons/react/outline";
 import { useState } from "react";
-import { Activity } from "./signal-container";
+import { Activity } from "./SignalContainer";
 
 export default function MessagesList({
 	activity,

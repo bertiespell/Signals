@@ -1,13 +1,8 @@
 import { useContext, useEffect, useState } from "react";
-import { DaoContext } from "../context/dao";
-import LoadingSpinner from "./Spinner";
-import { Fragment } from "react";
-import { CheckCircleIcon } from "@heroicons/react/outline";
-import { XIcon } from "@heroicons/react/solid";
-import { Dialog, Transition } from "@headlessui/react";
-import { CheckIcon } from "@heroicons/react/outline";
-import SuccessAlert from "./SuccessAlert";
-import { SystemContext } from "../context/system";
+import { DaoContext } from "../../context/dao";
+import { SystemContext } from "../../context/system";
+import LoadingSpinner from "../Spinner";
+import SuccessAlert from "../SuccessAlert";
 
 export default function CreateProposal() {
 	const { makeProposal, fetchProposals } = useContext(DaoContext);
@@ -81,9 +76,11 @@ export default function CreateProposal() {
 													{systemParams &&
 														Object.keys(
 															systemParams as any
-														).map((key) => {
+														).map((key, index) => {
 															return (
-																<option>
+																<option
+																	key={index}
+																>
 																	{key}
 																</option>
 															);

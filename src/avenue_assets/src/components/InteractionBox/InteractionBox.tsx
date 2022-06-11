@@ -1,11 +1,11 @@
 import { useContext, useState } from "react";
-import { MapContext } from "../context/map";
-import Starting from "./interactions/Starting";
-import TypeSelection from "./interactions/TypeSelection";
-import ChatForm from "./newContentForms/ChatForm";
-import EventForm from "./newContentForms/EventForm";
-import TradeForm from "./newContentForms/TradeForm";
-import ProgressBar from "./ProgressBar";
+import { MapContext } from "../../context/map";
+import Starting from "./Interactions/Starting";
+import TypeSelection from "./Interactions/TypeSelection";
+import ChatForm from "../NewContentForms/ChatForm";
+import EventForm from "../NewContentForms/EventForm";
+import TradeForm from "../NewContentForms/TradeForm";
+import ProgressBar from "../ProgressBar";
 
 export enum CreationState {
 	Starting = "starting",

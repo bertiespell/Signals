@@ -1,5 +1,5 @@
-import Rating from "../Rating";
-import MessagesList from "./messages";
+import Rating from "../InteractionBox/Rating";
+import MessagesList from "./Messages";
 
 export default function Trade(
 	pinUser: any,
