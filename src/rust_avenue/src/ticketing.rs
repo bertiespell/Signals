@@ -1,6 +1,7 @@
 use std::collections::{BTreeSet, HashSet};
 use std::mem;
 
+use crate::utils::caller;
 use candid::{
     types::{Serializer, Type},
     CandidType, Principal,
@@ -12,32 +13,22 @@ use ic_cdk::{
     },
     storage,
 };
+use ic_cdk_macros::*;
 use once_cell::sync::Lazy;
 use parking_lot::{MappedRwLockReadGuard, RwLock, RwLockReadGuard};
-
-#[init]
-fn init(custodians: Option<HashSet<Principal>>) {
-    STORAGE.write().custodians = custodians.unwrap_or_else(|| HashSet::from([api::caller()]));
-    ic_certified_assets::init();
-}
-
-fn create_event() {
-    // should cost to list ticketed event
-}
-
-fn buy_ticket() {}
+use serde::{Deserialize, Serialize};
 
 #[derive(CandidType, Deserialize)]
 struct StableState {
     assets: ic_certified_assets::StableState,
-    wallet: Storage,
+    events: BTreeSet<Event>,
 }
 
 #[pre_upgrade]
 fn pre_upgrade() {
     let state = StableState {
         assets: ic_certified_assets::pre_upgrade(),
-        wallet: mem::take(&mut *STORAGE.write()),
+        events: mem::take(&mut *STORAGE.write()),
     };
     storage::stable_save((state,)).unwrap();
 }
@@ -45,8 +36,15 @@ fn pre_upgrade() {
 #[post_upgrade]
 fn post_upgrade() {
     let (s,): (StableState,) = storage::stable_restore().unwrap();
-    *STORAGE.write() = s.wallet;
+    *STORAGE.write() = s.events;
     ic_certified_assets::post_upgrade(s.assets);
+}
+
+#[derive(CandidType, Deserialize, Ord, PartialOrd, Eq, PartialEq, Clone)]
+struct Event {
+    event_owner: Principal,
+    number_of_tickets: u64,
+    event_passes_distributed: Vec<EventPass>,
 }
 
 #[derive(CandidType, Deserialize, Ord, PartialOrd, Eq, PartialEq, Clone, Copy)]
@@ -88,33 +86,6 @@ impl From<(RejectionCode, String)> for Error {
     }
 }
 
-#[inspect_message]
-fn inspect_message() {
-    if is_authorized()
-        || !["set_authorized", "transfer", "register"].contains(&call::method_name().as_str())
-    {
-        call::accept_message();
-    }
-}
-
-#[query]
-fn is_authorized() -> bool {
-    STORAGE.read().custodians.contains(&api::caller())
-}
-
-#[update]
-fn set_authorized(principal: Principal, authorized: bool) -> Result {
-    if !is_authorized() {
-        return Err(Error::Unauthorized);
-    }
-    if authorized {
-        STORAGE.write().custodians.insert(principal);
-    } else {
-        STORAGE.write().custodians.remove(&principal);
-    }
-    Ok(())
-}
-
 #[derive(CandidType, Deserialize, Debug)]
 enum DipError {
     Unauthorized,
@@ -123,14 +94,43 @@ enum DipError {
     Other,
 }
 
-#[update]
-async fn register(eventPass: EventPass) -> Result {
-    if !is_authorized() {
-        return Err(Error::Unauthorized);
+/**
+ * TODO: add authorized, each user should only be able to add a few free events
+ */
+fn create_event(event: Event) -> Result {
+    // in the future we'll make this paid, but to stop cycle exhaustion, let's limit events to 100 for now
+    if event.number_of_tickets > 100 {
+        ic_cdk::trap(&String::from(
+            "We currently only support events for 100 people or less",
+        ));
     }
-    if STORAGE.read().bought_passes.contains(&eventPass) {
+    // put the event in storage
+    // then register the number of events
+    let mut i = 0;
+
+    while i < event.number_of_tickets {
+        // register the number of passes
+        register(event.event_passes_distributed[i]);
+        i = i + 1;
+    }
+
+    if STORAGE.read().passes.contains(&event) {
         return Ok(());
     }
+
+    STORAGE.write().passes.insert(event);
+    Ok(())
+}
+
+/**
+ * TODO: we can support non-paid but limited supply tickets with this
+ * On Event creationg, we can register an EventPass, with an owner (of the event), and a number available.
+ * Payments integration will be done later
+ */
+#[update]
+async fn register(eventPass: EventPass) -> Result {
+    let principal_id = caller();
+
     if let Ok((owner,)) = call::call::<_, (Result<Principal, DipError>,)>(
         eventPass.canister,
         "ownerOfDip721",
@@ -144,15 +144,11 @@ async fn register(eventPass: EventPass) -> Result {
     } else {
         return Err(Error::InvalidCanister);
     }
-    STORAGE.write().bought_passes.insert(eventPass);
     Ok(())
 }
 
 #[update]
 async fn burn(event_pass: EventPass) -> Result {
-    if !is_authorized() {
-        return Err(Error::Unauthorized);
-    }
     call::call::<_, (Result<u128, DipError>,)>(
         event_pass.canister,
         "burnDip721",
@@ -164,17 +160,17 @@ async fn burn(event_pass: EventPass) -> Result {
 }
 
 #[query]
-fn bought_passes() -> Wrapper<MappedRwLockReadGuard<'static, BTreeSet<EventPass>>> {
-    Wrapper(RwLockReadGuard::map(STORAGE.read(), |s| &s.bought_passes))
+fn passes() -> Wrapper<MappedRwLockReadGuard<'static, BTreeSet<Event>>> {
+    Wrapper(RwLockReadGuard::map(STORAGE.read(), |s| &s.passes))
 }
 
+/**
+ * Transfer will work whilst tickets remain
+ */
 #[update]
 async fn transfer(event_pass: EventPass, target: Principal, notify: Option<bool>) -> Result {
-    if !is_authorized() {
-        return Err(Error::Unauthorized);
-    }
-    if !STORAGE.read().bought_passes.contains(&event_pass) {
-        register(event_pass).await?;
+    if !STORAGE.read().passes.contains(&event_pass) {
+        register_passes(event_pass).await?;
     }
     if notify != Some(false) {
         if let Ok((res,)) = call::call::<_, (Result<u128, DipError>,)>(
@@ -207,13 +203,13 @@ async fn transfer(event_pass: EventPass, target: Principal, notify: Option<bool>
         .await?
         .0?;
     }
-    STORAGE.write().bought_passes.remove(&event_pass);
+    STORAGE.write().passes.remove(&event_pass);
     Ok(())
 }
 
 #[update(name = "onDIP721Received")]
 fn on_dip721_received(_: Principal, _: Principal, tokenid: u64, _: Vec<u8>) {
-    STORAGE.write().bought_passes.insert(EventPass {
+    STORAGE.write().passes.insert(EventPass {
         canister: api::caller(),
         index: tokenid,
     });
@@ -221,8 +217,7 @@ fn on_dip721_received(_: Principal, _: Principal, tokenid: u64, _: Vec<u8>) {
 
 #[derive(CandidType, Deserialize, Default)]
 struct Storage {
-    custodians: HashSet<Principal>,
-    bought_passes: BTreeSet<EventPass>,
+    passes: BTreeSet<Event>,
 }
 
 static STORAGE: Lazy<RwLock<Storage>> = Lazy::new(|| RwLock::new(Storage::default()));

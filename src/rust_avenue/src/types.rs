@@ -37,8 +37,6 @@ pub struct Coordinate {
     pub long: OrderedFloat<f64>,
 }
 
-// pub struct Loca
-
 #[derive(Clone, Debug, CandidType, Deserialize, PartialEq)]
 pub struct Signal {
     pub created_at: u64,

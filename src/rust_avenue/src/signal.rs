@@ -1,4 +1,5 @@
 use crate::dao_store::SIGNAL_DAO;
+use crate::ticketing_three;
 use crate::types::*;
 use crate::utils::caller;
 use ic_cdk::{api::time, export::Principal};
@@ -74,6 +75,20 @@ pub fn internal_delete_signal(location: IncomingCoordinate, principal_id: Princi
 }
 
 #[update]
+async fn create_ticketed_signal(
+    location: IncomingCoordinate,
+    initial_contents: String,
+    signal_type: SignalType,
+    number_of_passes: u32,
+) -> Signal {
+    let signal = create_new_signal(location, initial_contents, signal_type).await;
+    ic_cdk::println!("signal id {}", signal.id);
+    ticketing_three::create_tickets(signal.id, number_of_passes);
+
+    return signal;
+}
+
+#[update]
 async fn create_new_signal(
     location: IncomingCoordinate,
     initial_contents: String,
@@ -100,7 +115,7 @@ async fn create_new_signal(
             long: OrderedFloat(location.long),
         };
         if SIGNAL_STORE.with(|signal_store| signal_store.borrow().contains_key(&ordered_location)) {
-            panic!("A signal already exists at this location!")
+            ic_cdk::trap("A signal already exists at this location!");
         }
         SIGNAL_STORE.with(|signal_store| {
             signal_store

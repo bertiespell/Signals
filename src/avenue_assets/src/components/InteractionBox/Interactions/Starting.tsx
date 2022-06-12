@@ -42,14 +42,16 @@ export default function Starting({
 				</p>
 				{authenicated ? (
 					<>
-						<p className="text-lg text-gray-500">
-							To get started, simply drag the pin to the location
-							where you'd like to leave a signal.
-						</p>
-						<p className="text-lg text-gray-500">
-							Once you're happy with the location of your pin,
-							click the button below to get started.
-						</p>
+						<b>
+							<p className="text-lg text-gray-500">
+								To get started, simply drag the pin to the
+								location where you'd like to leave a signal.
+							</p>
+							<p className="text-lg text-gray-500">
+								Once you're happy with the location of your pin,
+								click the button below to get started.
+							</p>
+						</b>
 						<div className="mt-10 row-span-3">
 							<button
 								type="button"

@@ -54,7 +54,9 @@ export default function Sidebar() {
 				setActiveContent(newPinContent);
 				setShowMap(true);
 			}
-			map.setView(newPinContent?.marker.getLatLng(), 13);
+			try {
+				map.setView(newPinContent?.marker.getLatLng(), 13);
+			} catch {}
 		} else {
 			setShowMap(false);
 		}

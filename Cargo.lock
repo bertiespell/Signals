@@ -413,6 +413,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "ic-ledger-types"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3e5538e50e22dcdc395c0e3161b62fae088c4ff74342aaee4770ac0caddbce69"
+dependencies = [
+ "candid",
+ "crc32fast",
+ "hex",
+ "ic-cdk 0.5.1",
+ "serde",
+ "serde_bytes",
+ "sha2",
+]
+
+[[package]]
 name = "ic-types"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -425,6 +440,17 @@ dependencies = [
  "serde_bytes",
  "sha2",
  "thiserror",
+]
+
+[[package]]
+name = "include-base64"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b6a0c7dce4536b2d38681542df9746f57757e85c66340719d3825e2c9156b970"
+dependencies = [
+ "base64",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -762,12 +788,15 @@ checksum = "49b3de9ec5dc0a3417da371aab17d729997c15010e7fd24ff707773a33bddb64"
 name = "rust_avenue"
 version = "0.1.0"
 dependencies = [
+ "base64",
  "candid",
  "chrono",
  "ic-cdk 0.5.1",
  "ic-cdk-macros 0.5.1",
  "ic-certified-assets",
  "ic-certified-map",
+ "ic-ledger-types",
+ "include-base64",
  "once_cell",
  "ordered-float",
  "parking_lot",

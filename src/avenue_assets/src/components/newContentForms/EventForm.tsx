@@ -14,6 +14,9 @@ export default function EventForm() {
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
 
+	const [isTicketed, setIsTicketed] = useState(false);
+	const [numberOfTickets, setNumberOfTickets] = useState("10");
+
 	return (
 		<form>
 			<div className="p-5 pt-20 mt-8 lg:mt-0">
@@ -75,18 +78,78 @@ export default function EventForm() {
 						/>
 					</div>
 				</div>
-
-				<div className="mt-6 flex items-center justify-end space-x-4">
+				<div className="col-span-3 p-5 ">
+					<div className="relative flex items-start">
+						<div className="flex items-center h-5">
+							<input
+								id="third-party"
+								name="third-party"
+								type="checkbox"
+								className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+								onChange={(e) => setIsTicketed(!isTicketed)}
+							/>
+						</div>
+						<div className="ml-3 text-sm">
+							<label
+								htmlFor="third-party"
+								className="font-medium text-gray-700"
+							>
+								Ticketed Event
+							</label>
+							<p className="text-gray-500">
+								If you'd like to create a specific number of
+								tickets for your event you can set that here
+							</p>
+						</div>
+					</div>{" "}
+				</div>
+				<div className="col-span-3 px-5 pb-5">
+					<div
+						className={`sm:col-span-7 ${
+							isTicketed ? "" : "hidden"
+						}`}
+					>
+						<div className="flex rounded-md shadow-sm">
+							<span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+								Number of tickets
+							</span>
+							<input
+								type="text"
+								name="ticket-number"
+								id="ticket-number"
+								className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300"
+								placeholder="10"
+								value={numberOfTickets}
+								onChange={(e) =>
+									setNumberOfTickets(e.target.value)
+								}
+							/>
+						</div>
+					</div>
+				</div>
+				<div className="flex items-center justify-end space-x-4">
 					<button
 						type="submit"
 						className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
-						onClick={(e) =>
-							sendSignal(e as any, {
-								title,
-								description,
-								date,
-							})
-						}
+						onClick={(e) => {
+							if (isTicketed) {
+								sendSignal(
+									e as any,
+									{
+										title,
+										description,
+										date,
+										numberOfTickets,
+									} as any
+								);
+							} else {
+								sendSignal(e as any, {
+									title,
+									description,
+									date,
+								});
+							}
+						}}
 					>
 						Send Signal
 					</button>

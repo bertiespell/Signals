@@ -73,6 +73,12 @@ export default function TypeSelection({
 					Event
 				</button>
 			</div>
+			<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
+				<p className="text-lg text-gray-500">
+					<b>Not happy with your signal location?</b> Go back using
+					the steps below.
+				</p>
+			</div>
 		</div>
 	);
 }

@@ -31,10 +31,27 @@ type Signal = record {
     "signal_type": SignalType;
 };
 
-type BasicDaoStableStorage = record {
-    accounts: vec Account;
-    proposals: vec Proposal;
-    system_params: SystemParams;
+type AccTokens = record {
+    e8s: nat64
+};
+
+type Conf = record {
+  transaction_fee : AccTokens;
+  subaccount : opt vec nat8;
+  ledger_canister_id : principal;
+};
+
+type SaleTransferArgs = record {
+    amount: AccTokens;
+    to_principal: principal;
+    to_subaccount: opt blob
+};
+
+type Memo = nat64;
+
+type SaleTransferResult = variant {
+    Ok: Memo;
+    Err: text;
 };
 
 type Tokens = record {
@@ -138,9 +155,10 @@ type UpdateSystemParamsPayload = record {
     proposal_submission_deposit: opt Tokens;
 };
 
-type EventPass = record {
-    canister : principal;
-    index : TokenIndex;
+type TicketedEvent = record {
+    event_owner: principal;
+    number_of_tickets: nat32;
+    issued_passes: vec principal;
 };
 
 type TokenIndex = nat64;
@@ -193,7 +211,16 @@ service : (custodians : opt vec principal) -> {
     update_system_params: (UpdateSystemParamsPayload) -> ();
     create_account: (principal, nat64) -> ();
 
+    // Trade and Sale related functionality
+    transfer_sale: (SaleTransferArgs) -> (SaleTransferResult);
+
     // Event passes
+    create_ticketed_signal: (Coordinate, text, SignalType, nat32) -> (Signal);
+    claim_ticket: (int) -> ();
+    check_ticket: (int, principal) -> (bool) query;
+    get_event_details: (int) -> (TicketedEvent) query;
+    "get_all_ticketed_events": () -> (vec TicketedEvent) query;
+
     // is_authorized : () -> (bool) query;
     // bought_passes : () -> (vec EventPass) query;
     // set_authorized : (principal, bool) -> (ManageResult);

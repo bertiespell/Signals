@@ -1,11 +1,12 @@
 import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
 
+export interface AccTokens { 'e8s' : bigint }
 export interface Account { 'owner' : Principal, 'tokens' : Tokens }
-export interface BasicDaoStableStorage {
-  'system_params' : SystemParams,
-  'accounts' : Array<Account>,
-  'proposals' : Array<Proposal>,
+export interface Conf {
+  'transaction_fee' : AccTokens,
+  'subaccount' : [] | [Array<number>],
+  'ledger_canister_id' : Principal,
 }
 export interface Coordinate { 'lat' : number, 'long' : number }
 export type Error = { 'CanisterError' : { 'message' : string } } |
@@ -13,9 +14,9 @@ export type Error = { 'CanisterError' : { 'message' : string } } |
   { 'NoSuchToken' : null } |
   { 'Unauthorized' : null } |
   { 'NotOwner' : null };
-export interface EventPass { 'canister' : Principal, 'index' : TokenIndex }
 export type ManageResult = { 'Ok' : null } |
   { 'Err' : Error };
+export type Memo = bigint;
 export interface Message {
   'contents' : string,
   'time' : bigint,
@@ -45,6 +46,13 @@ export type ProposalState = { 'Failed' : string } |
   { 'Rejected' : null } |
   { 'Succeeded' : null } |
   { 'Accepted' : null };
+export interface SaleTransferArgs {
+  'to_principal' : Principal,
+  'to_subaccount' : [] | [Array<number>],
+  'amount' : AccTokens,
+}
+export type SaleTransferResult = { 'Ok' : Memo } |
+  { 'Err' : string };
 export interface Signal {
   'id' : bigint,
   'updated_at' : bigint,
@@ -69,6 +77,11 @@ export interface SystemParams {
   'proposal_vote_threshold' : Tokens,
   'proposal_submission_deposit' : Tokens,
 }
+export interface TicketedEvent {
+  'event_owner' : Principal,
+  'number_of_tickets' : number,
+  'issued_passes' : Array<Principal>,
+}
 export type TokenIndex = bigint;
 export interface Tokens { 'amount' : bigint }
 export interface TransferArgs { 'to' : Principal, 'amount' : Tokens }
@@ -91,10 +104,18 @@ export type VoteResult = { 'Ok' : ProposalState } |
 export interface _SERVICE {
   'account_balance' : ActorMethod<[], Tokens>,
   'add_new_message' : ActorMethod<[Coordinate, string], Signal>,
+  'check_ticket' : ActorMethod<[bigint, Principal], boolean>,
+  'claim_ticket' : ActorMethod<[bigint], undefined>,
   'create_account' : ActorMethod<[Principal, bigint], undefined>,
   'create_new_signal' : ActorMethod<[Coordinate, string, SignalType], Signal>,
+  'create_ticketed_signal' : ActorMethod<
+    [Coordinate, string, SignalType, number],
+    Signal,
+  >,
   'delete_signal' : ActorMethod<[Coordinate], undefined>,
   'get_all_signals' : ActorMethod<[], Array<Signal>>,
+  'get_all_ticketed_events' : ActorMethod<[], Array<TicketedEvent>>,
+  'get_event_details' : ActorMethod<[bigint], TicketedEvent>,
   'get_principal_for_signal_coordinates' : ActorMethod<[Coordinate], Principal>,
   'get_proposal' : ActorMethod<[bigint], [] | [Proposal]>,
   'get_rating_for_signal' : ActorMethod<[Coordinate], number>,
@@ -109,6 +130,7 @@ export interface _SERVICE {
   'principal_can_rate_location' : ActorMethod<[Principal, Coordinate], boolean>,
   'submit_proposal' : ActorMethod<[ProposalPayload], SubmitProposalResult>,
   'transfer' : ActorMethod<[TransferArgs], TransferResult>,
+  'transfer_sale' : ActorMethod<[SaleTransferArgs], SaleTransferResult>,
   'update_system_params' : ActorMethod<[UpdateSystemParamsPayload], undefined>,
   'update_user' : ActorMethod<[Profile], undefined>,
   'vote' : ActorMethod<[VoteArgs], VoteResult>,

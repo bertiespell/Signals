@@ -18,6 +18,7 @@ import ChatSig from "./Chat";
 import Event from "./Event";
 import { ActiveContent } from "../../utils/types";
 import { rust_avenue } from "../../../../declarations/rust_avenue";
+import { Principal } from "@dfinity/principal";
 
 export type Person = {
 	name: string;
@@ -33,15 +34,26 @@ export type Activity = {
 	date: string;
 };
 
+export type TicketData = {
+	numberOfTicketsRemaining: number;
+	yourAttending: boolean;
+	attendees: Array<Principal>;
+};
+
 export default function SignalContainer() {
 	const { activeContent, sendMessage } = useContext<{
 		sendMessage: any;
 		activeContent: ActiveContent<SignalType>;
 	}>(MapContext as any);
-	const { authenticatedActor } = useContext(UserContext);
+	const { authenticatedActor, authenticatedUser } = useContext(UserContext);
 	const { allSignals } = useContext(MapContext);
 	const [pinUser, setPinUser] = useState<Profile>();
 	const [activity, setActivity] = useState<Array<Activity>>([]);
+	const [eventTicketInfo, setEventTicketInfo] = useState<TicketData>({
+		numberOfTicketsRemaining: 0,
+		yourAttending: false,
+		attendees: [],
+	});
 
 	const getUserForSignal = async () => {
 		if (activeContent) {
@@ -52,14 +64,52 @@ export default function SignalContainer() {
 		}
 	};
 
-	useEffect(() => {
-		getUserForSignal();
-	}, [activeContent]);
+	const getDataForTicketedEvent = async () => {
+		if (
+			authenticatedUser?.toString() &&
+			!authenticatedUser.isAnonymous() &&
+			activeContent &&
+			mapActiveContentToPinType(activeContent) === PinType.Event
+		) {
+			const ticket = await rust_avenue.get_event_details(
+				activeContent.signalMetadata?.id as any
+			);
+			const ticketData = {
+				numberOfTicketsRemaining: 0,
+				yourAttending: false,
+				attendees: [],
+			};
+			if (
+				ticket.issued_passes.find(
+					(pass) =>
+						pass.toString() === authenticatedUser?.toString() &&
+						!authenticatedUser.isAnonymous()
+				)
+			) {
+				ticketData.yourAttending = true;
+			}
+			if (ticket.issued_passes.length < ticket.number_of_tickets) {
+				ticketData.numberOfTicketsRemaining =
+					ticket.number_of_tickets - ticket.issued_passes.length;
+				ticketData.attendees = ticket.issued_passes as any;
+			}
+			setEventTicketInfo(ticketData);
+		}
+	};
 
 	useEffect(() => {
 		setActivity([]);
 		addMessages();
+		getDataForTicketedEvent();
+		getUserForSignal();
 	}, [allSignals, activeContent]);
+
+	const buyTicket = async () => {
+		await authenticatedActor?.claim_ticket(
+			activeContent.signalMetadata?.id as any
+		);
+		getDataForTicketedEvent();
+	};
 
 	const sendMessageEv = async (e: Event, message: string) => {
 		e.preventDefault();
@@ -93,11 +143,25 @@ export default function SignalContainer() {
 		let type = mapActiveContentToPinType(content);
 		if (pinUser && content) {
 			if (type === PinType.Trade)
-				return Trade(pinUser, content, sendMessageEv, activity);
+				return Trade(
+					pinUser,
+					content,
+					sendMessageEv,
+					activity,
+					authenticatedActor
+				);
 			if (type === PinType.Chat)
 				return ChatSig(pinUser, content, sendMessageEv, activity);
 			if (type === PinType.Event)
-				return Event(pinUser, content, sendMessageEv, activity);
+				return Event(
+					pinUser,
+					content,
+					sendMessageEv,
+					activity,
+					eventTicketInfo,
+					buyTicket,
+					authenticatedUser as Principal
+				);
 		}
 	};
 

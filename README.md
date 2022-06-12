@@ -60,6 +60,18 @@ dfx canister call internet_identity init_salt
 
 Then `npm start` on the FE (which is where the actor is looking in the User Context)
 
+# Ledger
+
+You'll also need to set up the ledger if you want to run this locally. Instructions over here:
+
+```
+export IC_VERSION=dd3a710b03bd3ae10368a91b255571d012d1ec2f
+curl -o ledger.wasm.gz https://download.dfinity.systems/ic/dd3a710b03bd3ae10368a91b255571d012d1ec2f/canisters/ledger-canister_notify-method.wasm.gz
+gunzip ledger.wasm.gz
+curl -o ledger.private.did https://raw.githubusercontent.com/dfinity/ic/dd3a710b03bd3ae10368a91b255571d012d1ec2f/rs/rosetta-api/ledger.did
+curl -o ledger.public.did https://raw.githubusercontent.com/dfinity/ic/dd3a710b03bd3ae10368a91b255571d012d1ec2f/rs/rosetta-api/ledger_canister/ledger.did
+```
+
 # DAO interacting with the DAO, to submit a proposal:
 
 We can change `transfer_fee` by calling rust_avenue's `update_system_params` method. This method takes
@@ -117,6 +129,11 @@ Note the output proposal ID:
 -   Make the app mobile friends, I've kind of ignored this for now
 -   Use React Leaflet instead of all the custom stuff I added https://react-leaflet.js.org/docs/example-draggable-marker/
 -   Add way more data validation (both BE and FE)
+-   See who's attending events and add profile view
+-   Add better page about how DAO works and how to get involved
+-   Create better incentive mechanisms (getting others to sign up, etc)
+-   Show number of likes
+-   Fix bug with likes: update state when a signal gets enough downvotes that it's deleted
 
 Extension Ideas
 
@@ -144,7 +161,7 @@ Debugging: Sometimes the dfx deploy seems to go wrong :| I think it's when it's 
 -   delete .dfx folder
 -   dfx start (in Signals)
 -   dfx deploy (in Signals)
--   dfx deploy (internet-identity)
+-   dfx deploy (internet-identity) - II_FETCH_ROOT_KEY=1 dfx deploy --no-wallet --argument '(null)'
 -   npm start (in internet-indentity) (this needs port 8000)
 -   npm start (in Signals) this now falls back to 80001
 

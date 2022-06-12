@@ -82,12 +82,14 @@ export default function InteractionBox() {
 		<>
 			{stateToComponent[interactionState]}
 			{authenicated ? (
-				<div className="absolute inset-x-0 bottom-0 h-16">
-					<ProgressBar
-						setInteractionState={setInteractionState}
-						interactionState={interactionState}
-					/>
-				</div>
+				<>
+					<div className="absolute inset-x-0 bottom-0 h-16">
+						<ProgressBar
+							setInteractionState={setInteractionState}
+							interactionState={interactionState}
+						/>
+					</div>
+				</>
 			) : (
 				""
 			)}

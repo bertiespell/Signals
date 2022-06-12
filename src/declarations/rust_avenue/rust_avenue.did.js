@@ -21,6 +21,11 @@ export const idlFactory = ({ IDL }) => {
     'created_at' : IDL.Nat64,
     'location' : Coordinate,
   });
+  const TicketedEvent = IDL.Record({
+    'event_owner' : IDL.Principal,
+    'number_of_tickets' : IDL.Nat32,
+    'issued_passes' : IDL.Vec(IDL.Principal),
+  });
   const ProposalState = IDL.Variant({
     'Failed' : IDL.Text,
     'Open' : IDL.Null,
@@ -66,6 +71,14 @@ export const idlFactory = ({ IDL }) => {
   });
   const TransferArgs = IDL.Record({ 'to' : IDL.Principal, 'amount' : Tokens });
   const TransferResult = IDL.Variant({ 'Ok' : IDL.Null, 'Err' : IDL.Text });
+  const AccTokens = IDL.Record({ 'e8s' : IDL.Nat64 });
+  const SaleTransferArgs = IDL.Record({
+    'to_principal' : IDL.Principal,
+    'to_subaccount' : IDL.Opt(IDL.Vec(IDL.Nat8)),
+    'amount' : AccTokens,
+  });
+  const Memo = IDL.Nat64;
+  const SaleTransferResult = IDL.Variant({ 'Ok' : Memo, 'Err' : IDL.Text });
   const UpdateSystemParamsPayload = IDL.Record({
     'tokens_received_for_signal_creation' : IDL.Opt(ProposalParams),
     'transfer_fee' : IDL.Opt(Tokens),
@@ -81,14 +94,27 @@ export const idlFactory = ({ IDL }) => {
   return IDL.Service({
     'account_balance' : IDL.Func([], [Tokens], ['query']),
     'add_new_message' : IDL.Func([Coordinate, IDL.Text], [Signal], []),
+    'check_ticket' : IDL.Func([IDL.Int, IDL.Principal], [IDL.Bool], ['query']),
+    'claim_ticket' : IDL.Func([IDL.Int], [], []),
     'create_account' : IDL.Func([IDL.Principal, IDL.Nat64], [], []),
     'create_new_signal' : IDL.Func(
         [Coordinate, IDL.Text, SignalType],
         [Signal],
         [],
       ),
+    'create_ticketed_signal' : IDL.Func(
+        [Coordinate, IDL.Text, SignalType, IDL.Nat32],
+        [Signal],
+        [],
+      ),
     'delete_signal' : IDL.Func([Coordinate], [], []),
     'get_all_signals' : IDL.Func([], [IDL.Vec(Signal)], ['query']),
+    'get_all_ticketed_events' : IDL.Func(
+        [],
+        [IDL.Vec(TicketedEvent)],
+        ['query'],
+      ),
+    'get_event_details' : IDL.Func([IDL.Int], [TicketedEvent], ['query']),
     'get_principal_for_signal_coordinates' : IDL.Func(
         [Coordinate],
         [IDL.Principal],
@@ -119,6 +145,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'submit_proposal' : IDL.Func([ProposalPayload], [SubmitProposalResult], []),
     'transfer' : IDL.Func([TransferArgs], [TransferResult], []),
+    'transfer_sale' : IDL.Func([SaleTransferArgs], [SaleTransferResult], []),
     'update_system_params' : IDL.Func([UpdateSystemParamsPayload], [], []),
     'update_user' : IDL.Func([Profile], [], []),
     'vote' : IDL.Func([VoteArgs], [VoteResult], []),

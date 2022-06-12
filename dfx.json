@@ -23,6 +23,9 @@
     "build": {
       "args": "",
       "packtool": ""
+    },
+    "replica": {
+      "subnet_type":"system"
     }
   },
   "networks": {

@@ -1,11 +1,18 @@
+import { Principal } from "@dfinity/principal";
+import { EventSignal } from "../../utils/mapSignalTypes";
+import { ActiveContent } from "../../utils/types";
 import Rating from "../InteractionBox/Rating";
 import MessagesList from "./Messages";
+import { TicketData } from "./SignalContainer";
 
 export default function Event(
 	pinUser: any,
-	activeContent: any,
+	activeContent: ActiveContent<EventSignal>,
 	sendMessageEv: any,
-	activity: any
+	activity: any,
+	eventTicketInfo: TicketData,
+	buyTicket: any,
+	authenticatedUser: Principal
 ) {
 	return (
 		<div className="p-5 pt-20 mt-8 lg:mt-0">
@@ -34,6 +41,43 @@ export default function Event(
 					)}
 				</p>
 			</div>
+			{authenticatedUser?.toString() &&
+			!authenticatedUser.isAnonymous() ? (
+				<>
+					{eventTicketInfo.numberOfTicketsRemaining &&
+					!eventTicketInfo.yourAttending ? (
+						<div className="pt-5">
+							<div className="mt-10 row-span-3">
+								<button
+									type="button"
+									className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-signalBlue-200 hover:bg-signalBlue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-signalBlue-500"
+									onClick={buyTicket}
+								>
+									Buy Ticket
+								</button>
+							</div>
+						</div>
+					) : (
+						<>
+							{eventTicketInfo.yourAttending ? (
+								<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
+									<p className="text-lg text-gray-500">
+										<b>You're attending this event!</b>
+									</p>
+								</div>
+							) : (
+								<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
+									<p className="text-lg text-gray-500">
+										<b>Sorry, this event is sold out!</b>
+									</p>
+								</div>
+							)}
+						</>
+					)}
+				</>
+			) : (
+				""
+			)}
 
 			<MessagesList sendMessageEv={sendMessageEv} activity={activity} />
 		</div>

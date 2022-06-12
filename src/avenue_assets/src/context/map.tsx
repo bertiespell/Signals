@@ -30,6 +30,8 @@ const MapProvider = ({ children }: any) => {
 		useState<ActiveContent<SignalType>>();
 	const [pinType, setPinType] = useState(PinType.Chat);
 	const [mapInitialised, setMapInitialized] = useState(false);
+	const [showTooltip, setShowToolTip] = useState(false);
+
 	const [map, setMap] = useState();
 	const [allMarkers, setAllMarkers] = useState<Array<Marker>>([]);
 	const [allSignals, setAllSignals] = useState<
@@ -217,18 +219,34 @@ const MapProvider = ({ children }: any) => {
 			}
 		)
 			.addTo(map)
+			.on("mouseover", () => {
+				try {
+					marker.closeTooltip();
+					marker.unbindToolTip();
+				} catch {}
+			})
 			.on("click", () => {
 				(map as any).setView(marker.getLatLng(), 13);
 				setActiveContent({
 					...active,
 					marker,
 				});
+				marker
+					.bindTooltip(
+						"To change location <br>go back a step in the<br> progress bar on the left"
+					)
+					.toggleTooltip();
+				setShowToolTip(!showTooltip);
 			})
 			.on("drag", () => {
 				setActiveContent({
 					...active,
 					marker,
 				});
+				try {
+					marker.closeTooltip();
+					marker.unbindToolTip();
+				} catch {}
 			});
 		active.marker = marker;
 		setActiveContent(active as any);
@@ -292,13 +310,22 @@ const MapProvider = ({ children }: any) => {
 			const location = activeContent?.marker.getLatLng();
 			const signalType = mapSignalToType(pinType);
 			try {
-				const signal: Signal<any> = await (
-					authenticatedActor as any
-				)?.create_new_signal(
-					{ lat: location.lat, long: location.lng },
-					JSON.stringify(contents),
-					signalType
-				);
+				let signal;
+				if ((contents as EventSignal).numberOfTickets) {
+					signal = (await authenticatedActor?.create_ticketed_signal(
+						{ lat: location.lat, long: location.lng },
+						JSON.stringify(contents),
+						signalType,
+						Number((contents as EventSignal).numberOfTickets)
+					)) as unknown as Signal<SignalType>;
+					console.log(signal);
+				} else {
+					signal = (await authenticatedActor?.create_new_signal(
+						{ lat: location.lat, long: location.lng },
+						JSON.stringify(contents),
+						signalType
+					)) as unknown as Signal<SignalType>;
+				}
 
 				// remove the newsignal marker
 				activeContent.isNewPin = false;

@@ -12,6 +12,7 @@ export type EventSignal = {
     date: string;
     title: string;
     description: string;
+    numberOfTickets?: number;
 }
 
 export type Chat = {

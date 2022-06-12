@@ -1,12 +1,37 @@
+import { ActorSubclass, SignIdentity } from "@dfinity/agent";
+import { Principal } from "@dfinity/principal";
+import { useContext, useEffect } from "react";
+import { _SERVICE } from "../../../../declarations/rust_avenue/rust_avenue.did";
+import { UserContext } from "../../context/user";
+import { Trade } from "../../utils/mapSignalTypes";
+import { ActiveContent } from "../../utils/types";
 import Rating from "../InteractionBox/Rating";
 import MessagesList from "./Messages";
 
 export default function Trade(
 	pinUser: any,
-	activeContent: any,
+	activeContent: ActiveContent<Trade>,
 	sendMessageEv: any,
-	activity: any
+	activity: any,
+	authenticatedActor: ActorSubclass<_SERVICE> | undefined
 ) {
+	const buy = async () => {
+		if (authenticatedActor && activeContent) {
+			Principal;
+
+			const transfer = await authenticatedActor.transfer_sale({
+				to_principal: activeContent.signalMetadata?.user as Principal,
+				to_subaccount: [],
+				amount: {
+					e8s: BigInt(
+						Number(activeContent.signalMetadata?.metadata.price)
+					),
+				},
+			});
+			console.log(transfer);
+		}
+	};
+
 	return (
 		<div className="p-5 pt-20 mt-8 lg:mt-0">
 			<div>
@@ -24,6 +49,15 @@ export default function Trade(
 					<p className="text-lg text-gray-500">
 						Price: {activeContent?.signalMetadata?.metadata.price}
 					</p>
+				</div>
+				<div className="mt-6 flex items-center justify-start space-x-4">
+					<button
+						type="submit"
+						className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+						onClick={buy}
+					>
+						Buy
+					</button>
 				</div>
 				<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
 					<p className="text-lg text-gray-500">
