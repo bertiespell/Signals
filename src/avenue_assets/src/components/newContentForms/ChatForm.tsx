@@ -1,11 +1,13 @@
 import { useContext, useState } from "react";
 
 import { MapContext } from "../../context/map";
+import ErrorAlert from "../ErrorAlert";
 
 export default function ChatForm() {
 	const { sendSignal } = useContext(MapContext);
 	const [contents, setContents] = useState("");
 	const [title, setTitle] = useState("");
+	const [open, setOpen] = useState(false);
 
 	return (
 		<div className="p-5 pt-20 mt-8 lg:mt-0">
@@ -75,12 +77,19 @@ export default function ChatForm() {
 												<button
 													type="submit"
 													className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
-													onClick={(e) =>
-														sendSignal(e as any, {
-															title,
-															contents,
-														})
-													}
+													onClick={(e) => {
+														if (title && contents) {
+															sendSignal(
+																e as any,
+																{
+																	title,
+																	contents,
+																}
+															);
+														} else {
+															setOpen(true);
+														}
+													}}
 												>
 													Send Signal
 												</button>
@@ -100,6 +109,12 @@ export default function ChatForm() {
 						</div>
 					</div>
 				</div>
+				<ErrorAlert
+					setOpen={setOpen}
+					open={open}
+					title={"Success"}
+					message={"Your username was updated."}
+				/>
 			</section>
 		</div>
 	);

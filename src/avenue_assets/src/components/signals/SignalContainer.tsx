@@ -38,6 +38,7 @@ export type TicketData = {
 	numberOfTicketsRemaining: number;
 	yourAttending: boolean;
 	attendees: Array<Principal>;
+	isTicketed: boolean;
 };
 
 export default function SignalContainer() {
@@ -53,6 +54,7 @@ export default function SignalContainer() {
 		numberOfTicketsRemaining: 0,
 		yourAttending: false,
 		attendees: [],
+		isTicketed: false,
 	});
 
 	const getUserForSignal = async () => {
@@ -66,9 +68,10 @@ export default function SignalContainer() {
 
 	const getDataForTicketedEvent = async () => {
 		if (
+			activeContent &&
+			(activeContent.signalMetadata?.metadata as any).numberOfTickets &&
 			authenticatedUser?.toString() &&
 			!authenticatedUser.isAnonymous() &&
-			activeContent &&
 			mapActiveContentToPinType(activeContent) === PinType.Event
 		) {
 			const ticket = await rust_avenue.get_event_details(
@@ -78,6 +81,7 @@ export default function SignalContainer() {
 				numberOfTicketsRemaining: 0,
 				yourAttending: false,
 				attendees: [],
+				isTicketed: true,
 			};
 			if (
 				ticket.issued_passes.find(

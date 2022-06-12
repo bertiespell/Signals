@@ -3,7 +3,7 @@ pub mod dao_store;
 pub mod heartbeat;
 pub mod ratings;
 pub mod signal;
-pub mod ticketing_three;
+pub mod ticketing;
 pub mod types;
 pub mod users;
 pub mod utils;

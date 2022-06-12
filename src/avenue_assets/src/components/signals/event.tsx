@@ -41,7 +41,8 @@ export default function Event(
 					)}
 				</p>
 			</div>
-			{authenticatedUser?.toString() &&
+			{eventTicketInfo.isTicketed &&
+			authenticatedUser?.toString() &&
 			!authenticatedUser.isAnonymous() ? (
 				<>
 					{eventTicketInfo.numberOfTicketsRemaining &&

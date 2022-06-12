@@ -1,241 +1,97 @@
-use std::collections::{BTreeSet, HashSet};
-use std::mem;
-
 use crate::utils::caller;
-use candid::{
-    types::{Serializer, Type},
-    CandidType, Principal,
-};
-use ic_cdk::{
-    api::{
-        self,
-        call::{self, RejectionCode},
-    },
-    storage,
-};
+use ic_cdk::export::candid::{CandidType, Deserialize};
+use ic_cdk::export::Principal;
 use ic_cdk_macros::*;
-use once_cell::sync::Lazy;
-use parking_lot::{MappedRwLockReadGuard, RwLock, RwLockReadGuard};
-use serde::{Deserialize, Serialize};
+use std::cell::RefCell;
+use std::collections::BTreeMap;
 
-#[derive(CandidType, Deserialize)]
-struct StableState {
-    assets: ic_certified_assets::StableState,
-    events: BTreeSet<Event>,
-}
+// Maps the SignalID to an TicketedEvent
+pub type EventStore = BTreeMap<i128, TicketedEvent>;
 
-#[pre_upgrade]
-fn pre_upgrade() {
-    let state = StableState {
-        assets: ic_certified_assets::pre_upgrade(),
-        events: mem::take(&mut *STORAGE.write()),
-    };
-    storage::stable_save((state,)).unwrap();
-}
-
-#[post_upgrade]
-fn post_upgrade() {
-    let (s,): (StableState,) = storage::stable_restore().unwrap();
-    *STORAGE.write() = s.events;
-    ic_certified_assets::post_upgrade(s.assets);
-}
-
-#[derive(CandidType, Deserialize, Ord, PartialOrd, Eq, PartialEq, Clone)]
-struct Event {
+#[derive(Clone, Debug, CandidType, Deserialize)]
+pub struct TicketedEvent {
     event_owner: Principal,
-    number_of_tickets: u64,
-    event_passes_distributed: Vec<EventPass>,
+    number_of_tickets: u32,
+    issued_passes: Vec<Principal>,
 }
 
-#[derive(CandidType, Deserialize, Ord, PartialOrd, Eq, PartialEq, Clone, Copy)]
-struct EventPass {
-    canister: Principal,
-    index: u64,
+thread_local! {
+    pub static EVENTS: RefCell<EventStore> = RefCell::default();
+    // for now, if you want to create a ticketed event, we limit accounts to 3 (to stop cycle exhaustion)
+    pub static PRINCIPAL_TO_EVENT_NUMBER: RefCell<BTreeMap<Principal, u8>> = RefCell::default();
 }
 
-#[derive(CandidType, Deserialize)]
-enum Error {
-    InvalidCanister,
-    CannotNotify,
-    CanisterError { message: String },
-    NoSuchToken,
-    NotOwner,
-    Unauthorized,
-}
-
-impl From<DipError> for Error {
-    fn from(e: DipError) -> Self {
-        match e {
-            DipError::InvalidTokenId => Self::NoSuchToken,
-            DipError::Unauthorized => Self::NotOwner,
-            _ => Self::CanisterError {
-                message: format!("{e:?}"),
-            },
-        }
-    }
-}
-
-type Result<T = (), E = Error> = std::result::Result<T, E>;
-
-impl From<(RejectionCode, String)> for Error {
-    fn from((code, message): (RejectionCode, String)) -> Self {
-        match code {
-            RejectionCode::CanisterError => Self::CanisterError { message },
-            _ => Self::InvalidCanister,
-        }
-    }
-}
-
-#[derive(CandidType, Deserialize, Debug)]
-enum DipError {
-    Unauthorized,
-    InvalidTokenId,
-    ZeroAddress,
-    Other,
-}
-
-/**
- * TODO: add authorized, each user should only be able to add a few free events
- */
-fn create_event(event: Event) -> Result {
-    // in the future we'll make this paid, but to stop cycle exhaustion, let's limit events to 100 for now
-    if event.number_of_tickets > 100 {
-        ic_cdk::trap(&String::from(
-            "We currently only support events for 100 people or less",
-        ));
-    }
-    // put the event in storage
-    // then register the number of events
-    let mut i = 0;
-
-    while i < event.number_of_tickets {
-        // register the number of passes
-        register(event.event_passes_distributed[i]);
-        i = i + 1;
+pub fn create_tickets(signal_id: i128, number_of_tickets: u32) {
+    if number_of_tickets >= 1000 {
+        ic_cdk::trap("Currently ticketed events are limited to 1000 places");
     }
 
-    if STORAGE.read().passes.contains(&event) {
-        return Ok(());
-    }
+    let caller_principal = caller();
+    let events_already_created = PRINCIPAL_TO_EVENT_NUMBER.with(|events_created| {
+        events_created
+            .borrow()
+            .get(&caller_principal)
+            .cloned()
+            .unwrap_or_else(|| 0)
+    });
 
-    STORAGE.write().passes.insert(event);
-    Ok(())
-}
+    // if events_already_created >= 3 {
+    //     ic_cdk::trap("Limit reached: You have already created 3 ticketed events.");
+    // }
 
-/**
- * TODO: we can support non-paid but limited supply tickets with this
- * On Event creationg, we can register an EventPass, with an owner (of the event), and a number available.
- * Payments integration will be done later
- */
-#[update]
-async fn register(eventPass: EventPass) -> Result {
-    let principal_id = caller();
+    let event = TicketedEvent {
+        event_owner: caller_principal,
+        number_of_tickets,
+        issued_passes: vec![],
+    };
 
-    if let Ok((owner,)) = call::call::<_, (Result<Principal, DipError>,)>(
-        eventPass.canister,
-        "ownerOfDip721",
-        (eventPass.index,),
-    )
-    .await
-    {
-        if !matches!(owner, Ok(p) if p == api::id()) {
-            return Err(Error::NotOwner);
-        }
-    } else {
-        return Err(Error::InvalidCanister);
-    }
-    Ok(())
-}
+    PRINCIPAL_TO_EVENT_NUMBER.with(|principal_to_events_store| {
+        principal_to_events_store
+            .borrow_mut()
+            .insert(caller_principal, events_already_created + 1);
+    });
 
-#[update]
-async fn burn(event_pass: EventPass) -> Result {
-    call::call::<_, (Result<u128, DipError>,)>(
-        event_pass.canister,
-        "burnDip721",
-        (event_pass.index,),
-    )
-    .await?
-    .0?;
-    Ok(())
-}
-
-#[query]
-fn passes() -> Wrapper<MappedRwLockReadGuard<'static, BTreeSet<Event>>> {
-    Wrapper(RwLockReadGuard::map(STORAGE.read(), |s| &s.passes))
-}
-
-/**
- * Transfer will work whilst tickets remain
- */
-#[update]
-async fn transfer(event_pass: EventPass, target: Principal, notify: Option<bool>) -> Result {
-    if !STORAGE.read().passes.contains(&event_pass) {
-        register_passes(event_pass).await?;
-    }
-    if notify != Some(false) {
-        if let Ok((res,)) = call::call::<_, (Result<u128, DipError>,)>(
-            event_pass.canister,
-            "safeTransferFromNotifyDip721",
-            (api::id(), target, event_pass.index, Vec::<u8>::new()),
-        )
-        .await
-        {
-            res?;
-        } else {
-            if notify == None {
-                call::call::<_, (Result<u128, DipError>,)>(
-                    event_pass.canister,
-                    "safeTransferFromDip721",
-                    (api::id(), target, event_pass.index),
-                )
-                .await?
-                .0?;
-            } else {
-                return Err(Error::CannotNotify);
-            }
-        }
-    } else {
-        call::call::<_, (Result<u128, DipError>,)>(
-            event_pass.canister,
-            "safeTransferFromDip721",
-            (api::id(), target, event_pass.index),
-        )
-        .await?
-        .0?;
-    }
-    STORAGE.write().passes.remove(&event_pass);
-    Ok(())
-}
-
-#[update(name = "onDIP721Received")]
-fn on_dip721_received(_: Principal, _: Principal, tokenid: u64, _: Vec<u8>) {
-    STORAGE.write().passes.insert(EventPass {
-        canister: api::caller(),
-        index: tokenid,
+    EVENTS.with(|event_store| {
+        event_store.borrow_mut().insert(signal_id, event);
     });
 }
 
-#[derive(CandidType, Deserialize, Default)]
-struct Storage {
-    passes: BTreeSet<Event>,
+#[update]
+pub fn claim_ticket(signal_id: i128) {
+    let buyer = caller();
+    let mut ticketed_event = get_event_details(signal_id);
+
+    if ticketed_event.number_of_tickets as usize <= ticketed_event.issued_passes.len() {
+        ic_cdk::trap("Ticket limit reached.");
+    }
+
+    ticketed_event.issued_passes.push(buyer);
+
+    EVENTS.with(|events_store| events_store.borrow_mut().insert(signal_id, ticketed_event));
 }
 
-static STORAGE: Lazy<RwLock<Storage>> = Lazy::new(|| RwLock::new(Storage::default()));
+#[query]
+pub fn get_event_details(signal_id: i128) -> TicketedEvent {
+    EVENTS.with(|event_store| event_store.borrow().get(&signal_id).cloned().unwrap())
+}
 
-pub struct Wrapper<T>(pub T);
+#[query]
+// takes a principal and an event and checks
+pub fn check_ticket(signal_id: i128, ticket_holder: Principal) -> bool {
+    let ticketed_event = get_event_details(signal_id);
+    ticketed_event.issued_passes.contains(&ticket_holder)
+}
 
-impl<'a, T> CandidType for Wrapper<MappedRwLockReadGuard<'a, T>>
-where
-    T: CandidType,
-{
-    fn _ty() -> Type {
-        T::_ty()
-    }
+#[query]
+fn get_all_ticketed_events() -> Vec<TicketedEvent> {
+    let mut all_events: Vec<TicketedEvent> = vec![];
 
-    fn idl_serialize<S>(&self, serializer: S) -> Result<(), S::Error>
-    where
-        S: Serializer,
-    {
-        (*self.0).idl_serialize(serializer)
-    }
+    EVENTS.with(|event_store| {
+        event_store
+            .borrow()
+            .iter()
+            .for_each(|(_key, value)| all_events.push(value.clone()))
+    });
+
+    return all_events;
 }

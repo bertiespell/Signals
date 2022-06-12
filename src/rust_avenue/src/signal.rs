@@ -1,5 +1,5 @@
 use crate::dao_store::SIGNAL_DAO;
-use crate::ticketing_three;
+use crate::ticketing;
 use crate::types::*;
 use crate::utils::caller;
 use ic_cdk::{api::time, export::Principal};
@@ -82,9 +82,7 @@ async fn create_ticketed_signal(
     number_of_passes: u32,
 ) -> Signal {
     let signal = create_new_signal(location, initial_contents, signal_type).await;
-    ic_cdk::println!("signal id {}", signal.id);
-    ticketing_three::create_tickets(signal.id, number_of_passes);
-
+    ticketing::create_tickets(signal.id, number_of_passes);
     return signal;
 }
 
