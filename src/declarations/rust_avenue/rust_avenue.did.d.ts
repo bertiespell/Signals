@@ -3,12 +3,11 @@ import type { ActorMethod } from '@dfinity/agent';
 
 export interface AccTokens { 'e8s' : bigint }
 export interface Account { 'owner' : Principal, 'tokens' : Tokens }
-export interface Conf {
-  'transaction_fee' : AccTokens,
-  'subaccount' : [] | [Array<number>],
-  'ledger_canister_id' : Principal,
-}
 export interface Coordinate { 'lat' : number, 'long' : number }
+export type DepositErr = { 'TransferFailure' : null } |
+  { 'BalanceLow' : null };
+export type DepositReceipt = { 'Ok' : bigint } |
+  { 'Err' : DepositErr };
 export type Error = { 'CanisterError' : { 'message' : string } } |
   { 'CannotNotify' : null } |
   { 'NoSuchToken' : null } |
@@ -104,7 +103,9 @@ export type VoteResult = { 'Ok' : ProposalState } |
 export interface _SERVICE {
   'account_balance' : ActorMethod<[], Tokens>,
   'add_new_message' : ActorMethod<[Coordinate, string], Signal>,
+  'buy_item' : ActorMethod<[bigint, bigint], DepositReceipt>,
   'check_ticket' : ActorMethod<[bigint, Principal], boolean>,
+  'claim_sale' : ActorMethod<[bigint], TransferResult>,
   'claim_ticket' : ActorMethod<[bigint], undefined>,
   'create_account' : ActorMethod<[Principal, bigint], undefined>,
   'create_new_signal' : ActorMethod<[Coordinate, string, SignalType], Signal>,

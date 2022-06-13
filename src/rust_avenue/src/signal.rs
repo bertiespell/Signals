@@ -1,8 +1,10 @@
 use crate::dao_store::SIGNAL_DAO;
 use crate::ticketing;
 use crate::types::*;
+use crate::users;
 use crate::utils::caller;
-use ic_cdk::{api::time, export::Principal};
+use candid::Principal;
+use ic_cdk::api::time;
 use ic_cdk_macros::*;
 use ordered_float::OrderedFloat;
 use std::cell::RefCell;
@@ -11,67 +13,7 @@ thread_local! {
     pub static SIGNAL_STORE: RefCell<SignalStore> = RefCell::default();
     pub static USER_SIGNAL_STORE: RefCell<UserSignalStore> = RefCell::default();
     pub static CURRENT_ID: RefCell<i128> = RefCell::default();
-}
-
-#[init]
-fn init() {
-    ic_cdk::setup();
-    CURRENT_ID.with(|current_id| *current_id.borrow_mut() = 0);
-}
-
-#[update]
-fn delete_signal(location: IncomingCoordinate) {
-    let principal_id = caller();
-
-    // Let pk be the public key of a principal that is allowed to perform
-    // this operation. This pk could be stored in the canister's state.
-    if caller() != Principal::self_authenticating(principal_id) {
-        ic_cdk::trap("You're not authorized to delete this signal");
-    }
-
-    let user = get_principal_for_signal_coordinates(location);
-
-    if caller() != user {
-        ic_cdk::trap("You're not authorized to delete this signal");
-    }
-    internal_delete_signal(location, principal_id);
-}
-
-pub fn internal_delete_signal(location: IncomingCoordinate, principal_id: Principal) {
-    let ordered_location = Coordinate {
-        lat: OrderedFloat(location.lat),
-        long: OrderedFloat(location.long),
-    };
-
-    let located_signal = SIGNAL_STORE.with(|signal_store| {
-        signal_store
-            .borrow()
-            .get(&ordered_location)
-            .cloned()
-            .unwrap()
-    });
-
-    let user_signals = USER_SIGNAL_STORE
-        .with(|user_store| user_store.borrow().get(&principal_id).cloned().unwrap());
-
-    if user_signals.contains(&located_signal) {
-        SIGNAL_STORE.with(|signal_store| signal_store.borrow_mut().remove(&ordered_location));
-
-        USER_SIGNAL_STORE.with(|user_store| {
-            // get the vec of locations for this user and remove it
-            let mut signals = user_store
-                .borrow()
-                .get(&principal_id)
-                .clone()
-                .unwrap()
-                .to_owned();
-            signals.retain(|x| x.clone() != located_signal);
-
-            user_store
-                .borrow_mut()
-                .insert(principal_id, signals.clone());
-        });
-    }
+    pub static SIGNAL_ID_TO_SIGNAL: RefCell<SignalIdMap> = RefCell::default();
 }
 
 #[update]
@@ -120,6 +62,13 @@ async fn create_new_signal(
                 .borrow_mut()
                 .insert(ordered_location.clone(), signal.clone());
         });
+
+        SIGNAL_ID_TO_SIGNAL.with(|signal_id_store| {
+            signal_id_store
+                .borrow_mut()
+                .insert(signal.id, signal.clone());
+        });
+
         USER_SIGNAL_STORE.with(|user_store| {
             let mut signals = match user_store.borrow_mut().get(&principal_id).clone() {
                 None => vec![],
@@ -172,6 +121,11 @@ pub fn get_signal(location: IncomingCoordinate) -> Signal {
     })
 }
 
+pub fn get_signal_by_id(signal_id: i128) -> Signal {
+    SIGNAL_ID_TO_SIGNAL
+        .with(|signal_id_store| signal_id_store.borrow().get(&signal_id).cloned().unwrap())
+}
+
 #[query]
 fn get_all_signals() -> Vec<Signal> {
     let mut all_signals: Vec<Signal> = vec![];
@@ -188,12 +142,12 @@ fn get_all_signals() -> Vec<Signal> {
 
 #[update]
 fn add_new_message(location: IncomingCoordinate, contents: String) -> Signal {
-    let principal_id = caller();
+    let principal = caller();
 
     let updated_at = time();
 
     let message: Message = Message {
-        identity: principal_id.to_string(),
+        identity: users::get_user_from_principal(principal),
         contents: contents,
         time: updated_at,
     };
@@ -221,4 +175,60 @@ pub fn get_principal_for_signal_coordinates(location: IncomingCoordinate) -> Pri
     let signal = get_signal(location);
 
     return signal.user;
+}
+
+#[query]
+pub fn get_principal_for_signal_id(signal_id: SignalID) -> Principal {
+    let signal = get_signal_by_id(signal_id);
+
+    return signal.user;
+}
+
+#[update]
+fn delete_signal(location: IncomingCoordinate) {
+    let principal_id = caller();
+    let user = get_principal_for_signal_coordinates(location);
+    let signal = get_signal(location);
+
+    if caller() != user {
+        ic_cdk::trap("You're not authorized to delete this signal");
+    }
+    internal_delete_signal(signal.location, principal_id);
+}
+
+pub fn internal_delete_signal(location: IncomingCoordinate, principal_id: Principal) {
+    let ordered_location = Coordinate {
+        lat: OrderedFloat(location.lat),
+        long: OrderedFloat(location.long),
+    };
+
+    let located_signal = SIGNAL_STORE.with(|signal_store| {
+        signal_store
+            .borrow()
+            .get(&ordered_location)
+            .cloned()
+            .unwrap()
+    });
+
+    let user_signals = USER_SIGNAL_STORE
+        .with(|user_store| user_store.borrow().get(&principal_id).cloned().unwrap());
+
+    if user_signals.contains(&located_signal) {
+        SIGNAL_STORE.with(|signal_store| signal_store.borrow_mut().remove(&ordered_location));
+
+        USER_SIGNAL_STORE.with(|user_store| {
+            // get the vec of locations for this user and remove it
+            let mut signals = user_store
+                .borrow()
+                .get(&principal_id)
+                .clone()
+                .unwrap()
+                .to_owned();
+            signals.retain(|x| x.clone() != located_signal);
+
+            user_store
+                .borrow_mut()
+                .insert(principal_id, signals.clone());
+        });
+    }
 }

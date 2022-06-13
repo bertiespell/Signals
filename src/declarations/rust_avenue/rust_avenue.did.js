@@ -21,6 +21,12 @@ export const idlFactory = ({ IDL }) => {
     'created_at' : IDL.Nat64,
     'location' : Coordinate,
   });
+  const DepositErr = IDL.Variant({
+    'TransferFailure' : IDL.Null,
+    'BalanceLow' : IDL.Null,
+  });
+  const DepositReceipt = IDL.Variant({ 'Ok' : IDL.Nat, 'Err' : DepositErr });
+  const TransferResult = IDL.Variant({ 'Ok' : IDL.Null, 'Err' : IDL.Text });
   const TicketedEvent = IDL.Record({
     'event_owner' : IDL.Principal,
     'number_of_tickets' : IDL.Nat32,
@@ -70,7 +76,6 @@ export const idlFactory = ({ IDL }) => {
     'Err' : IDL.Text,
   });
   const TransferArgs = IDL.Record({ 'to' : IDL.Principal, 'amount' : Tokens });
-  const TransferResult = IDL.Variant({ 'Ok' : IDL.Null, 'Err' : IDL.Text });
   const AccTokens = IDL.Record({ 'e8s' : IDL.Nat64 });
   const SaleTransferArgs = IDL.Record({
     'to_principal' : IDL.Principal,
@@ -94,7 +99,9 @@ export const idlFactory = ({ IDL }) => {
   return IDL.Service({
     'account_balance' : IDL.Func([], [Tokens], ['query']),
     'add_new_message' : IDL.Func([Coordinate, IDL.Text], [Signal], []),
+    'buy_item' : IDL.Func([IDL.Int, IDL.Nat64], [DepositReceipt], []),
     'check_ticket' : IDL.Func([IDL.Int, IDL.Principal], [IDL.Bool], ['query']),
+    'claim_sale' : IDL.Func([IDL.Int], [TransferResult], []),
     'claim_ticket' : IDL.Func([IDL.Int], [], []),
     'create_account' : IDL.Func([IDL.Principal, IDL.Nat64], [], []),
     'create_new_signal' : IDL.Func(

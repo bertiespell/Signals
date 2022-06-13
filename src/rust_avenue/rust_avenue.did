@@ -1,11 +1,12 @@
 type Message = record {
-    "identity": text;
+    "identity": Profile;
     "contents": text;
     "time": nat64;
 };
 
 type Profile = record {
     "name": text;
+    "principal": principal;
     "profile_pic_url": text;
 };
 
@@ -33,12 +34,6 @@ type Signal = record {
 
 type AccTokens = record {
     e8s: nat64
-};
-
-type Conf = record {
-  transaction_fee : AccTokens;
-  subaccount : opt vec nat8;
-  ledger_canister_id : principal;
 };
 
 type SaleTransferArgs = record {
@@ -178,6 +173,18 @@ type ManageResult = variant {
     Err : Error;
 };
 
+type DepositReceipt = 
+ variant {
+   Err: DepositErr;
+   Ok: nat;
+};
+
+type DepositErr = 
+ variant {
+   BalanceLow;
+   TransferFailure;
+};
+
 service : (custodians : opt vec principal) -> {
     // User related
     "update_user": (Profile) -> ();
@@ -195,9 +202,9 @@ service : (custodians : opt vec principal) -> {
     "get_principal_for_signal_coordinates": (Coordinate) -> (principal) query;
 
     // Ratings related functionality
-    "leave_rating": (Coordinate, bool) -> ();
+    "leave_rating": (int, bool) -> ();
     "get_rating_for_signal": (Coordinate) -> (int32) query;
-    "principal_can_rate_location": (principal, Coordinate) -> (bool) query;
+    "principal_can_rate_signal": (principal, int) -> (bool) query;
 
     // DAO related functionality
     get_system_params: () -> (SystemParams);
@@ -213,21 +220,13 @@ service : (custodians : opt vec principal) -> {
 
     // Trade and Sale related functionality
     transfer_sale: (SaleTransferArgs) -> (SaleTransferResult);
+    claim_sale: (int) -> (TransferResult);
+    buy_item: (int, nat64) ->  (DepositReceipt);
 
     // Event passes
     create_ticketed_signal: (Coordinate, text, SignalType, nat32) -> (Signal);
     claim_ticket: (int) -> ();
     check_ticket: (int, principal) -> (bool) query;
     get_event_details: (int) -> (TicketedEvent) query;
-    "get_all_ticketed_events": () -> (vec TicketedEvent) query;
-
-    // is_authorized : () -> (bool) query;
-    // bought_passes : () -> (vec EventPass) query;
-    // set_authorized : (principal, bool) -> (ManageResult);
-    // transfer : (EventPass, principal, notify: opt bool) -> (ManageResult);
-    // register : (EventPass) -> (ManageResult);
-
-    // callbacks
-    // onDIP721Received : (principal, principal, TokenIndex, blob) -> ();
-    // tokenTransferNotification : (text, variant { address : text; "principal" : principal; }, nat, blob) -> (opt nat);
+    get_all_ticketed_events: () -> (vec TicketedEvent) query;
 }

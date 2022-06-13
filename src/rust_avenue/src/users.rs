@@ -6,16 +6,10 @@ use ic_cdk_macros::*;
 use std::cell::RefCell;
 use std::collections::BTreeMap;
 
-thread_local! {
-    static SIGNAL_STORE: RefCell<SignalStore> = RefCell::default();
-    static USER_SIGNAL_STORE: RefCell<UserSignalStore> = RefCell::default();
-    static CURRENT_ID: RefCell<i128> = RefCell::default();
-}
-
-type UserStore = BTreeMap<Principal, User>;
+pub type UserStore = BTreeMap<Principal, User>;
 
 thread_local! {
-    static USER_STORE: RefCell<UserStore> = RefCell::default();
+    pub static USER_STORE: RefCell<UserStore> = RefCell::default();
 }
 
 #[query]
@@ -31,18 +25,26 @@ fn get_user_self() -> User {
             .borrow()
             .get(&id)
             .cloned()
-            .unwrap_or_else(|| User::default())
+            .unwrap_or_else(|| User {
+                name: String::default(),
+                principal: id,
+                profile_pic_url: String::default(),
+            })
     })
 }
 
 #[query]
-fn get_user_from_principal(principal: Principal) -> User {
+pub fn get_user_from_principal(principal: Principal) -> User {
     USER_STORE.with(|user_store| {
         user_store
             .borrow()
             .get(&principal)
             .cloned()
-            .unwrap_or_else(|| User::default())
+            .unwrap_or_else(|| User {
+                name: String::default(),
+                principal,
+                profile_pic_url: String::default(),
+            })
     })
 }
 

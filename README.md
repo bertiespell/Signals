@@ -65,11 +65,11 @@ Then `npm start` on the FE (which is where the actor is looking in the User Cont
 You'll also need to set up the ledger if you want to run this locally. Instructions over here:
 
 ```
-export IC_VERSION=dd3a710b03bd3ae10368a91b255571d012d1ec2f
-curl -o ledger.wasm.gz https://download.dfinity.systems/ic/dd3a710b03bd3ae10368a91b255571d012d1ec2f/canisters/ledger-canister_notify-method.wasm.gz
+export IC_VERSION=430eff2024adc2cea9ffd081a94dcb0ce4f96f58
+curl -o ledger.wasm.gz https://download.dfinity.systems/ic/430eff2024adc2cea9ffd081a94dcb0ce4f96f58/canisters/ledger-canister_notify-method.wasm.gz
 gunzip ledger.wasm.gz
-curl -o ledger.private.did https://raw.githubusercontent.com/dfinity/ic/dd3a710b03bd3ae10368a91b255571d012d1ec2f/rs/rosetta-api/ledger.did
-curl -o ledger.public.did https://raw.githubusercontent.com/dfinity/ic/dd3a710b03bd3ae10368a91b255571d012d1ec2f/rs/rosetta-api/ledger_canister/ledger.did
+curl -o ledger.private.did https://raw.githubusercontent.com/dfinity/ic/430eff2024adc2cea9ffd081a94dcb0ce4f96f58/rs/rosetta-api/ledger.did
+curl -o ledger.public.did https://raw.githubusercontent.com/dfinity/ic/430eff2024adc2cea9ffd081a94dcb0ce4f96f58/rs/rosetta-api/ledger_canister/ledger.did
 ```
 
 # DAO interacting with the DAO, to submit a proposal:

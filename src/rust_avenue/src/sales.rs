@@ -1,40 +1,17 @@
-use candid::{CandidType, Nat, Principal};
+use crate::signal;
+use crate::utils;
+use candid::{CandidType, Principal};
+use ic_cdk_macros::*;
+use ic_ledger_types::{
+    AccountIdentifier, BlockIndex, Memo, Subaccount, Tokens, MAINNET_LEDGER_CANISTER_ID,
+};
+use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
+use std::collections::BTreeMap;
 use std::convert::TryInto;
 use std::hash::Hash;
 
-use ic_cdk_macros::*;
-use ic_ledger_types::{
-    AccountIdentifier, BlockIndex, Memo, Subaccount, Tokens, DEFAULT_SUBACCOUNT,
-    MAINNET_LEDGER_CANISTER_ID,
-};
-use serde::{Deserialize, Serialize};
-
 const ICP_FEE: u64 = 10_000;
-
-#[derive(CandidType, Serialize, Deserialize, Clone, Debug, Hash, PartialEq)]
-pub struct Conf {
-    ledger_canister_id: Principal,
-    // The subaccount of the account identifier that will be used to withdraw tokens and send them
-    // to another account identifier. If set to None then the default subaccount will be used.
-    // See the [Ledger doc](https://smartcontracts.org/docs/integration/ledger-quick-start.html#_accounts).
-    subaccount: Option<Subaccount>,
-    transaction_fee: Tokens,
-}
-
-impl Default for Conf {
-    fn default() -> Self {
-        Conf {
-            ledger_canister_id: MAINNET_LEDGER_CANISTER_ID,
-            subaccount: None,
-            transaction_fee: Tokens::from_e8s(10_000),
-        }
-    }
-}
-
-thread_local! {
-    pub static CONF: RefCell<Conf> = RefCell::new(Conf::default());
-}
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug, Hash)]
 pub struct TransferArgs {
@@ -43,11 +20,24 @@ pub struct TransferArgs {
     to_subaccount: Option<Subaccount>,
 }
 
-#[update]
+/// Maps a Signal ID to whether it's been purchased
+pub type PurchaseStore = BTreeMap<i128, Trade>;
 
-async fn create_sale() {
-    // store a record of who has paid, who they are paying too, and how much
-    // create a record of "claimable sales", with the Principal of who can claim and how much
+thread_local! {
+    pub static PURCHASE_STORE: RefCell<PurchaseStore> = RefCell::default();
+}
+
+/**
+ * The point is to know if a signal is accountted for, and how much for...
+ */
+#[derive(Clone, Copy, CandidType, Deserialize)]
+pub struct Trade {
+    seller: Principal,
+    amount: u64,
+}
+
+fn get_trade_for_signal_id(id: i128) -> Trade {
+    PURCHASE_STORE.with(|event_store| event_store.borrow().get(&id).cloned().unwrap())
 }
 
 /**
@@ -59,35 +49,41 @@ async fn create_sale() {
  * https://github.com/dfinity/bitcoin-developer-preview
  */
 #[update]
-async fn claim_sale(args: TransferArgs) -> Result<BlockIndex, String> {
+async fn claim_sale(signal_id: i128) -> Result<BlockIndex, String> {
+    let caller_principal = utils::caller();
+    let canister_id = ic_cdk::api::id();
+
+    let trade = get_trade_for_signal_id(signal_id);
+
+    if trade.seller != caller_principal {
+        ic_cdk::trap("You aren't a seller of this signal");
+    }
+
     ic_cdk::println!(
-        "Transferring {} tokens to principal {} subaccount {:?}",
-        &args.amount,
-        &args.to_principal,
-        &args.to_subaccount
+        "Transferring {} ICP to principal {}",
+        &trade.amount,
+        caller_principal,
     );
-    let ledger_canister_id = CONF.with(|conf| conf.borrow().ledger_canister_id);
-    let to_subaccount = args.to_subaccount.unwrap_or(DEFAULT_SUBACCOUNT);
-    let transfer_args = CONF.with(|conf| {
-        let conf = conf.borrow();
-        ic_ledger_types::TransferArgs {
-            memo: Memo(0),
-            amount: args.amount,
-            fee: conf.transaction_fee,
-            from_subaccount: conf.subaccount,
-            to: AccountIdentifier::new(&args.to_principal, &to_subaccount),
-            created_at_time: None,
-        }
-    });
-    let callerPrinciapl = ic_cdk::api::caller();
-    let args = ic_ledger_types::AccountBalanceArgs {
-        account: AccountIdentifier::new(&callerPrinciapl, &DEFAULT_SUBACCOUNT),
+
+    let transfer_args = ic_ledger_types::TransferArgs {
+        memo: Memo(0),
+        amount: Tokens::from_e8s(trade.amount),
+        fee: Tokens::from_e8s(ICP_FEE),
+        from_subaccount: Some(principal_to_subaccount(&canister_id)),
+        to: AccountIdentifier::new(
+            &caller_principal,
+            &principal_to_subaccount(&caller_principal),
+        ),
+        created_at_time: None,
     };
-    let balance = ic_ledger_types::account_balance(callerPrinciapl, args).await;
-    ic_ledger_types::transfer(ledger_canister_id, transfer_args)
+
+    let transfer = ic_ledger_types::transfer(MAINNET_LEDGER_CANISTER_ID, transfer_args)
         .await
         .map_err(|e| format!("failed to call ledger: {:?}", e))?
-        .map_err(|e| format!("ledger transfer error {:?}", e))
+        .map_err(|e| format!("ledger transfer error {:?}", e));
+
+    PURCHASE_STORE.with(|purchase_store| purchase_store.borrow_mut().remove(&signal_id));
+    transfer
 }
 
 #[derive(CandidType)]
@@ -96,45 +92,66 @@ pub enum DepositErr {
     TransferFailure,
 }
 
-pub type DepositReceipt = Result<Nat, DepositErr>;
+pub type DepositReceipt = Result<(), DepositErr>;
 
-async fn deposit_icp(caller: Principal) -> Result<Nat, DepositErr> {
+// the caller, send funds to us, the canister it
+// we should get the signal trade ID
+#[update]
+
+pub async fn buy_item(signal_id: i128, amount: u64) -> DepositReceipt {
     let canister_id = ic_cdk::api::id();
-    let ledger_canister_id = STATE
-        .with(|s| s.borrow().ledger)
-        .unwrap_or(MAINNET_LEDGER_CANISTER_ID);
 
-    let account = AccountIdentifier::new(&canister_id, &principal_to_subaccount(&caller));
+    let caller_principal = utils::caller();
 
-    let balance_args = ic_ledger_types::AccountBalanceArgs { account };
-    let balance = ic_ledger_types::account_balance(ledger_canister_id, balance_args)
-        .await
-        .map_err(|_| DepositErr::TransferFailure)?;
+    let signal = signal::get_signal_by_id(signal_id);
 
-    if balance.e8s() < ICP_FEE {
+    let trade = Trade {
+        seller: signal.user,
+        amount,
+    };
+
+    PURCHASE_STORE.with(|purchase_store| purchase_store.borrow_mut().insert(signal_id, trade));
+
+    let this_canister_account =
+        AccountIdentifier::new(&canister_id, &principal_to_subaccount(&canister_id));
+
+    let caller_account = AccountIdentifier::new(
+        &caller_principal,
+        &principal_to_subaccount(&caller_principal),
+    );
+
+    let caller_balance_args = ic_ledger_types::AccountBalanceArgs {
+        account: caller_account,
+    };
+    let caller_balance =
+        ic_ledger_types::account_balance(MAINNET_LEDGER_CANISTER_ID, caller_balance_args)
+            .await
+            .map_err(|_| DepositErr::TransferFailure)?;
+
+    if caller_balance.e8s() < ICP_FEE {
         return Err(DepositErr::BalanceLow);
     }
 
     let transfer_args = ic_ledger_types::TransferArgs {
         memo: Memo(0),
-        amount: balance - Tokens::from_e8s(ICP_FEE),
+        amount: caller_balance - Tokens::from_e8s(ICP_FEE),
         fee: Tokens::from_e8s(ICP_FEE),
-        from_subaccount: Some(principal_to_subaccount(&caller)),
-        to: AccountIdentifier::new(&canister_id, &DEFAULT_SUBACCOUNT),
+        from_subaccount: Some(principal_to_subaccount(&caller_principal)),
+        to: this_canister_account,
         created_at_time: None,
     };
-    ic_ledger_types::transfer(ledger_canister_id, transfer_args)
+    ic_ledger_types::transfer(MAINNET_LEDGER_CANISTER_ID, transfer_args)
         .await
         .map_err(|_| DepositErr::TransferFailure)?
         .map_err(|_| DepositErr::TransferFailure)?;
 
     ic_cdk::println!(
         "Deposit of {} ICP in account {:?}",
-        balance - Tokens::from_e8s(ICP_FEE),
-        &account
+        caller_balance - Tokens::from_e8s(ICP_FEE),
+        &caller_account
     );
 
-    Ok((balance.e8s() - ICP_FEE).into())
+    DepositReceipt::Ok(())
 }
 
 pub fn principal_to_subaccount(principal_id: &Principal) -> Subaccount {

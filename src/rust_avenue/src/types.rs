@@ -16,9 +16,10 @@ pub struct Profile {
     pub keywords: Vec<String>,
 }
 
-#[derive(Clone, Debug, Default, CandidType, Deserialize)]
+#[derive(Clone, Debug, CandidType, Deserialize, PartialEq)]
 pub struct User {
     pub name: String,
+    pub principal: Principal,
     pub profile_pic_url: String,
 }
 
@@ -37,6 +38,8 @@ pub struct Coordinate {
     pub long: OrderedFloat<f64>,
 }
 
+pub type SignalID = i128;
+
 #[derive(Clone, Debug, CandidType, Deserialize, PartialEq)]
 pub struct Signal {
     pub created_at: u64,
@@ -44,7 +47,7 @@ pub struct Signal {
     pub user: Principal,
     pub location: IncomingCoordinate,
     pub metadata: String, // each type of event has a stringified metadata
-    pub id: i128,
+    pub id: SignalID,
     pub messages: Vec<Message>,
     pub signal_type: SignalType,
 }
@@ -61,9 +64,11 @@ pub type SignalStore = BTreeMap<Coordinate, Signal>;
 // Allows administrative priviledges to principles over their signals
 pub type UserSignalStore = BTreeMap<Principal, Vec<Signal>>;
 
+pub type SignalIdMap = BTreeMap<i128, Signal>;
+
 #[derive(Clone, Debug, CandidType, Deserialize, PartialEq)]
 pub struct Message {
-    pub identity: String,
+    pub identity: User,
     pub contents: String,
     pub time: u64,
 }

@@ -2,64 +2,25 @@ use crate::types::*;
 use crate::utils::caller;
 use ic_cdk::export::Principal;
 use ic_cdk_macros::*;
-use ordered_float::OrderedFloat;
 use std::cell::RefCell;
 use std::collections::BTreeMap;
 
 use crate::dao_store::SIGNAL_DAO;
 
-use crate::signal::{get_principal_for_signal_coordinates, internal_delete_signal};
-
-use std::mem;
-
-use candid::CandidType;
-use ic_cdk::storage;
-use once_cell::sync::Lazy;
-use parking_lot::RwLock;
+use crate::signal::{get_principal_for_signal_id, get_signal_by_id, internal_delete_signal};
 
 // Store the ratings a user has given (they can only vote once per signal)
-type UserGivenRatingsStore = BTreeMap<Principal, Vec<Coordinate>>;
+pub type UserGivenRatingsStore = BTreeMap<Principal, Vec<SignalID>>;
 // store the rating of the signal
-type SignalRatingsStore = BTreeMap<Coordinate, i32>;
+pub type SignalRatingsStore = BTreeMap<SignalID, i32>;
 // store whether the signal has been awarded tokens yet
-type SignalsToTokensStore = BTreeMap<Coordinate, bool>;
+pub type SignalsToTokensStore = BTreeMap<SignalID, bool>;
 
 thread_local! {
-    static USER_GIVEN_RATING_STORE: RefCell<UserGivenRatingsStore> = RefCell::default();
-    static SIGNAL_RATINGS_STORE: RefCell<SignalRatingsStore> = RefCell::default();
-    static SIGNALS_TO_TOKEN_STORE: RefCell<SignalsToTokensStore> = RefCell::default();
+    pub static USER_GIVEN_RATING_STORE: RefCell<UserGivenRatingsStore> = RefCell::default();
+    pub static SIGNAL_RATINGS_STORE: RefCell<SignalRatingsStore> = RefCell::default();
+    pub static SIGNALS_TO_TOKEN_STORE: RefCell<SignalsToTokensStore> = RefCell::default();
 }
-// #[derive(Deserialize)]
-// struct StableState {
-//     assets: ic_certified_assets::StableState,
-//     signals: Storage,
-// }
-
-// #[derive(Default, Deserialize)]
-// struct Storage {
-//     user_given_ratings_store: UserGivenRatingsStore,
-//     signals_ratings_store: SignalRatingsStore,
-//     signals_to_token_store: UserGivenRatingsStore,
-// }
-
-// static STORAGE: Lazy<RwLock<Storage>> = Lazy::new(|| RwLock::new(Storage::default()));
-
-// #[pre_upgrade]
-// fn pre_upgrade() {
-//     let state = StableState {
-//         assets: ic_certified_assets::pre_upgrade(),
-//         signals: mem::take(&mut *STORAGE.write()),
-//     };
-//     storage::stable_save((state,)).unwrap();
-// }
-
-// #[post_upgrade]
-// fn post_upgrade() {
-//     let (s,): (StableState,) = storage::stable_restore().unwrap();
-//     *STORAGE.write() = s.signals;
-//     ic_certified_assets::post_upgrade(s.assets);
-// }
-
 /**
  * This function allows users to leave a rating of a signal
  * Each user can rate each signal once
@@ -67,15 +28,11 @@ thread_local! {
  * If a signal receives more than 10 upvotes, then the user will be rewarded
  */
 #[query]
-fn get_rating_for_signal(location: IncomingCoordinate) -> i32 {
-    let ordered_location = Coordinate {
-        lat: OrderedFloat(location.lat),
-        long: OrderedFloat(location.long),
-    };
+fn get_rating_for_signal(signal_id: SignalID) -> i32 {
     SIGNAL_RATINGS_STORE.with(|signal_ratings_store| {
         signal_ratings_store
             .borrow()
-            .get(&ordered_location)
+            .get(&signal_id)
             .clone()
             .unwrap_or_else(|| &0)
             .clone()
@@ -83,12 +40,7 @@ fn get_rating_for_signal(location: IncomingCoordinate) -> i32 {
 }
 
 #[query]
-fn principal_can_rate_location(principal: Principal, location: IncomingCoordinate) -> bool {
-    let ordered_location = Coordinate {
-        lat: OrderedFloat(location.lat),
-        long: OrderedFloat(location.long),
-    };
-
+fn principal_can_rate_signal(principal: Principal, signal_id: SignalID) -> bool {
     let user_ratings = USER_GIVEN_RATING_STORE.with(|user_store| {
         user_store
             .borrow()
@@ -97,17 +49,12 @@ fn principal_can_rate_location(principal: Principal, location: IncomingCoordinat
             .unwrap_or_else(|| vec![])
     });
 
-    return !user_ratings.contains(&ordered_location);
+    return !user_ratings.contains(&signal_id);
 }
 
 #[update]
-fn leave_rating(location: IncomingCoordinate, positive: bool) {
+fn leave_rating(signal_id: SignalID, positive: bool) {
     let principal_id = caller();
-
-    let ordered_location = Coordinate {
-        lat: OrderedFloat(location.lat),
-        long: OrderedFloat(location.long),
-    };
 
     let user_ratings = USER_GIVEN_RATING_STORE.with(|user_store| {
         user_store
@@ -118,7 +65,7 @@ fn leave_rating(location: IncomingCoordinate, positive: bool) {
     });
 
     // if it contains the located signal, they can't vote again
-    if user_ratings.contains(&ordered_location) {
+    if user_ratings.contains(&signal_id) {
         panic!("You can only vote once for a given signal")
     } else {
         // add an entry for this user into the store so they can't rate again
@@ -127,7 +74,7 @@ fn leave_rating(location: IncomingCoordinate, positive: bool) {
                 None => vec![],
                 Some(i) => i.clone(),
             };
-            signals.push(ordered_location.clone());
+            signals.push(signal_id.clone());
             user_store
                 .borrow_mut()
                 .insert(principal_id, signals.clone());
@@ -135,11 +82,7 @@ fn leave_rating(location: IncomingCoordinate, positive: bool) {
 
         // get the ratings of the signal to see if we meet thresholds
         SIGNAL_RATINGS_STORE.with(|signal_ratings_store| {
-            let mut score = match signal_ratings_store
-                .borrow_mut()
-                .get(&ordered_location)
-                .clone()
-            {
+            let mut score = match signal_ratings_store.borrow_mut().get(&signal_id).clone() {
                 None => 0,
                 Some(i) => i.clone(),
             };
@@ -149,9 +92,7 @@ fn leave_rating(location: IncomingCoordinate, positive: bool) {
                 false => score -= 1,
             }
 
-            signal_ratings_store
-                .borrow_mut()
-                .insert(ordered_location, score);
+            signal_ratings_store.borrow_mut().insert(signal_id, score);
 
             // take action for above or below thresholds
             SIGNALS_TO_TOKEN_STORE.with(|signals_to_token_store| {
@@ -167,15 +108,13 @@ fn leave_rating(location: IncomingCoordinate, positive: bool) {
                     // transfer takens if we haven't already
                     if *signals_to_token_store
                         .borrow()
-                        .get(&ordered_location)
+                        .get(&signal_id)
                         .clone()
                         .unwrap_or_else(|| &false)
                     {
-                        signals_to_token_store
-                            .borrow_mut()
-                            .insert(ordered_location, true);
+                        signals_to_token_store.borrow_mut().insert(signal_id, true);
 
-                        let user_principle = get_principal_for_signal_coordinates(location);
+                        let user_principle = get_principal_for_signal_id(signal_id);
 
                         // reward tokens for upvoted signal
                         SIGNAL_DAO.with(|service| {
@@ -196,25 +135,23 @@ fn leave_rating(location: IncomingCoordinate, positive: bool) {
                             .amount
                     }) as i32)
                 {
+                    let signal = get_signal_by_id(signal_id);
                     // delete the signal if it has too many negative ratings
-                    internal_delete_signal(
-                        location,
-                        get_principal_for_signal_coordinates(location),
-                    );
+                    internal_delete_signal(signal.location, get_principal_for_signal_id(signal_id));
                     SIGNAL_RATINGS_STORE
-                        .with(|signal_store| signal_store.borrow_mut().remove(&ordered_location));
+                        .with(|signal_store| signal_store.borrow_mut().remove(&signal_id));
                     SIGNALS_TO_TOKEN_STORE
-                        .with(|signal_store| signal_store.borrow_mut().remove(&ordered_location));
+                        .with(|signal_store| signal_store.borrow_mut().remove(&signal_id));
                     // and delete it from the users vec
                     USER_GIVEN_RATING_STORE.with(|user_given_ratings_store| {
-                        // get the vec of locations for this user and remove it
+                        // get the vec of signals for this user and remove it
                         let mut ratings = user_given_ratings_store
                             .borrow()
                             .get(&principal_id)
                             .clone()
                             .unwrap()
                             .to_owned();
-                        ratings.retain(|x| x.clone() != ordered_location);
+                        ratings.retain(|x| x.clone() != signal_id);
                         user_given_ratings_store
                             .borrow_mut()
                             .insert(principal_id, ratings.clone());

@@ -8,6 +8,8 @@ use std::collections::BTreeMap;
 // Maps the SignalID to an TicketedEvent
 pub type EventStore = BTreeMap<i128, TicketedEvent>;
 
+pub type PrincipalEvents = BTreeMap<Principal, u8>;
+
 #[derive(Clone, Debug, CandidType, Deserialize)]
 pub struct TicketedEvent {
     event_owner: Principal,
@@ -18,7 +20,7 @@ pub struct TicketedEvent {
 thread_local! {
     pub static EVENTS: RefCell<EventStore> = RefCell::default();
     // for now, if you want to create a ticketed event, we limit accounts to 3 (to stop cycle exhaustion)
-    pub static PRINCIPAL_TO_EVENT_NUMBER: RefCell<BTreeMap<Principal, u8>> = RefCell::default();
+    pub static PRINCIPAL_TO_EVENT_NUMBER: RefCell<PrincipalEvents> = RefCell::default();
 }
 
 pub fn create_tickets(signal_id: i128, number_of_tickets: u32) {
