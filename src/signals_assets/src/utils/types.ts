@@ -39,8 +39,8 @@ export type Message = {
 };
 
 export type Signal<T extends SignalType> = {
-	created_at: string;
-	updated_at: string;
+	created_at: Date;
+	updated_at: Date;
 	id: number;
 	metadata: T;
 	user: Principal;

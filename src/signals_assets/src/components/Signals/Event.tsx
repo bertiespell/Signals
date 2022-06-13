@@ -22,11 +22,6 @@ export default function Event(
 			<h3 className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
 				{activeContent?.signalMetadata?.metadata.title}
 			</h3>
-			{isOwnListing ? (
-				<DeleteButton deleteSignal={deleteSignal} />
-			) : (
-				<Rating signal={activeContent} />
-			)}
 
 			<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
 				<p className="text-lg text-gray-500">
@@ -85,6 +80,12 @@ export default function Event(
 				</>
 			) : (
 				""
+			)}
+
+			{isOwnListing ? (
+				<DeleteButton deleteSignal={deleteSignal} />
+			) : (
+				<Rating signal={activeContent} />
 			)}
 
 			<MessagesList sendMessageEv={sendMessageEv} activity={activity} />

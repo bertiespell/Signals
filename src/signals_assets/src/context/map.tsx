@@ -122,14 +122,14 @@ const MapProvider = ({ children }: any) => {
 		// multiplied by 1000 so that the argument is in milliseconds, not seconds.
 		const created_at = new Date(
 			Number(created_at_unix_timestamp.slice(0, 10)) * 1000
-		).toString();
+		);
 
 		let updated_at_unix_timestamp = Number(signal.updated_at).toString();
 
 		// multiplied by 1000 so that the argument is in milliseconds, not seconds.
 		const updated_at = new Date(
 			Number(updated_at_unix_timestamp.slice(0, 10)) * 1000
-		).toString();
+		);
 
 		const messages: Array<Message> = signal.messages.map((message) => {
 			let message_time = Number(message.time).toString();

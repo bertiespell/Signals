@@ -81,7 +81,7 @@ export default function Sidebar() {
 							>
 								<img
 									className="w-max"
-									src="../../logo-6.png"
+									src="../../logo-rectangle.png"
 									alt="Workflow"
 								/>
 							</button>

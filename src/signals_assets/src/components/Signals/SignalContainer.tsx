@@ -34,7 +34,7 @@ export type Activity = {
 	assigned?: Person;
 	imageUrl: string;
 	comment: string;
-	date: string;
+	date: Date;
 };
 
 export type TicketData = {
@@ -156,7 +156,7 @@ export default function SignalContainer() {
 		activeContent?.signalMetadata?.messages.map((message) => {
 			newActivity.push({
 				comment: message.contents,
-				date: message.time,
+				date: new Date(message.time),
 				imageUrl:
 					"https://img.icons8.com/external-kiranshastry-lineal-color-kiranshastry/64/undefined/external-user-interface-kiranshastry-lineal-color-kiranshastry.png",
 				id: uuidv4().toString(),

@@ -41,6 +41,15 @@ export default function ChatSig(
 										<>
 											{activeContent?.signalMetadata?.user.toString()}
 										</>
+									)}{" "}
+									on{" "}
+									{activeContent?.signalMetadata?.created_at.toLocaleDateString(
+										"en-gb",
+										{
+											year: "numeric",
+											month: "long",
+											day: "numeric",
+										}
 									)}
 								</p>
 							</div>

@@ -16,7 +16,7 @@ const DeleteButton = ({ deleteSignal }: { deleteSignal: any }) => {
 					className="flex items-center"
 					onClick={() => deleteSignal()}
 				>
-					<TrashIcon className="h-8 w-8 " style={{ color: "red" }} />{" "}
+					<TrashIcon className="h-8 w-8 " style={{ color: "grey" }} />{" "}
 				</button>
 			</Tooltip>
 		</div>

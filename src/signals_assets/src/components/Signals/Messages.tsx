@@ -90,7 +90,14 @@ export default function MessagesList({
 																</div>
 																<p className="mt-0.5 text-sm text-gray-500">
 																	Commented{" "}
-																	{item.date}
+																	{item.date.toLocaleDateString(
+																		"en-gb",
+																		{
+																			year: "numeric",
+																			month: "long",
+																			day: "numeric",
+																		}
+																	)}
 																</p>
 															</div>
 															<div className="mt-2 text-sm text-gray-700">
