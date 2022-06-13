@@ -80,7 +80,7 @@ async fn create_new_signal(
                 .insert(principal_id, signals.clone());
         });
 
-        // reward tokens for creating a chat
+        // reward tokens for creating a signal
         SIGNAL_DAO.with(|service| {
             let token_amount = service
                 .borrow()

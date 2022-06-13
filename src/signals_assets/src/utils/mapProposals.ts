@@ -1,4 +1,4 @@
-import { Proposal } from "../../../declarations/rust_avenue/rust_avenue.did";
+import { Proposal } from "../../../declarations/signals/signals.did";
 
 export const proposalIsOpen = (proposal: Proposal) =>
 getProposalState(proposal) === "Open";

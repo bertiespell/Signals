@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { SystemParams } from "../../../declarations/rust_avenue/rust_avenue.did";
+import { SystemParams } from "../../../declarations/signals/signals.did";
 import { UserContext } from "./user";
 
 type DisplayData = {

@@ -1,7 +1,7 @@
 import { ActorSubclass, SignIdentity } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 import { useContext, useEffect } from "react";
-import { _SERVICE } from "../../../../declarations/rust_avenue/rust_avenue.did";
+import { _SERVICE } from "../../../../declarations/signals/signals.did";
 import { UserContext } from "../../context/user";
 import { Trade } from "../../utils/mapSignalTypes";
 import { ActiveContent } from "../../utils/types";

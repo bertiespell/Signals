@@ -1,11 +1,11 @@
 import { ActorSubclass } from "@dfinity/agent";
 import { Marker } from "leaflet";
 import React, { useContext, useEffect, useState } from "react";
-import { rust_avenue } from "../../../declarations/rust_avenue";
+import { signals } from "../../../declarations/signals";
 import {
 	_SERVICE,
 	Signal as RustSignal,
-} from "../../../declarations/rust_avenue/rust_avenue.did";
+} from "../../../declarations/signals/signals.did";
 import {
 	EventSignal,
 	mapSignalToType,
@@ -177,12 +177,12 @@ const MapProvider = ({ children }: any) => {
 	};
 
 	const setKnownSignals = async () => {
-		const signals: Array<RustSignal> = await (
-			rust_avenue as any
+		const knownSignals: Array<RustSignal> = await (
+			signals as any
 		).get_all_signals();
 
 		let allSignals: Array<ActiveContent<SignalType>> = [];
-		signals.map((signal) => {
+		knownSignals.map((signal) => {
 			const activeContent = transformSignal(signal);
 			allSignals.push(activeContent);
 		});

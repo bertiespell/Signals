@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { AuthClient } from "@dfinity/auth-client";
-import { canisterId, idlFactory } from "../../../declarations/rust_avenue";
+import { canisterId, idlFactory } from "../../../declarations/signals";
 import { Actor, ActorSubclass, HttpAgent } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
-import {
-	_SERVICE,
-	Profile,
-} from "../../../declarations/rust_avenue/rust_avenue.did";
+import { _SERVICE, Profile } from "../../../declarations/signals/signals.did";
 
 export const UserContext = React.createContext<{
 	login: any;

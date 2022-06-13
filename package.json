@@ -1,7 +1,7 @@
 {
-  "name": "avenue",
+  "name": "signals",
   "version": "0.1.1",
-  "description": "A way to discover local friends and send signal messages using ICP",
+  "description": "A way to discover local friends and send signal messages build on ICP",
   "keywords": [
     "Internet Computer",
     "Motoko",
@@ -13,7 +13,7 @@
     "prebuild": "npm run generate",
     "start": "webpack serve --mode development --env development",
     "prestart": "npm run generate",
-    "generate": "dfx generate rust_avenue"
+    "generate": "dfx generate signals"
   },
   "devDependencies": {
     "@dfinity/agent": "^0.10.4",

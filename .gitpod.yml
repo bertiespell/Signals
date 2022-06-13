@@ -9,7 +9,7 @@ tasks:
           npm install
           npm start
 
-    - init: gp open src/avenue_assets/src/App.jsx
+    - init: gp open src/signals_assets/src/App.jsx
       command: |
           zsh
           exit

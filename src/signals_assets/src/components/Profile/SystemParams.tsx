@@ -3,7 +3,7 @@ import * as Flowbite from "flowbite-react";
 import { QuestionMarkCircleIcon } from "@heroicons/react/outline";
 import { v4 as uuidv4 } from "uuid";
 
-import { SystemParams } from "../../../../declarations/rust_avenue/rust_avenue.did";
+import { SystemParams } from "../../../../declarations/signals/signals.did";
 import { SystemContext } from "../../context/system";
 import LoadingSpinner from "../Spinner";
 

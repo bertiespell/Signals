@@ -1,6 +1,6 @@
 import { Principal } from "@dfinity/principal";
 import { Marker } from "leaflet";
-import { Profile, SignalType as RustSignalType } from "../../../declarations/rust_avenue/rust_avenue.did";
+import { Profile, SignalType as RustSignalType } from "../../../declarations/signals/signals.did";
 
 import {
 	EventSignal,

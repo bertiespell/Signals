@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { XIcon } from "@heroicons/react/solid";
 import { CheckIcon } from "@heroicons/react/outline";
 
-import { Proposal } from "../../../../declarations/rust_avenue/rust_avenue.did";
+import { Proposal } from "../../../../declarations/signals/signals.did";
 import { DaoContext } from "../../context/dao";
 import { UserContext } from "../../context/user";
 import { getProposalState, proposalIsOpen } from "../../utils/mapProposals";

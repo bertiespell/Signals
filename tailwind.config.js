@@ -4,7 +4,7 @@ const colors = require("tailwindcss/colors");
 
 module.exports = {
 	content: [
-		"./src/avenue_assets/**/*.{js,jsx,ts,tsx}",
+		"./src/signals_assets/**/*.{js,jsx,ts,tsx}",
 		"node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}",
 		"./node_modules/flowbite/**/*.js",
 	],

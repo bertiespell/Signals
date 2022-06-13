@@ -12,13 +12,13 @@ import {
 	Coordinate,
 	Profile,
 	_SERVICE,
-} from "../../../../declarations/rust_avenue/rust_avenue.did";
+} from "../../../../declarations/signals/signals.did";
 
 import Trade from "./Trade";
 import ChatSig from "./Chat";
 import Event from "./Event";
 import { ActiveContent } from "../../utils/types";
-import { rust_avenue } from "../../../../declarations/rust_avenue";
+import { signals } from "../../../../declarations/signals";
 import { Principal } from "@dfinity/principal";
 
 export type Person = {
@@ -78,7 +78,7 @@ export default function SignalContainer() {
 
 	const getUserForSignal = async () => {
 		if (activeContent) {
-			const user = await rust_avenue.get_user_for_signal_location(
+			const user = await signals.get_user_for_signal_location(
 				activeContent.signalMetadata?.location as any
 			);
 			setPinUser(user);
@@ -96,7 +96,7 @@ export default function SignalContainer() {
 			!authenticatedUser.isAnonymous() &&
 			mapActiveContentToPinType(activeContent) === PinType.Event
 		) {
-			const ticket = await rust_avenue.get_event_details(
+			const ticket = await signals.get_event_details(
 				activeContent.signalMetadata?.id as any
 			);
 			const ticketData = {

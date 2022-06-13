@@ -1,4 +1,4 @@
-# Avenue
+# Signals
 
 ## Build Locally
 
@@ -30,7 +30,7 @@ If you are hosting frontend code somewhere without using DFX, you may need to ma
 
 # To update Tailwind CSS
 
-`npx tailwindcss -i ./src/avenue_assets/assets/main.css -o ./dist/avenue_assets/main.css --watch`
+`npx tailwindcss -i ./src/signal_assets/assets/main.css -o ./dist/signal_assets/main.css --watch`
 
 # During development to test again with clean state
 
@@ -74,7 +74,7 @@ curl -o ledger.public.did https://raw.githubusercontent.com/dfinity/ic/430eff202
 
 # DAO interacting with the DAO, to submit a proposal:
 
-We can change `transfer_fee` by calling rust_avenue's `update_system_params` method. This method takes
+We can change `transfer_fee` by calling signals' `update_system_params` method. This method takes
 a `UpdateSystemParamsPayload` as an arg, which we need to encode into a `blob` to use in `ProposalPayload`.
 Use `didc` to encode a `UpdateSystemParamsPayload`:
 
@@ -95,7 +95,7 @@ blob "DIDL\03l\01\f2\c7\94\ae\03\01n\02l\01\b9\ef\93\80\08x\01\00\01 N\00\00\00\
 We can then submit the proposal:
 
 ```text
-$ dfx canister call rust_avenue submit_proposal '(record { canister_id = principal "ryjl3-tyaaa-aaaaa-aaaba-cai";
+$ dfx canister call signals submit_proposal '(record { canister_id = principal "ryjl3-tyaaa-aaaaa-aaaba-cai";
    method = "update_system_params":text;
    metadata = "tokens_received_for_signal_creation":text;
    message = blob "DIDL\01l\01\87\8f\c3Ux\01\00\02\00\00\00\00\00\00\00";

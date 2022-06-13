@@ -1,20 +1,20 @@
 {
   "canisters": {
-    "rust_avenue": {
-      "candid": "src/rust_avenue/rust_avenue.did",
-      "package": "rust_avenue",
+    "signals": {
+      "candid": "src/signals/signals.did",
+      "package": "signals",
       "type": "rust"
     },
-    "avenue_assets": {
+    "signals_assets": {
       "dependencies": [
-        "rust_avenue"
+        "signals"
       ],
       "frontend": {
-        "entrypoint": "src/avenue_assets/src/index.html"
+        "entrypoint": "src/signals_assets/src/index.html"
       },
       "source": [
-        "src/avenue_assets/assets",
-        "dist/avenue_assets/"
+        "src/signals_assets/assets",
+        "dist/signals_assets/"
       ],
       "type": "assets"
     }

@@ -2,13 +2,13 @@ import { IDL } from "@dfinity/candid";
 import { encode } from "@dfinity/candid/lib/cjs/idl";
 import { Principal } from "@dfinity/principal";
 import React, { useContext, useEffect, useState } from "react";
-import { canisterId } from "../../../declarations/rust_avenue";
+import { canisterId } from "../../../declarations/signals";
 import {
 	Proposal,
 	Signal,
 	SubmitProposalResult,
 	Tokens,
-} from "../../../declarations/rust_avenue/rust_avenue.did";
+} from "../../../declarations/signals/signals.did";
 import { SystemContext } from "./system";
 import { UserContext } from "./user";
 

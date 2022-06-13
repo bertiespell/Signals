@@ -1,5 +1,5 @@
 [package]
-name = "rust_avenue"
+name = "signals"
 version = "0.1.0"
 edition = "2018"
 
