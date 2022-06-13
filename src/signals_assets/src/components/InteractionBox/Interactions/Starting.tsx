@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { UserContext } from "../../../context/user";
 
 export default function Starting({
@@ -38,7 +39,7 @@ export default function Starting({
 					Signals is a DAO. The more you interact with the network,
 					the greater say you have in how it's governed. Signals is a
 					rich multi-purpose platform, you can learn more about how
-					Signals works here.
+					Signals works <Link to="about">here</Link>.
 				</p>
 				{authenicated ? (
 					<>

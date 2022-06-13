@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function About() {
 	return (
 		<div className="overflow-y-auto">
@@ -16,82 +18,89 @@ export default function About() {
 							I was inspired to build Signals after moving to a
 							new city and finding it hard to connect with new
 							people. It occurred to me that I pass the same
-							people every day who share my interets and hobbies -
-							we live in the same building, we go to the same gym,
-							enjoy the same cafes or play the same sports. Yet
-							there is very little infrastructure to discover one
-							another. Despite an epidemic of loneliness, crowded
-							cities and all of use carrying devices that
-							constantly signal our location and availability to
-							private companies... so often it seems harder than
-							ever to connect with one another. Signals presents
-							an opportunity to re-think social media, to put
-							connection instead of content at the heart.
+							strangers every day who share my interests and
+							hobbies - we live in the same building, go to the
+							same gym, enjoy the same cafes or play the same
+							sports. Despite an epidemic of loneliness, crowded
+							cities and all of us carrying devices which
+							constantly broadcast our location to private
+							companies... it seems harder than ever to connect
+							with one another in meaningful ways. Signals
+							presents an opportunity to re-think social media to
+							put connection at the heart.
 						</p>
 						<p className="text-lg text-gray-500">
-							I'm also very interested in DAOs as one of the most
-							immediate and useful applications of blockchain for
-							the average user, but much needs to be done to not
-							just make them accessible to communities and people,
-							but to educate on the potential posed by the
-							technology. Since Signals allows users to connect
-							over shared interests and places geographically, it
-							already encourages the formation of communities and
-							DAOs make it easier to organise in more advanced
-							ways. it easily form communities with one another to
-							organise their interests, in that vein, I see
-							Signals as creating a dual opportunity for users:
-							one to discover and connnect, and the other to
-							organise and launch further DAOsl
+							Signals is built as a <b>DAO</b>, meaning that its
+							users control how it operates and are incentivised
+							through the <b>Signals Token</b> to interact with
+							the map and maintain the quality of the data.
+							Currently it supports leaving three types of signals
+							- <b>Chats</b>, <b>Trades</b> and <b>Events</b>. Any
+							user with sufficient tokens can{" "}
+							<Link to={"/profile"}>
+								see the state of the system
+							</Link>
+							, and make proposals on how Signals should be run.
 						</p>
 						<p className="text-lg text-gray-500">
-							At this stage Signals is really just a proof of
-							concept, but there are many things I'd like it to
-							be, some of which are already implemented or alluded
-							to here. Signals itself is organized as a DAO, so as
-							users interact with the app they are rewarded in
-							Signals Tokens. These tokens allow them to create
-							and vote on proposals to modify the application,
-							meaning that data and configuration is placed in the
-							users hands. I'd really love to extend this idea to
-							be a DAO launcher platform, where after connecting
-							over shared spaces and interests, people can use the
-							platform to manage their affairs. As an example,
-							I've been part of shared rehersal spaces for
-							musicians where the rent is paid together -
-							organising people traditionally in this way was
-							always difficult and not very transparent - I'd love
-							Signals to become a way that people can not just
-							discover these kinds of spaces but also to organise
-							activities such as a subscription based model for
-							community services like this.
+							Some ideas of how to use the <b>Chat Signal</b>:
+						</p>
+						<ul>
+							<li>Finding a language exchange partner</li>
+							<li>Meeting someone to play sports with</li>
+							<li>
+								Searching for a lost connection... someone who's
+								number you regret not asking for
+							</li>
+							<li>Communicating and organizing with neighbors</li>
+							<li>
+								Creating a public forum page for your business
+								or cafe
+							</li>
+							<li>
+								Reporting incidents, repairs and local
+								infrastructure problems
+							</li>
+							<li>Looking for lost pets</li>
+						</ul>
+
+						<p className="text-lg text-gray-500">
+							Signals also supports the <b>Event Signal</b>. You
+							can use this to broadcast an event taking place -
+							maybe a talk, meetup, party, book launch or anything
+							really! There's also the option to make the event
+							ticketed and to set the number of available tickets.
 						</p>
 						<p className="text-lg text-gray-500">
-							Since Signals is tied to geography and your
-							location, it makes it ideal for several other
-							purposes too - such as geographically based events.
-							It is possible in the app to buy and sell tickets to
-							events (which works similarly to an NFT). It's also
-							possible to list local items and services, for sale
-							which creates further potential for the economic
-							viability of the project, but also just encouraging
-							people to buy second-hand, the environmental
-							benefits of which shouldn't be overlooked. Since
-							everything happens on a map, it's really a limitless
-							potential for opportunity and expansion - for
-							example, you could drop a pin of your location on
-							the map which calls to a specific ride sharing
-							canister to look for available drivers.
+							With the <b>Trade Signal</b> you can list goods and
+							services for sale, the way you would on Gumtree or
+							Wallapop. Perhaps you're looking for a cleaner,
+							nanny or teacher, leaving a trade signal is the
+							perfect way to find someone. It also encourages
+							people to buy second hand, which is good for the
+							planet.
 						</p>
 						<p className="text-lg text-gray-500">
-							I'd love the opportunity to develop these ideas, and
-							implement a production ready version of this idea.
-							I've loved building on the ICP and have felt very
-							inspired by the idea of building a completely
-							decentralized app. Thanks so much for reading if you
-							made it this far. I'm always very happy to hear
-							feedback and of course - to make new connections -
-							so feel free to reach out.
+							Where to go from here? I'd like to integrate a{" "}
+							<b>DAO Launcher</b> into the app, to allow users who
+							have discovered each other to easily launch template
+							DAOs to govern their communities, spaces or
+							projects. But I have many many other ideas for it,
+							which you can see over on the{" "}
+							<a href={"https://github.com/bertiespell/Signals"}>
+								Github Page
+							</a>
+							.
+						</p>
+						<p className="text-lg text-gray-500">
+							I'd love the opportunity to develop these ideas
+							further, and implement a production ready version of
+							this idea. I've loved building on the ICP and have
+							felt very inspired by the idea of building a
+							completely decentralized application. Thanks so much
+							for reading if you made it this far. I'm always very
+							happy to hear feedback and of course - to make new
+							connections - so feel free to reach out.
 						</p>
 						<p className="text-lg text-gray-500">
 							Who am I? I'm a full stack developer, I've worked
@@ -100,12 +109,12 @@ export default function About() {
 							systems for millions of users at Sketch. I'm really
 							passionate about trying to use blockchain to solve
 							real world problems, and building beautiful products
-							that really benefit people. I'm currently in the
-							process of turning my ideas into something more
-							concrete, I hope to find a path to be able to
-							sustain myself building in this space... so, if you
-							know of any, or want to link up, let me know. You
-							can find me on any of the links below.
+							which benefit people. I'm currently in the process
+							of turning my ideas into something more concrete, I
+							hope to find a path to be able to sustain myself
+							building in this space... so, if you know of any, or
+							want to link up, let me know. You can find me on any
+							of the links below.
 						</p>
 						<p className="text-lg text-gray-500">
 							Made with &lt;3 by{" "}

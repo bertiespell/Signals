@@ -3,6 +3,7 @@ import {
 	ThumbUpIcon as ThumbUpIconSolid,
 	TrashIcon,
 } from "@heroicons/react/solid";
+import { Tooltip } from "flowbite-react";
 
 const DeleteButton = ({ deleteSignal }: { deleteSignal: any }) => {
 	return (
@@ -10,13 +11,14 @@ const DeleteButton = ({ deleteSignal }: { deleteSignal: any }) => {
 			className="flex flex-row-reverse items-center"
 			style={{ flexDirection: "row-reverse" }}
 		>
-			<button
-				className="flex items-center"
-				onClick={() => deleteSignal()}
-			>
-				<TrashIcon className="h-8 w-8 " style={{ color: "red" }} />{" "}
-				Delete
-			</button>{" "}
+			<Tooltip content="Click here to delete your signal. This action cannot be undone.">
+				<button
+					className="flex items-center"
+					onClick={() => deleteSignal()}
+				>
+					<TrashIcon className="h-8 w-8 " style={{ color: "red" }} />{" "}
+				</button>
+			</Tooltip>
 		</div>
 	);
 };

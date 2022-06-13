@@ -14,7 +14,11 @@ const Map = () => {
 
 	return (
 		<main>
-			<div ref={myRef} id="map" style={{ height: size.height }}></div>
+			<div
+				ref={myRef}
+				id="map"
+				style={{ height: size.height, zIndex: "10" }}
+			></div>
 		</main>
 	);
 };

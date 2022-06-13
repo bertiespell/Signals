@@ -22,22 +22,28 @@ export default function ChatSig(
 							<h3 className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
 								{activeContent?.signalMetadata?.metadata.title}
 							</h3>
-							<p>
-								{
-									activeContent?.signalMetadata?.metadata
-										.contents
-								}
-							</p>
-							<p>
-								Posted by{" "}
-								{pinUser?.name ? (
-									pinUser?.name
-								) : (
-									<>
-										{activeContent?.signalMetadata?.user.toString()}
-									</>
-								)}
-							</p>
+
+							<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
+								<p className="text-lg text-gray-500">
+									{
+										activeContent?.signalMetadata?.metadata
+											.contents
+									}
+								</p>
+							</div>
+
+							<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
+								<p className="text-lg text-gray-500">
+									Posted by{" "}
+									{pinUser?.name ? (
+										pinUser?.name
+									) : (
+										<>
+											{activeContent?.signalMetadata?.user.toString()}
+										</>
+									)}
+								</p>
+							</div>
 
 							{isOwnListing ? (
 								<DeleteButton deleteSignal={deleteSignal} />

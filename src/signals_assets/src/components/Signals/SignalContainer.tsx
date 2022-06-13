@@ -20,6 +20,8 @@ import Event from "./Event";
 import { ActiveContent } from "../../utils/types";
 import { signals } from "../../../../declarations/signals";
 import { Principal } from "@dfinity/principal";
+import ErrorAlert from "../ErrorAlert";
+import SuccessAlert from "../SuccessAlert";
 
 export type Person = {
 	name: string;
@@ -43,15 +45,18 @@ export type TicketData = {
 };
 
 export default function SignalContainer() {
-	const { activeContent, sendMessage } = useContext<{
+	const { activeContent, sendMessage, createNewActivePin } = useContext<{
 		sendMessage: any;
 		activeContent: ActiveContent<SignalType>;
+		createNewActivePin: any;
 	}>(MapContext as any);
 	const { authenticatedActor, authenticatedUser, user } =
 		useContext(UserContext);
 	const { allSignals } = useContext(MapContext);
 	const [pinUser, setPinUser] = useState<Profile>();
 	const [isOwnListing, setOwnListing] = useState(false);
+	const [open, setOpen] = useState(false);
+	const [errorOpen, setErrorOpen] = useState(false);
 
 	const [activity, setActivity] = useState<Array<Activity>>([]);
 	const [eventTicketInfo, setEventTicketInfo] = useState<TicketData>({
@@ -62,17 +67,17 @@ export default function SignalContainer() {
 	});
 
 	const deleteSignal = async () => {
-		if (activeContent && authenticatedActor) {
-			console.log(
-				"delete",
-				authenticatedUser?.toString(),
-				activeContent.signalMetadata?.user.toString()
-			);
-
-			const deleted = await authenticatedActor.delete_signal(
-				activeContent.signalMetadata?.location as Coordinate
-			);
-			console.log("deleted!!)", deleted);
+		try {
+			if (activeContent && authenticatedActor) {
+				await authenticatedActor.delete_signal(
+					activeContent.signalMetadata?.location as Coordinate
+				);
+				createNewActivePin();
+				setOpen(true);
+			}
+		} catch (e) {
+			console.log(e);
+			setErrorOpen(true);
 		}
 	};
 
@@ -202,5 +207,25 @@ export default function SignalContainer() {
 		}
 	};
 
-	return <>{activeContent && mapSignalTypeToComponent(activeContent)}</>;
+	return (
+		<>
+			{activeContent && mapSignalTypeToComponent(activeContent)}
+			<>
+				<ErrorAlert
+					setOpen={setErrorOpen}
+					open={errorOpen}
+					title={"Error"}
+					message={
+						"Sorry, there was an issue performing your request."
+					}
+				/>
+				<SuccessAlert
+					setOpen={setOpen}
+					open={open}
+					title={"Success"}
+					message={"Your signal has been deleted."}
+				/>
+			</>
+		</>
+	);
 }

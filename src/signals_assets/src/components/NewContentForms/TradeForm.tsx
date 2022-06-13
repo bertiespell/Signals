@@ -1,11 +1,13 @@
 import { useContext, useState } from "react";
 import { MapContext } from "../../context/map";
+import ErrorAlert from "../ErrorAlert";
 
 export default function TradeForm() {
 	const { sendSignal } = useContext(MapContext);
 	const [description, setDescription] = useState("");
 	const [title, setTitle] = useState("");
 	const [price, setPrice] = useState("0");
+	const [open, setOpen] = useState(false);
 
 	return (
 		<>
@@ -96,19 +98,30 @@ export default function TradeForm() {
 						<button
 							type="submit"
 							className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
-							onClick={(e) =>
-								sendSignal(e as any, {
-									title,
-									description,
-									price,
-								})
-							}
+							onClick={(e) => {
+								e.preventDefault();
+								if (title && description && Number(price)) {
+									sendSignal(e as any, {
+										title,
+										description,
+										price: Number(price).toString(),
+									});
+								} else {
+									setOpen(true);
+								}
+							}}
 						>
 							Send Signal
 						</button>
 					</div>
 				</div>
 			</form>
+			<ErrorAlert
+				setOpen={setOpen}
+				open={open}
+				title={"Error"}
+				message={"You need to fill in all the details to continue."}
+			/>
 		</>
 	);
 }
