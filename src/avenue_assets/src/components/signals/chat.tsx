@@ -1,11 +1,14 @@
+import DeleteButton from "../InteractionBox/DeleteButton";
 import Rating from "../InteractionBox/Rating";
 import MessagesList from "./Messages";
 
 export default function ChatSig(
 	pinUser: any,
+	isOwnListing: boolean,
 	activeContent: any,
 	sendMessageEv: any,
-	activity: any
+	activity: any,
+	deleteSignal: any
 ) {
 	return (
 		<>
@@ -36,7 +39,11 @@ export default function ChatSig(
 								)}
 							</p>
 
-							<Rating signal={activeContent} />
+							{isOwnListing ? (
+								<DeleteButton deleteSignal={deleteSignal} />
+							) : (
+								<Rating signal={activeContent} />
+							)}
 						</div>
 
 						<MessagesList

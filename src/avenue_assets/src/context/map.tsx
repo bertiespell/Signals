@@ -2,7 +2,10 @@ import { ActorSubclass } from "@dfinity/agent";
 import { Marker } from "leaflet";
 import React, { useContext, useEffect, useState } from "react";
 import { rust_avenue } from "../../../declarations/rust_avenue";
-import { _SERVICE } from "../../../declarations/rust_avenue/rust_avenue.did";
+import {
+	_SERVICE,
+	Signal as RustSignal,
+} from "../../../declarations/rust_avenue/rust_avenue.did";
 import {
 	EventSignal,
 	mapSignalToType,
@@ -111,7 +114,7 @@ const MapProvider = ({ children }: any) => {
 		}
 	};
 
-	const transformSignal = (signal: Signal<SignalType>) => {
+	const transformSignal = (signal: RustSignal) => {
 		// when we reset data structure we can remove this try block
 
 		let created_at_unix_timestamp = Number(signal.created_at).toString();
@@ -130,16 +133,20 @@ const MapProvider = ({ children }: any) => {
 
 		const messages: Array<Message> = signal.messages.map((message) => {
 			let message_time = Number(message.time).toString();
+			let identity = message.identity.name
+				? message.identity.name
+				: message.identity.principal.toString();
 
 			// multiplied by 1000 so that the argument is in milliseconds, not seconds.
 			const time = new Date(
 				Number(message_time.slice(0, 10)) * 1000
 			).toString();
-			return { ...message, time };
+			return { ...message, time, identity };
 		});
 
 		const formattedSignal: Signal<SignalType> = {
 			...signal,
+			id: Number(signal.id),
 			created_at,
 			updated_at,
 			metadata: JSON.parse(signal.metadata as any),
@@ -170,7 +177,7 @@ const MapProvider = ({ children }: any) => {
 	};
 
 	const setKnownSignals = async () => {
-		const signals: Array<Signal<any>> = await (
+		const signals: Array<RustSignal> = await (
 			rust_avenue as any
 		).get_all_signals();
 
@@ -317,14 +324,14 @@ const MapProvider = ({ children }: any) => {
 						JSON.stringify(contents),
 						signalType,
 						Number((contents as EventSignal).numberOfTickets)
-					)) as unknown as Signal<SignalType>;
+					)) as unknown as RustSignal;
 					console.log(signal);
 				} else {
 					signal = (await authenticatedActor?.create_new_signal(
 						{ lat: location.lat, long: location.lng },
 						JSON.stringify(contents),
 						signalType
-					)) as unknown as Signal<SignalType>;
+					)) as unknown as RustSignal;
 				}
 
 				// remove the newsignal marker

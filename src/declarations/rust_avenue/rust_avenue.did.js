@@ -6,10 +6,15 @@ export const idlFactory = ({ IDL }) => {
     'Chat' : IDL.Null,
     'Trade' : IDL.Null,
   });
+  const Profile = IDL.Record({
+    'principal' : IDL.Principal,
+    'profile_pic_url' : IDL.Text,
+    'name' : IDL.Text,
+  });
   const Message = IDL.Record({
     'contents' : IDL.Text,
     'time' : IDL.Nat64,
-    'identity' : IDL.Text,
+    'identity' : Profile,
   });
   const Signal = IDL.Record({
     'id' : IDL.Int,
@@ -65,10 +70,6 @@ export const idlFactory = ({ IDL }) => {
     'tokens_received_for_upvoted_signal' : ProposalParams,
     'proposal_vote_threshold' : Tokens,
     'proposal_submission_deposit' : Tokens,
-  });
-  const Profile = IDL.Record({
-    'profile_pic_url' : IDL.Text,
-    'name' : IDL.Text,
   });
   const Account = IDL.Record({ 'owner' : IDL.Principal, 'tokens' : Tokens });
   const SubmitProposalResult = IDL.Variant({
@@ -142,11 +143,11 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'get_user_self' : IDL.Func([], [Profile], ['query']),
-    'leave_rating' : IDL.Func([Coordinate, IDL.Bool], [], []),
+    'leave_rating' : IDL.Func([IDL.Int, IDL.Bool], [], []),
     'list_accounts' : IDL.Func([], [IDL.Vec(Account)], ['query']),
     'list_proposals' : IDL.Func([], [IDL.Vec(Proposal)], []),
-    'principal_can_rate_location' : IDL.Func(
-        [IDL.Principal, Coordinate],
+    'principal_can_rate_signal' : IDL.Func(
+        [IDL.Principal, IDL.Int],
         [IDL.Bool],
         ['query'],
       ),

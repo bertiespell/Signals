@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { DaoContext } from "../../context/dao";
 import { SystemContext } from "../../context/system";
+import ErrorAlert from "../ErrorAlert";
 import LoadingSpinner from "../Spinner";
 import SuccessAlert from "../SuccessAlert";
 
@@ -13,6 +14,8 @@ export default function CreateProposal() {
 	const [contents, setContents] = useState("");
 	const [amount, setAmount] = useState("");
 	const [open, setOpen] = useState(false);
+	const [errorOpen, setErrorOpen] = useState(false);
+	const [errorMessage, setErrorMessge] = useState("");
 
 	useEffect(() => {
 		if (systemParams) {
@@ -24,11 +27,21 @@ export default function CreateProposal() {
 	const createProposal = async (e: any) => {
 		e.preventDefault();
 		if (contents && amount && makeProposal) {
-			await makeProposal(contents, Number(amount));
-			await fetchProposals();
-			setAmount("");
-			setContents("");
-			setOpen(true);
+			const proposal = await makeProposal(contents, Number(amount));
+			console.log(proposal, (proposal as any).Err);
+			if ((proposal as any).Err) {
+				setErrorOpen(true);
+				setErrorMessge(
+					`Your proposal couldn't be created. The canister returned: ` +
+						(proposal as any).Err
+				);
+			} else {
+				setErrorOpen(false);
+				setAmount("");
+				setContents("");
+				await fetchProposals();
+				setOpen(true);
+			}
 		}
 	};
 
@@ -138,6 +151,12 @@ export default function CreateProposal() {
 					message={
 						"Your proposal was created, return to your profile to see it in the prosoals list."
 					}
+				/>
+				<ErrorAlert
+					setOpen={setErrorOpen}
+					open={errorOpen}
+					title={"Error"}
+					message={errorMessage}
 				/>
 			</div>
 		</>

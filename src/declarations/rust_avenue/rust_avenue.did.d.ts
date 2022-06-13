@@ -19,9 +19,13 @@ export type Memo = bigint;
 export interface Message {
   'contents' : string,
   'time' : bigint,
-  'identity' : string,
+  'identity' : Profile,
 }
-export interface Profile { 'profile_pic_url' : string, 'name' : string }
+export interface Profile {
+  'principal' : Principal,
+  'profile_pic_url' : string,
+  'name' : string,
+}
 export interface Proposal {
   'id' : bigint,
   'votes_no' : Tokens,
@@ -125,10 +129,10 @@ export interface _SERVICE {
   'get_system_params' : ActorMethod<[], SystemParams>,
   'get_user_for_signal_location' : ActorMethod<[Coordinate], Profile>,
   'get_user_self' : ActorMethod<[], Profile>,
-  'leave_rating' : ActorMethod<[Coordinate, boolean], undefined>,
+  'leave_rating' : ActorMethod<[bigint, boolean], undefined>,
   'list_accounts' : ActorMethod<[], Array<Account>>,
   'list_proposals' : ActorMethod<[], Array<Proposal>>,
-  'principal_can_rate_location' : ActorMethod<[Principal, Coordinate], boolean>,
+  'principal_can_rate_signal' : ActorMethod<[Principal, bigint], boolean>,
   'submit_proposal' : ActorMethod<[ProposalPayload], SubmitProposalResult>,
   'transfer' : ActorMethod<[TransferArgs], TransferResult>,
   'transfer_sale' : ActorMethod<[SaleTransferArgs], SaleTransferResult>,

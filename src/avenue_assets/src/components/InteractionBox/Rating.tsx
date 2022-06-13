@@ -25,12 +25,9 @@ const Rating = ({ signal }: { signal: ActiveContent<any> }) => {
 	}, [authenticatedActor, activeContent]);
 
 	const userCanRate = async () => {
-		const canRate = await authenticatedActor?.principal_can_rate_location(
+		const canRate = await authenticatedActor?.principal_can_rate_signal(
 			authenticatedUser as Principal,
-			{
-				lat: signal.signalMetadata?.location.lat as number,
-				long: signal.signalMetadata?.location.long as number,
-			}
+			BigInt(activeContent?.signalMetadata?.id as number)
 		);
 
 		setAlreadyVoted(!canRate);
@@ -38,10 +35,7 @@ const Rating = ({ signal }: { signal: ActiveContent<any> }) => {
 
 	const submitRating = async (positive: boolean) => {
 		await authenticatedActor?.leave_rating(
-			{
-				lat: signal.signalMetadata?.location.lat as number,
-				long: signal.signalMetadata?.location.long as number,
-			},
+			BigInt(signal.signalMetadata?.id as number),
 			positive
 		);
 		setAlreadyVoted(true);

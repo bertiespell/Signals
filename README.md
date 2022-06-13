@@ -155,14 +155,123 @@ I'd love the opportunity to develop these ideas, and implement a production read
 
 Made with <3 by Bertie Spell
 
+# Troubleshooting
+
+I've found that pretty consistently I need to stop dfx and then reinstall it. Seems to be particularly true when trying to also work with the identity canister
+`~/.cache/dfinity/uninstall.sh && sh -ci "$(curl -sSL https://smartcontracts.org/install.sh)"`
+
 Debugging: Sometimes the dfx deploy seems to go wrong :| I think it's when it's running in two places, but I'm really not sure, best effort invovles:
 
 -   dfx stop (in both internet-identity and Signals)
 -   delete .dfx folder
 -   dfx start (in Signals)
 -   dfx deploy (in Signals)
--   dfx deploy (internet-identity) - II_FETCH_ROOT_KEY=1 dfx deploy --no-wallet --argument '(null)'
+-   dfx deploy (internet-identity) - `II_FETCH_ROOT_KEY=1 dfx deploy --no-wallet --argument '(null)'`
 -   npm start (in internet-indentity) (this needs port 8000)
 -   npm start (in Signals) this now falls back to 80001
 
 If in
+
+{
+dao : record {
+next_proposal_id : nat64;
+system_params : record {
+tokens_received_for_signal_creation : record { amount : nat64 };
+transfer_fee : record { amount : nat64 };
+upvotes_required_before_token_minting : record { amount : nat64 };
+downvotes_required_before_delete : record { amount : nat64 };
+tokens_received_for_upvoted_signal : record { amount : nat64 };
+proposal_vote_threshold : record { amount : nat64 };
+proposal_submission_deposit : record { amount : nat64 };
+};
+accounts : vec record { principal; record { amount : nat64 } };
+proposals : vec record {
+nat64;
+record {
+id : nat64;
+votes_no : record { amount : nat64 };
+voters : vec principal;
+state : variant {
+Failed : text;
+Open;
+Executing;
+Rejected;
+Succeeded;
+Accepted;
+};
+timestamp : nat64;
+proposer : principal;
+votes_yes : record { amount : nat64 };
+payload : record {
+method : text;
+metadata : text;
+canister_id : principal;
+message : vec nat8;
+};
+};
+};
+};
+principal_event_store : vec record { principal; nat8 };
+user_signals : vec record {
+principal;
+vec record {
+id : int;
+updated_at : nat64;
+signal_type : variant { Event; Chat; Trade };
+messages : vec record {
+contents : text;
+time : nat64;
+identity : record {
+\"principal\" : principal;
+profile_pic_url : text;
+name : text;
+};
+};
+metadata : text;
+user : principal;
+created_at : nat64;
+location : record { lat : float64; long : float64 };
+};
+};
+signal_ratings : vec record { int; int32 };
+events : vec record {
+int;
+record {
+event_owner : principal;
+number_of_tickets : nat32;
+issued_passes : vec principal;
+};
+};
+users : vec record {
+principal;
+record { \"principal\" : principal; profile_pic_url : text; name : text };
+};
+signal_id_to_signal : vec record {
+int;
+record {
+id : int;
+updated_at : nat64;
+signal_type : variant { Event; Chat; Trade };
+messages : vec record {
+contents : text;
+time : nat64;
+identity : record {
+\"principal\" : principal;
+profile_pic_url : text;
+name : text;
+};
+};
+metadata : text;
+user : principal;
+created_at : nat64;
+location : record { lat : float64; long : float64 };
+};
+};
+current_id : int;
+purchase_store : vec record {
+int;
+record { seller : principal; amount : nat64 };
+};
+signals_to_tokens : vec record { int; bool };
+user_given_ratings : vec record { principal; vec int };
+}

@@ -5,15 +5,18 @@ import { _SERVICE } from "../../../../declarations/rust_avenue/rust_avenue.did";
 import { UserContext } from "../../context/user";
 import { Trade } from "../../utils/mapSignalTypes";
 import { ActiveContent } from "../../utils/types";
+import DeleteButton from "../InteractionBox/DeleteButton";
 import Rating from "../InteractionBox/Rating";
 import MessagesList from "./Messages";
 
 export default function Trade(
 	pinUser: any,
+	isOwnListing: boolean,
 	activeContent: ActiveContent<Trade>,
 	sendMessageEv: any,
 	activity: any,
-	authenticatedActor: ActorSubclass<_SERVICE> | undefined
+	authenticatedActor: ActorSubclass<_SERVICE> | undefined,
+	deleteSignal: any
 ) {
 	const buy = async () => {
 		if (authenticatedActor && activeContent) {
@@ -37,7 +40,11 @@ export default function Trade(
 				<h3 className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
 					{activeContent?.signalMetadata?.metadata.title}
 				</h3>
-				<Rating signal={activeContent} />
+				{isOwnListing ? (
+					<DeleteButton deleteSignal={deleteSignal} />
+				) : (
+					<Rating signal={activeContent} />
+				)}
 
 				<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
 					<p className="text-lg text-gray-500">

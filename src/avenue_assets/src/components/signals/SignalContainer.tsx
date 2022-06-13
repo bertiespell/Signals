@@ -9,6 +9,7 @@ import {
 } from "../../utils/mapSignalTypes";
 import { UserContext } from "../../context/user";
 import {
+	Coordinate,
 	Profile,
 	_SERVICE,
 } from "../../../../declarations/rust_avenue/rust_avenue.did";
@@ -46,9 +47,12 @@ export default function SignalContainer() {
 		sendMessage: any;
 		activeContent: ActiveContent<SignalType>;
 	}>(MapContext as any);
-	const { authenticatedActor, authenticatedUser } = useContext(UserContext);
+	const { authenticatedActor, authenticatedUser, user } =
+		useContext(UserContext);
 	const { allSignals } = useContext(MapContext);
 	const [pinUser, setPinUser] = useState<Profile>();
+	const [isOwnListing, setOwnListing] = useState(false);
+
 	const [activity, setActivity] = useState<Array<Activity>>([]);
 	const [eventTicketInfo, setEventTicketInfo] = useState<TicketData>({
 		numberOfTicketsRemaining: 0,
@@ -57,12 +61,30 @@ export default function SignalContainer() {
 		isTicketed: false,
 	});
 
+	const deleteSignal = async () => {
+		if (activeContent && authenticatedActor) {
+			console.log(
+				"delete",
+				authenticatedUser?.toString(),
+				activeContent.signalMetadata?.user.toString()
+			);
+
+			const deleted = await authenticatedActor.delete_signal(
+				activeContent.signalMetadata?.location as Coordinate
+			);
+			console.log("deleted!!)", deleted);
+		}
+	};
+
 	const getUserForSignal = async () => {
 		if (activeContent) {
 			const user = await rust_avenue.get_user_for_signal_location(
 				activeContent.signalMetadata?.location as any
 			);
 			setPinUser(user);
+			if (user.principal.toString() === authenticatedUser?.toString()) {
+				setOwnListing(true);
+			}
 		}
 	};
 
@@ -134,7 +156,7 @@ export default function SignalContainer() {
 					"https://img.icons8.com/external-kiranshastry-lineal-color-kiranshastry/64/undefined/external-user-interface-kiranshastry-lineal-color-kiranshastry.png",
 				id: uuidv4().toString(),
 				person: {
-					name: message.identity,
+					name: user?.name ? user?.name : message.identity,
 					href: "",
 				},
 			});
@@ -149,22 +171,33 @@ export default function SignalContainer() {
 			if (type === PinType.Trade)
 				return Trade(
 					pinUser,
+					isOwnListing,
 					content,
 					sendMessageEv,
 					activity,
-					authenticatedActor
+					authenticatedActor,
+					deleteSignal
 				);
 			if (type === PinType.Chat)
-				return ChatSig(pinUser, content, sendMessageEv, activity);
+				return ChatSig(
+					pinUser,
+					isOwnListing,
+					content,
+					sendMessageEv,
+					activity,
+					deleteSignal
+				);
 			if (type === PinType.Event)
 				return Event(
 					pinUser,
+					isOwnListing,
 					content,
 					sendMessageEv,
 					activity,
 					eventTicketInfo,
 					buyTicket,
-					authenticatedUser as Principal
+					authenticatedUser as Principal,
+					deleteSignal
 				);
 		}
 	};

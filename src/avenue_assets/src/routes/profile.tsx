@@ -4,8 +4,8 @@ import CreateProposal from "../components/Profile/CreateProposal";
 import ProposalList from "../components/Profile/ProposalList";
 import SuccessAlert from "../components/SuccessAlert";
 import SystemParams from "../components/Profile/SystemParams";
-import { DaoContext } from "../context/dao";
 import { UserContext } from "../context/user";
+import { Principal } from "@dfinity/principal";
 
 export default function Profile() {
 	const { authenticatedUser, authenticatedActor, login, user } =
@@ -28,6 +28,7 @@ export default function Profile() {
 		if (user) {
 			await authenticatedActor?.update_user({
 				name: username,
+				principal: authenticatedUser as Principal,
 				profile_pic_url: user?.profile_pic_url,
 			});
 			setOpen(true);
