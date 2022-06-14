@@ -50,14 +50,17 @@ const MapProvider = ({ children }: any) => {
 			setMapInitialized(true);
 			const location = defaultLocation;
 
-			const map = L.map("map").setView(
+			const map = L.map("map", {
+				maxZoom: 19,
+				worldCopyJump: true,
+			}).setView(
 				[location.coords.latitude, location.coords.longitude],
 				13
 			);
 			setMap(map);
-			L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-				maxZoom: 19,
-			}).addTo(map);
+			L.tileLayer(
+				"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+			).addTo(map);
 			const search = new L.Control.Search({
 				url: "https://nominatim.openstreetmap.org/search?format=json&q={s}",
 				jsonpParam: "json_callback",
@@ -269,7 +272,7 @@ const MapProvider = ({ children }: any) => {
 		if (refReady && map) {
 			if (!mapInitialised && refReady && map) {
 				setMapInitialized(true);
-				const map = L.map("map").setView(
+				const map = L.map("map", { worldCopyJump: true }).setView(
 					[location.coords.latitude, location.coords.longitude],
 					13
 				);
