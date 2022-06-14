@@ -1,4 +1,4 @@
-import { CreationState } from "../components/InteractionBox/InteractionBox";
+import { CreationState } from "../context/new-pin";
 
 export const defaultSteps = [
     {

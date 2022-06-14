@@ -3,8 +3,6 @@ import { MapContext } from "../context/map";
 import { ShowMapContext } from "../context/show-map";
 import Map from "../Map";
 
-import InteractionBox from "./InteractionBox/InteractionBox";
-
 import { useLocation } from "react-router-dom";
 import SignalContainer from "./Signals/SignalContainer";
 import ProgressBar from "./InteractionBox/ProgressBar";
@@ -15,18 +13,21 @@ import ChatForm from "./NewContentForms/ChatForm";
 import EventForm from "./NewContentForms/EventForm";
 import TradeForm from "./NewContentForms/TradeForm";
 import { UserContext } from "../context/user";
-
-export enum CreationState {
-	Starting = "starting",
-	TypeSelection = "typeSelection",
-	AddContent = "addContent",
-	Created = "created",
-}
+import { NewPinContext } from "../context/new-pin";
 
 export default function LayoutPanels() {
+	const { authenticatedUser } = useContext(UserContext);
+	const {
+		setInteractionState,
+		setPinType,
+		pinType,
+		createSignal,
+		selectType,
+		interactionState,
+	} = useContext(NewPinContext);
+	const { showMap } = useContext(ShowMapContext);
 	const location = useLocation();
 	const { activeContent } = useContext(MapContext);
-	const { showMap } = useContext(ShowMapContext);
 
 	const [visibility, setVisibility] = useState("visible");
 
@@ -39,30 +40,15 @@ export default function LayoutPanels() {
 		}
 	}, [showMap, location]);
 
-	const { authenticatedUser } = useContext(UserContext);
-	const { pinType, setPinType } = useContext(MapContext);
-
 	const [authenicated, setAuthenicated] = useState(false);
-	const [interactionState, setInterState] = useState(CreationState.Starting);
+
+	useEffect(() => {}, [interactionState]);
 
 	useEffect(() => {
 		if (authenticatedUser && !authenticatedUser?.isAnonymous()) {
 			setAuthenicated(true);
 		}
 	}, [authenticatedUser]);
-
-	const createSignal = () => {
-		setInteractionState(CreationState.TypeSelection);
-	};
-
-	const setInteractionState = (state: CreationState) => {
-		setInterState(state);
-	};
-
-	const selectType = (type: String) => {
-		setPinType(type);
-		setInteractionState(CreationState.AddContent);
-	};
 
 	const mapNewContentPanelToType = {
 		chat: (

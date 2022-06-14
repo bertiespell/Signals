@@ -26,8 +26,6 @@ export default function MessagesList({
 		sendMessageEv(e, message);
 	};
 
-	console.log(activity);
-
 	return (
 		<div className="mt-10 row-span-3">
 			<section aria-labelledby="activity-title" className="mt-8 xl:mt-10">

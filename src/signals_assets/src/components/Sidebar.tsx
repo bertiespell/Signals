@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { ShowMapContext } from "../context/show-map";
 import { MapContext } from "../context/map";
 import { v4 as uuidv4 } from "uuid";
+import { CreationState, NewPinContext } from "../context/new-pin";
 
 type NavItem = {
 	name: string;
@@ -25,6 +26,7 @@ export default function Sidebar() {
 	const { setShowMap } = useContext(ShowMapContext);
 	const { setActiveContent, newPinContent, createNewActivePin, map } =
 		useContext(MapContext);
+	const { setInteractionState } = useContext(NewPinContext);
 	let navigate = useNavigate();
 
 	const navigation: Array<NavItem> = [
@@ -41,7 +43,8 @@ export default function Sidebar() {
 
 	const handleNavEvent = (e: any, nav_item: NavItem) => {
 		if (nav_item.name === "New Signal") {
-			console.log("new sigggyhey");
+			setInteractionState(CreationState.Starting);
+
 			if (!newPinContent) {
 				createNewActivePin();
 			} else {

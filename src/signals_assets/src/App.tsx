@@ -13,6 +13,7 @@ import ListChats from "./routes/list/Chats";
 import ListEvents from "./routes/list/Events";
 import ListTrades from "./routes/list/Trades";
 import LayoutPanels from "./components/LayoutPanels";
+import NewPinContext from "./context/new-pin";
 
 const App = () => {
 	return (
@@ -23,39 +24,41 @@ const App = () => {
 						<SystemContext>
 							<DaoContext>
 								<MapProvider>
-									<div className="h-full flex">
-										<Sidebar />
-										<div className="flex-1 flex overflow-hidden">
-											<LayoutPanels />
-											<Routes>
-												<Route
-													path="/"
-													element={<></>}
-												></Route>
-												<Route
-													path="about"
-													element={<About />}
-												/>
-												<Route
-													path="/profile"
-													element={<Profile />}
-												/>
+									<NewPinContext>
+										<div className="h-full flex">
+											<Sidebar />
+											<div className="flex-1 flex overflow-hidden">
+												<LayoutPanels />
+												<Routes>
+													<Route
+														path="/"
+														element={<></>}
+													></Route>
+													<Route
+														path="about"
+														element={<About />}
+													/>
+													<Route
+														path="/profile"
+														element={<Profile />}
+													/>
 
-												<Route
-													path="/list/chats"
-													element={<ListChats />}
-												/>
-												<Route
-													path="/list/events"
-													element={<ListEvents />}
-												/>
-												<Route
-													path="/list/trades"
-													element={<ListTrades />}
-												/>
-											</Routes>
+													<Route
+														path="/list/chats"
+														element={<ListChats />}
+													/>
+													<Route
+														path="/list/events"
+														element={<ListEvents />}
+													/>
+													<Route
+														path="/list/trades"
+														element={<ListTrades />}
+													/>
+												</Routes>
+											</div>
 										</div>
-									</div>
+									</NewPinContext>
 								</MapProvider>
 							</DaoContext>
 						</SystemContext>

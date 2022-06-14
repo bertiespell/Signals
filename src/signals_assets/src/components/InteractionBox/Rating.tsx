@@ -47,6 +47,12 @@ const Rating = ({ signal }: { signal: ActiveContent<any> }) => {
 			className="flex flex-row-reverse items-center p-2"
 			style={{ flexDirection: "row-reverse" }}
 		>
+			<Flowbite.Tooltip content="You'll be rewarded in Signals Token for maintaining the quality of data. You can only vote once per signal, and currently this action cannot be undone.">
+				<QuestionMarkCircleIcon
+					className="h-8 w85 text-gray-400"
+					style={{ paddingRight: "5px" }}
+				/>
+			</Flowbite.Tooltip>
 			{alreadyVoted ? (
 				<>
 					<>
@@ -94,12 +100,6 @@ const Rating = ({ signal }: { signal: ActiveContent<any> }) => {
 					</button>
 				</>
 			)}
-			<Flowbite.Tooltip content="You'll be rewarded in Signals Token for maintaining the quality of data. You can only vote once per signal, and currently this action cannot be undone.">
-				<QuestionMarkCircleIcon
-					className="h-8 w85 text-gray-400"
-					style={{ paddingRight: "5px" }}
-				/>
-			</Flowbite.Tooltip>
 		</div>
 	);
 };

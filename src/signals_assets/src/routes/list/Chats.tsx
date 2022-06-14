@@ -116,7 +116,7 @@ export default function ListChats() {
 							{signals.map((signal) => (
 								<li
 									key={signal.signalMetadata?.id}
-									className="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200"
+									className="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200 border-solid border-2"
 								>
 									<div className="w-full flex items-center justify-between p-6 space-x-6">
 										<div className="flex-1 truncate">
@@ -140,7 +140,7 @@ export default function ListChats() {
 										<div className="-mt-px flex divide-x divide-gray-200">
 											<div className="-ml-px w-0 flex-1 flex">
 												<button
-													className="relative w-0 flex-1 inline-flex items-center justify-center py-4 text-sm text-gray-700 font-medium border-8 border-solid rounded-br-lg hover:text-gray-500"
+													className="relative w-0 flex-1 inline-flex items-center justify-center py-4 text-sm text-gray-700  border border-transparent font-medium rounded-br-lg hover:text-gray-500"
 													onClick={() =>
 														navigateToSignal(signal)
 													}

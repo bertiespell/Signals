@@ -83,10 +83,10 @@ export default function About() {
 						<p className="text-lg text-gray-500">
 							Where to go from here? I'd like to integrate a{" "}
 							<b>DAO Launcher</b> into the app, to allow users who
-							have discovered each other to easily launch template
-							DAOs to govern their communities, spaces or
-							projects. But I have many many other ideas for it,
-							which you can see over on the{" "}
+							have discovered each other to easily launch
+							templated DAOs to govern their communities, spaces
+							or projects. But I have many many other ideas for
+							it, which you can see over on the{" "}
 							<a href={"https://github.com/bertiespell/Signals"}>
 								Github Page
 							</a>
