@@ -19,6 +19,7 @@ import { UserContext } from "./user";
 import { v4 as uuidv4 } from "uuid";
 import { ActiveContent, MapContextType, Message, Signal } from "../utils/types";
 import { defaultLocation } from "../utils/defaults";
+import "../utils/leaflet-search";
 
 const L = (window as any).L;
 
@@ -57,6 +58,18 @@ const MapProvider = ({ children }: any) => {
 			L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 				maxZoom: 19,
 			}).addTo(map);
+			const search = new L.Control.Search({
+				url: "https://nominatim.openstreetmap.org/search?format=json&q={s}",
+				jsonpParam: "json_callback",
+				propertyName: "display_name",
+				propertyLoc: ["lat", "lon"],
+				hideMarkerOnCollapse: true,
+				marker: L.circleMarker([0, 0], { radius: 30 }),
+				autoCollapse: true,
+				autoType: false,
+				minLength: 2,
+			});
+			map.addControl(search);
 			map.attributionControl.setPrefix("");
 			addNewPin(location as any, map);
 		}
@@ -262,6 +275,19 @@ const MapProvider = ({ children }: any) => {
 						maxZoom: 19,
 					}
 				).addTo(map);
+				map.addControl(
+					new L.Control.Search({
+						url: "https://nominatim.openstreetmap.org/search?format=json&q={s}",
+						jsonpParam: "json_callback",
+						propertyName: "display_name",
+						propertyLoc: ["lat", "lon"],
+						hideMarkerOnCollapse: true,
+						marker: L.circleMarker([0, 0], { radius: 30 }),
+						autoCollapse: true,
+						autoType: false,
+						minLength: 2,
+					})
+				);
 				map.attributionControl.setPrefix("");
 				addNewPin(location, map);
 			} else {
