@@ -1,4 +1,4 @@
-import { PencilAltIcon } from "@heroicons/react/outline";
+import { PencilAltIcon, SaveIcon } from "@heroicons/react/outline";
 import { useContext, useEffect, useState } from "react";
 import CreateProposal from "../components/Profile/CreateProposal";
 import ProposalList from "../components/Profile/ProposalList";
@@ -20,6 +20,7 @@ export default function Profile() {
 		if (authenticatedUser && !authenticatedUser?.isAnonymous()) {
 			checkBalance();
 			setShowLogin(false);
+			setUserName(authenticatedUser.toString());
 		}
 	}, [authenticatedUser]);
 
@@ -106,12 +107,12 @@ export default function Profile() {
 													updateUsername(e)
 												}
 											>
-												<div className="mt-1 relative rounded-md shadow-sm">
+												<div className="mt-1 relative rounded-md shadow-sm flex">
 													<input
 														type="text"
 														name="username"
 														id="username"
-														className="focus:ring-signalBlue-500 focus:border-signalBlue-500 block w-full pr-10 sm:text-sm border-gray-300 rounded-md"
+														className="focus:ring-signalBlue-500 focus:border-signalBlue-500 block w-full pr-10 sm:text-sm border-gray-300 rounded-md mr-2"
 														placeholder={user?.name}
 														onChange={(e) =>
 															setUserName(
@@ -119,17 +120,18 @@ export default function Profile() {
 															)
 														}
 													/>
-													<div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-														<button
-															type="submit"
-															className=""
-														>
-															<PencilAltIcon
-																className="h-5 w-5 text-gray-500"
-																aria-hidden="true"
-															/>
-														</button>
-													</div>
+
+													<button
+														type="button"
+														className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-signalBlue-600 hover:bg-signalBlue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+														onClick={updateUsername}
+													>
+														<SaveIcon
+															className="-ml-1 mr-2 h-5 w-5"
+															aria-hidden="true"
+														/>
+														Save
+													</button>
 												</div>
 											</form>
 										</div>
