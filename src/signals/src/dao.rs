@@ -16,14 +16,13 @@ pub struct SignalDaoService {
 impl Default for SystemParams {
     fn default() -> Self {
         SystemParams {
-            // TODO: arbitrarily lower these for testing purposes
-            tokens_received_for_signal_creation: ProposalParams { amount: 1 },
-            tokens_received_for_upvoted_signal: ProposalParams { amount: 1 },
-            downvotes_required_before_delete: ProposalParams { amount: 1 },
-            upvotes_required_before_token_minting: ProposalParams { amount: 1 },
-            transfer_fee: SignalsTokens { amount: 0 },
-            proposal_vote_threshold: SignalsTokens { amount: 1 },
-            proposal_submission_deposit: SignalsTokens { amount: 0 },
+            tokens_received_for_signal_creation: ProposalParams { amount: 100000 },
+            tokens_received_for_upvoted_signal: ProposalParams { amount: 50 },
+            downvotes_required_before_delete: ProposalParams { amount: 10 },
+            upvotes_required_before_token_minting: ProposalParams { amount: 15 },
+            transfer_fee: SignalsTokens { amount: 5 },
+            proposal_vote_threshold: SignalsTokens { amount: 10000 },
+            proposal_submission_deposit: SignalsTokens { amount: 1 },
         }
     }
 }

@@ -111,7 +111,6 @@ export interface _SERVICE {
   'check_ticket' : ActorMethod<[bigint, Principal], boolean>,
   'claim_sale' : ActorMethod<[bigint], TransferResult>,
   'claim_ticket' : ActorMethod<[bigint], undefined>,
-  'create_account' : ActorMethod<[Principal, bigint], undefined>,
   'create_new_signal' : ActorMethod<[Coordinate, string, SignalType], Signal>,
   'create_ticketed_signal' : ActorMethod<
     [Coordinate, string, SignalType, number],

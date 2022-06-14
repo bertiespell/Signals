@@ -28,16 +28,10 @@ export default function Sidebar() {
 	let navigate = useNavigate();
 
 	const navigation: Array<NavItem> = [
-		{ name: "Home", location: "/", icon: HomeIcon },
 		{ name: "New Signal", location: "/", icon: LocationMarkerIcon },
 		{ name: "Chats", location: "/list/chats", icon: ChatIcon },
 		{ name: "Trades", location: "/list/trades", icon: CreditCardIcon },
 		{ name: "Events", location: "/list/events", icon: CalendarIcon },
-		{
-			name: "Profile",
-			location: "/profile",
-			icon: UserIcon,
-		},
 		{
 			name: "About",
 			location: "/about",
@@ -46,9 +40,8 @@ export default function Sidebar() {
 	];
 
 	const handleNavEvent = (e: any, nav_item: NavItem) => {
-		if (nav_item.name === "Home") {
-			setShowMap(true);
-		} else if (nav_item.name === "New Signal") {
+		if (nav_item.name === "New Signal") {
+			console.log("new sigggyhey");
 			if (!newPinContent) {
 				createNewActivePin();
 			} else {
@@ -56,7 +49,8 @@ export default function Sidebar() {
 				setShowMap(true);
 			}
 			try {
-				map.setView(newPinContent?.marker.getLatLng(), 13);
+				newPinContent?.marker.setLatLng(map.getCenter());
+				map.setView(map.getCenter());
 			} catch {}
 		} else {
 			setShowMap(false);

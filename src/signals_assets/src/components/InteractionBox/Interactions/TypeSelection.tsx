@@ -13,17 +13,9 @@ export default function TypeSelection({
 			<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
 				<p className="text-lg text-gray-500">
 					Signals can be left for a variety of uses. Perhaps you just
-					want to leave a message somewhere for someone to find.
-				</p>
-				<p className="text-lg text-gray-500">
-					Or you could leave an expiring signal about an event taking
-					place.
-				</p>
-				<p className="text-lg text-gray-500">
-					You might also be selling something in an area, for which
-					you can leave a signal. Later we'll provide a richer
-					experience to interact with signals, which will support
-					things like purchases and ticketing.
+					want to leave a message somewhere for someone to find. Or
+					you could leave a signal about an event taking place, or an
+					item for sale.
 				</p>
 				<p className="text-lg text-gray-500">
 					Select the signal type that best fits your message:
@@ -72,12 +64,6 @@ export default function TypeSelection({
 					</div>
 					Event
 				</button>
-			</div>
-			<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
-				<p className="text-lg text-gray-500">
-					<b>Not happy with your signal location?</b> Go back using
-					the steps below.
-				</p>
 			</div>
 		</div>
 	);

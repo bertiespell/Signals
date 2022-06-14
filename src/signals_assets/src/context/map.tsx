@@ -86,7 +86,7 @@ const MapProvider = ({ children }: any) => {
 			new_content?.signalMetadata?.messages.push({
 				contents: message,
 				identity: (authenticatedUser as any).toString(),
-				time: new Date(Number(Date.now()) * 1000).toString(),
+				time: new Date(Number(Date.now())).toString(),
 			});
 			setActiveContent(new_content);
 		};
@@ -132,6 +132,7 @@ const MapProvider = ({ children }: any) => {
 		);
 
 		const messages: Array<Message> = signal.messages.map((message) => {
+			console.log(message);
 			let message_time = Number(message.time).toString();
 			let identity = message.identity.name
 				? message.identity.name
@@ -141,8 +142,10 @@ const MapProvider = ({ children }: any) => {
 			const time = new Date(
 				Number(message_time.slice(0, 10)) * 1000
 			).toString();
-			return { ...message, time, identity };
+			return { contents: message.contents, time, identity };
 		});
+
+		console.log(messages);
 
 		const formattedSignal: Signal<SignalType> = {
 			...signal,
@@ -226,23 +229,13 @@ const MapProvider = ({ children }: any) => {
 			}
 		)
 			.addTo(map)
-			.on("mouseover", () => {
-				try {
-					marker.closeTooltip();
-					marker.unbindToolTip();
-				} catch {}
-			})
 			.on("click", () => {
 				(map as any).setView(marker.getLatLng(), 13);
 				setActiveContent({
 					...active,
 					marker,
 				});
-				marker
-					.bindTooltip(
-						"To change location <br>go back a step in the<br> progress bar on the left"
-					)
-					.toggleTooltip();
+
 				setShowToolTip(!showTooltip);
 			})
 			.on("drag", () => {
@@ -250,10 +243,6 @@ const MapProvider = ({ children }: any) => {
 					...active,
 					marker,
 				});
-				try {
-					marker.closeTooltip();
-					marker.unbindToolTip();
-				} catch {}
 			});
 		active.marker = marker;
 		setActiveContent(active as any);
@@ -325,7 +314,6 @@ const MapProvider = ({ children }: any) => {
 						signalType,
 						Number((contents as EventSignal).numberOfTickets)
 					)) as unknown as RustSignal;
-					console.log(signal);
 				} else {
 					signal = (await authenticatedActor?.create_new_signal(
 						{ lat: location.lat, long: location.lng },

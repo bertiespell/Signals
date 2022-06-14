@@ -28,7 +28,6 @@ export default function CreateProposal() {
 		e.preventDefault();
 		if (contents && amount && makeProposal) {
 			const proposal = await makeProposal(contents, Number(amount));
-			console.log(proposal, (proposal as any).Err);
 			if ((proposal as any).Err) {
 				setErrorOpen(true);
 				setErrorMessge(

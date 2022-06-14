@@ -118,7 +118,10 @@ export default function About() {
 						</p>
 						<p className="text-lg text-gray-500">
 							Made with &lt;3 by{" "}
-							<a href="https://linktr.ee/bertiespell">
+							<a
+								href="https://linktr.ee/bertiespell"
+								target="_blank"
+							>
 								Bertie Spell
 							</a>
 						</p>

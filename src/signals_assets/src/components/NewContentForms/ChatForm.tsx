@@ -24,88 +24,71 @@ export default function ChatForm() {
 					your signal and send further messages.
 				</p>
 			</div>
-			<section aria-labelledby="activity-title" className="mt-8 xl:mt-10">
+			<section aria-labelledby="activity-title" className="mt-5 xl:mt-10">
 				<div>
 					<div className="divide-y divide-gray-200">
-						<div className="pt-6">
-							<div className="mt-6">
-								<div className="flex space-x-3">
-									<div className="min-w-0 flex-1">
-										<form action="#">
-											<div className="p-3">
-												<label
-													htmlFor="event-title"
-													className="block text-sm font-medium text-gray-700"
-												>
-													Chat Title
-												</label>
-												<input
-													type="text"
-													name="event-title"
-													id="event-title"
-													value={title}
-													onChange={(e) =>
-														setTitle(e.target.value)
-													}
-													className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-signalBlue-500 focus:border-signalBlue-500 sm:text-sm"
-												/>
-											</div>
-											<div className="p-3">
-												<label
-													htmlFor="about"
-													className="block text-sm font-medium text-gray-700"
-												>
-													Message
-												</label>
-												<div className="mt-1">
-													<textarea
-														id="about"
-														name="about"
-														rows={8}
-														value={contents}
-														onChange={(e) =>
-															setContents(
-																e.target.value
-															)
-														}
-														className="shadow-sm focus:ring-signalBlue-500 focus:border-signalBlue-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
-														placeholder="Leave a first message for everyone"
-													/>
-												</div>
-											</div>
-											<div className="mt-6 flex items-center justify-end space-x-4">
-												<button
-													type="submit"
-													className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
-													onClick={(e) => {
-														e.preventDefault();
-														if (title && contents) {
-															sendSignal(
-																e as any,
-																{
-																	title,
-																	contents,
-																}
-															);
-														} else {
-															setOpen(true);
-														}
-													}}
-												>
-													Send Signal
-												</button>
-											</div>
-										</form>
+						<div className="flex space-x-3">
+							<div className="min-w-0 flex-1">
+								<form action="#">
+									<div className="p-3">
+										<label
+											htmlFor="event-title"
+											className="block text-sm font-medium text-gray-700"
+										>
+											Chat Title
+										</label>
+										<input
+											type="text"
+											name="event-title"
+											id="event-title"
+											value={title}
+											onChange={(e) =>
+												setTitle(e.target.value)
+											}
+											className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-signalBlue-500 focus:border-signalBlue-500 sm:text-sm"
+										/>
 									</div>
-								</div>
-								<div className="mt-10 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
-									<p className="text-lg text-gray-500">
-										<b>
-											Not happy with your signal location?
-										</b>{" "}
-										Go back using the steps below.
-									</p>
-								</div>
+									<div className="p-3">
+										<label
+											htmlFor="about"
+											className="block text-sm font-medium text-gray-700"
+										>
+											Message
+										</label>
+										<div className="mt-1">
+											<textarea
+												id="about"
+												name="about"
+												rows={8}
+												value={contents}
+												onChange={(e) =>
+													setContents(e.target.value)
+												}
+												className="shadow-sm focus:ring-signalBlue-500 focus:border-signalBlue-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
+												placeholder="Leave a first message for everyone"
+											/>
+										</div>
+									</div>
+									<div className="mt-6 flex items-center justify-end space-x-4">
+										<button
+											type="submit"
+											className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-900 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+											onClick={(e) => {
+												e.preventDefault();
+												if (title && contents) {
+													sendSignal(e as any, {
+														title,
+														contents,
+													});
+												} else {
+													setOpen(true);
+												}
+											}}
+										>
+											Send Signal
+										</button>
+									</div>
+								</form>
 							</div>
 						</div>
 					</div>

@@ -76,7 +76,6 @@ export default function SignalContainer() {
 				setOpen(true);
 			}
 		} catch (e) {
-			console.log(e);
 			setErrorOpen(true);
 		}
 	};
@@ -161,7 +160,7 @@ export default function SignalContainer() {
 					"https://img.icons8.com/external-kiranshastry-lineal-color-kiranshastry/64/undefined/external-user-interface-kiranshastry-lineal-color-kiranshastry.png",
 				id: uuidv4().toString(),
 				person: {
-					name: user?.name ? user?.name : message.identity,
+					name: message.identity,
 					href: "",
 				},
 			});

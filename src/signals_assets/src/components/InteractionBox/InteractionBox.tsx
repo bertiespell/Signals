@@ -17,7 +17,7 @@ export enum CreationState {
 
 export default function InteractionBox() {
 	const { authenticatedUser } = useContext(UserContext);
-	const { pinType, setPinType, activeContent } = useContext(MapContext);
+	const { pinType, setPinType } = useContext(MapContext);
 
 	const [authenicated, setAuthenicated] = useState(false);
 	const [interactionState, setInterState] = useState(CreationState.Starting);
@@ -29,15 +29,10 @@ export default function InteractionBox() {
 	}, [authenticatedUser]);
 
 	const createSignal = () => {
-		activeContent?.marker.dragging?.disable();
 		setInteractionState(CreationState.TypeSelection);
 	};
 
 	const setInteractionState = (state: CreationState) => {
-		activeContent?.marker.dragging?.disable();
-		if (state === CreationState.Starting) {
-			activeContent?.marker.dragging?.enable();
-		}
 		setInterState(state);
 	};
 

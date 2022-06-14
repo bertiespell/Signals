@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AuthClient } from "@dfinity/auth-client";
+import { AuthClient, AuthClientLoginOptions } from "@dfinity/auth-client";
 import { canisterId, idlFactory } from "../../../declarations/signals";
 import { Actor, ActorSubclass, HttpAgent } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
@@ -44,8 +44,9 @@ const UserProvider = ({ children }: any) => {
 	const handleAuthenticated = async (authClient: AuthClient) => {
 		const identity = await authClient.getIdentity();
 		const agent = new HttpAgent({ identity });
-		// TODO: remove this line from production envs
-		await agent.fetchRootKey();
+		if (process.env.NODE_ENV !== "production") {
+			await agent.fetchRootKey();
+		}
 		const whoami_actor = Actor.createActor<_SERVICE>(idlFactory, {
 			agent,
 			canisterId: canisterId as string,
@@ -66,16 +67,20 @@ const UserProvider = ({ children }: any) => {
 	};
 
 	const login = async () => {
-		await authClient?.login({
+		const config: AuthClientLoginOptions = {
 			onSuccess: async () => {
-				handleAuthenticated(authClient);
+				handleAuthenticated(authClient as AuthClient);
 			},
 			onError: async (err: any) => {
-				console.log("Oh no!", err);
+				console.log("Error signing in", err);
 			},
-			// TODO: We'll want to remove this in production, or check an environment variable
-			identityProvider: "http://localhost:8080",
-		});
+		};
+
+		if (process.env.NODE_ENV !== "production") {
+			config.identityProvider = "http://localhost:8080";
+		}
+
+		await authClient?.login(config);
 	};
 
 	return (

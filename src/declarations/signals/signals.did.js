@@ -104,7 +104,6 @@ export const idlFactory = ({ IDL }) => {
     'check_ticket' : IDL.Func([IDL.Int, IDL.Principal], [IDL.Bool], ['query']),
     'claim_sale' : IDL.Func([IDL.Int], [TransferResult], []),
     'claim_ticket' : IDL.Func([IDL.Int], [], []),
-    'create_account' : IDL.Func([IDL.Principal, IDL.Nat64], [], []),
     'create_new_signal' : IDL.Func(
         [Coordinate, IDL.Text, SignalType],
         [Signal],

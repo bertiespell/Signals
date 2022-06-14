@@ -20,9 +20,7 @@ export default function Trade(
 ) {
 	const buy = async () => {
 		if (authenticatedActor && activeContent) {
-			// buy_item(signal_id: i128, amount: u64)
-
-			const transfer = await authenticatedActor.buy_item(
+			await authenticatedActor.buy_item(
 				BigInt(activeContent.signalMetadata?.id as number),
 				BigInt(
 					Number(
@@ -30,7 +28,6 @@ export default function Trade(
 					) as number
 				)
 			);
-			console.log(transfer);
 		}
 	};
 

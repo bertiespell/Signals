@@ -32,27 +32,26 @@ export default function Starting({
 					discovering events.
 				</p>
 				<p className="text-lg text-gray-500">
-					Signals encourages real world personal interactions,
-					allowing users to broadcast signals into their environment.
-				</p>
-				<p className="text-lg text-gray-500">
-					Signals is a DAO. The more you interact with the network,
-					the greater say you have in how it's governed. Signals is a
-					rich multi-purpose platform, you can learn more about how
-					Signals works <Link to="about">here</Link>.
+					Signals is a{" "}
+					<a
+						href="https://en.wikipedia.org/wiki/Decentralized_autonomous_organization"
+						target="_blank"
+					>
+						DAO
+					</a>
+					. The more you interact with the network, the greater say
+					you have in how it's governed. Signals is a rich
+					multi-purpose platform, you can learn more about how Signals
+					works <Link to="about">here</Link>.
 				</p>
 				{authenicated ? (
 					<>
-						<b>
-							<p className="text-lg text-gray-500">
-								To get started, simply drag the pin to the
-								location where you'd like to leave a signal.
-							</p>
-							<p className="text-lg text-gray-500">
-								Once you're happy with the location of your pin,
-								click the button below to get started.
-							</p>
-						</b>
+						<p className="text-lg text-gray-500">
+							To get started, drag the pin to the location where
+							you'd like to leave a signal and click the button
+							below.
+						</p>
+
 						<div className="mt-10 row-span-3">
 							<button
 								type="button"

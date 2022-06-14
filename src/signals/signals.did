@@ -216,7 +216,6 @@ service : (custodians : opt vec principal) -> {
     list_proposals: () -> (vec Proposal);
     vote: (VoteArgs) -> (VoteResult);
     update_system_params: (UpdateSystemParamsPayload) -> ();
-    create_account: (principal, nat64) -> ();
 
     // Trade and Sale related functionality
     transfer_sale: (SaleTransferArgs) -> (SaleTransferResult);
