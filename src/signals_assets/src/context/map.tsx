@@ -80,6 +80,11 @@ const MapProvider = ({ children }: any) => {
 			setKnownSignals();
 		}
 	}, [map]);
+	useEffect(() => {
+		if (map) {
+			setKnownSignals();
+		}
+	}, [refReady]);
 
 	useEffect(() => {
 		getLocationWithMap();
