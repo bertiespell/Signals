@@ -88,6 +88,8 @@ export default function SignalContainer() {
 			setPinUser(user);
 			if (user.principal.toString() === authenticatedUser?.toString()) {
 				setOwnListing(true);
+			} else {
+				setOwnListing(false);
 			}
 		}
 	};
