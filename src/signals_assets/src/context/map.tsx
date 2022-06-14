@@ -132,7 +132,6 @@ const MapProvider = ({ children }: any) => {
 		);
 
 		const messages: Array<Message> = signal.messages.map((message) => {
-			console.log(message);
 			let message_time = Number(message.time).toString();
 			let identity = message.identity.name
 				? message.identity.name
@@ -145,8 +144,6 @@ const MapProvider = ({ children }: any) => {
 			return { contents: message.contents, time, identity };
 		});
 
-		console.log(messages);
-
 		const formattedSignal: Signal<SignalType> = {
 			...signal,
 			id: Number(signal.id),
@@ -154,6 +151,7 @@ const MapProvider = ({ children }: any) => {
 			updated_at,
 			metadata: JSON.parse(signal.metadata as any),
 			messages,
+			username: signal.user.toString(),
 		};
 
 		const activeContent = {

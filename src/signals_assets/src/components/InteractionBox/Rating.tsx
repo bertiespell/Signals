@@ -44,7 +44,7 @@ const Rating = ({ signal }: { signal: ActiveContent<any> }) => {
 
 	return (
 		<div
-			className="flex flex-row-reverse items-center"
+			className="flex flex-row-reverse items-center p-2"
 			style={{ flexDirection: "row-reverse" }}
 		>
 			{alreadyVoted ? (
@@ -59,7 +59,6 @@ const Rating = ({ signal }: { signal: ActiveContent<any> }) => {
 								className="h-8 w-8 "
 								style={{ color: "grey" }}
 							/>{" "}
-							Dislike
 						</button>{" "}
 						<button
 							disabled={true}
@@ -70,7 +69,6 @@ const Rating = ({ signal }: { signal: ActiveContent<any> }) => {
 								className="h-8 w-8"
 								style={{ color: "grey" }}
 							/>{" "}
-							Like
 						</button>
 					</>
 				</>
@@ -84,7 +82,6 @@ const Rating = ({ signal }: { signal: ActiveContent<any> }) => {
 							className="h-8 w-8 "
 							style={{ color: "red" }}
 						/>{" "}
-						Dislike
 					</button>{" "}
 					<button
 						className="flex items-center"
@@ -94,7 +91,6 @@ const Rating = ({ signal }: { signal: ActiveContent<any> }) => {
 							className="h-8 w-8"
 							style={{ color: "green" }}
 						/>{" "}
-						Like
 					</button>
 				</>
 			)}

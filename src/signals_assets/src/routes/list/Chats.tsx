@@ -10,6 +10,8 @@ import {
 import { ShowMapContext } from "../../context/show-map";
 import { LocationMarkerIcon } from "@heroicons/react/solid";
 import { ActiveContent } from "../../utils/types";
+import Fuse from "fuse.js";
+import { SearchIcon } from "@heroicons/react/outline";
 
 export default function ListChats() {
 	let navigate = useNavigate();
@@ -22,6 +24,11 @@ export default function ListChats() {
 	}>(MapContext as any);
 
 	const [signals, setSignals] = useState<Array<ActiveContent<Chat>>>([]);
+	const [contents, setContents] = useState("");
+
+	useEffect(() => {
+		setSignals(filtered_signals(allSignals));
+	}, [allSignals]);
 
 	const navigateToSignal = (signal: ActiveContent<Chat>) => {
 		setActiveContent(signal);
@@ -30,14 +37,34 @@ export default function ListChats() {
 		navigate("/");
 	};
 
-	useEffect(() => {
-		const chat_signals = allSignals
+	const filtered_signals = (signals: Array<ActiveContent<Chat>>) =>
+		signals
 			.concat()
 			.filter(
 				(signal) => mapActiveContentToPinType(signal) === PinType.Chat
 			);
-		setSignals(chat_signals);
-	}, [allSignals]);
+
+	const search = (searchPattern: string) => {
+		setContents(searchPattern);
+		if (searchPattern) {
+			const fuse = new Fuse(filtered_signals(allSignals), {
+				keys: [
+					"id",
+					"signalMetadata.metadata.contents",
+					"signalMetadata.metadata.title",
+					"signalMetadata.location.lat",
+					"signalMetadata.location.long",
+					"signalMetadata.username",
+				],
+			});
+
+			const pattern = searchPattern;
+			const searchResults = fuse.search(pattern);
+			setSignals(searchResults.map((result) => result.item));
+		} else {
+			setSignals(filtered_signals(allSignals));
+		}
+	};
 
 	return (
 		<div className="flex-1 flex overflow-hidden w-max ">
@@ -50,6 +77,36 @@ export default function ListChats() {
 						<h3 className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
 							Chats
 						</h3>
+					</div>
+					<div className="pl-10 pr-10">
+						<div className=" min-w-0 flex-1 lg:px-0 ">
+							<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+								<div className="col-span-1">
+									<label htmlFor="search" className="sr-only">
+										Search
+									</label>
+									<div className="relative">
+										<div className="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
+											<SearchIcon
+												className="h-5 w-5 text-gray-400"
+												aria-hidden="true"
+											/>
+										</div>
+										<input
+											id="signals-search"
+											name="signals-search"
+											className="block w-full bg-white border border-gray-300 rounded-md py-2 pl-10 pr-3 text-sm placeholder-gray-500 focus:outline-none focus:text-gray-900 focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+											placeholder="Search"
+											type="signals-search"
+											value={contents}
+											onChange={(e) =>
+												search(e.target.value)
+											}
+										/>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 					<div className="p-10">
 						<ul

@@ -61,6 +61,7 @@
     "flowbite": "^1.4.7",
     "flowbite-datepicker": "^1.2.1",
     "flowbite-react": "^0.0.25",
+    "fuse.js": "^6.6.2",
     "leaflet": "^1.8.0",
     "postcss-loader": "^7.0.0",
     "react": "^18.1.0",

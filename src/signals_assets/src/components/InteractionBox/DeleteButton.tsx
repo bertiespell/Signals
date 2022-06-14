@@ -8,7 +8,7 @@ import { Tooltip } from "flowbite-react";
 const DeleteButton = ({ deleteSignal }: { deleteSignal: any }) => {
 	return (
 		<div
-			className="flex flex-row-reverse items-center"
+			className="flex flex-row-reverse items-center p-2"
 			style={{ flexDirection: "row-reverse" }}
 		>
 			<Tooltip content="Click here to delete your signal. This action cannot be undone.">

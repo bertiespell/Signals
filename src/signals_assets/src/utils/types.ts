@@ -50,6 +50,7 @@ export type Signal<T extends SignalType> = {
 		long: number;
 	};
 	signal_type: RustSignalType;
+	username: string;
 };
 
 export type ActiveContent<T extends SignalType> = {
