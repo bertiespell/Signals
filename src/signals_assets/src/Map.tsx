@@ -12,6 +12,10 @@ const Map = () => {
 		setRefReady();
 	}, [setRefReady]);
 
+	setTimeout(function () {
+		window.dispatchEvent(new Event("resize"));
+	});
+
 	return (
 		<main>
 			<div
