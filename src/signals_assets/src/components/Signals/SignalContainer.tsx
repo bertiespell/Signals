@@ -72,6 +72,8 @@ export default function SignalContainer() {
 				await authenticatedActor.delete_signal(
 					activeContent.signalMetadata?.location as Coordinate
 				);
+				activeContent.isNewPin = false;
+				activeContent.marker.remove();
 				createNewActivePin();
 				setOpen(true);
 			}

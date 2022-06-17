@@ -31,8 +31,7 @@ export default function EventForm() {
 				</h3>
 				<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
 					<p className="text-lg text-gray-500">
-						Fill in a few details about your event so that we can
-						send your signal to the network.
+						Fill in a few details about your event.
 					</p>
 				</div>
 				<div className="p-5 col-span-6 sm:col-span-3">
@@ -81,7 +80,7 @@ export default function EventForm() {
 						/>
 					</div>
 				</div>
-				<div className="col-span-3 p-5 ">
+				<div className="col-span-3 p-2 ">
 					<div className="relative flex items-start">
 						<div className="flex items-center h-5">
 							<input
@@ -100,8 +99,8 @@ export default function EventForm() {
 								Ticketed Event
 							</label>
 							<p className="text-gray-500">
-								If you'd like to create a specific number of
-								tickets for your event you can set that here
+								Create a specific number of tickets for your
+								event
 							</p>
 						</div>
 					</div>{" "}

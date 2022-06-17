@@ -21,8 +21,7 @@ export default function TradeForm() {
 					</h3>
 					<div className="mt-5 prose prose-signalBlue text-gray-500 mx-auto lg:max-w-none lg:row-start-1 lg:col-start-1 row-span-3">
 						<p className="text-lg text-gray-500">
-							Fill in a few details about your item so that we can
-							send your signal to the network.
+							Fill in a few details about your item.
 						</p>
 					</div>
 
