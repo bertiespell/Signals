@@ -102,7 +102,7 @@ curl -o ledger.public.did https://raw.githubusercontent.com/dfinity/ic/430eff202
 
 You then need to deploy it, but the steps are a bit involved so best to check the documentation there.
 
-# DAO interacting with the DAO, to submit a proposal
+# Interacting with the DAO, to submit a proposal
 
 Signals is built as a DAO, meaning that its users control how it operates and are incentivised through the Signals Token to interact with the map and maintain the quality of the data. Currently it supports leaving three types of signals - Chats, Trades and Events. Any user with sufficient tokens can see the state of the system, and make proposals on how Signals should be run.
 
@@ -155,8 +155,10 @@ Before the app is a feasible app it really needs a general refactor to be effici
 
 -   Paginate data
 -   Search functionality using a bounding box for coordinates (to load only what's visible on the map)
--   Add search bar to map to quickly find places of interest
+-   Improve map search bar
 -   Make mobile friendly
+-   Add search filters to BE
+-   Add ability to tag events
 -   Add edit functionality to change a Signal or message
 -   Add views to:
     -   See your own Signals
